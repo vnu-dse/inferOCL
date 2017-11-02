@@ -1,0 +1,546 @@
+
+
+package kermeta::language::structure;
+require "metamodels/alloy.kmt"
+//require "ToAlloy.kmt"
+require "Kermeta2Alloy.kmt"
+require "Kermeta2AlloyTrace.kmt"
+require "ClassDefinitionHelpers.kmt"
+require kermeta
+
+using kermeta::standard
+using kermeta::utils
+using Cartier::Kermeta2AlloyTrace
+using Cartier::AlloyMM
+using kermeta::language::structure
+
+
+
+
+
+aspect class Object
+{
+	//Reference to an Alloy atom for each Kermeta Object
+	reference alloyName : IDName
+	reference alloyNameExpr : Name_Expression
+	reference alloyNameAsCollection : Name[0..*]
+	
+	//Keeping Track of a numbers
+	attribute scaleLog: ExperimentLog
+	
+	operation toAlloyPass1(trace: Kermeta2AlloyTrace) : Void is do
+	end
+	
+	operation toAlloyPass2(trace: Kermeta2AlloyTrace) : Void is do
+	end
+	
+	operation toAlloyPass3(trace: Kermeta2AlloyTrace) : Void is do
+	end
+	
+	operation toAlloyPass4(trace: Kermeta2AlloyTrace) : Void is do
+	end
+	
+
+	
+}
+
+
+aspect class Package 
+{
+	//Reference to an Alloy Module for a Kermeta Package
+	reference alloyModule: Module		
+	
+	
+	method toAlloyPass1(trace: Kermeta2AlloyTrace) :Void is do
+		var moduleName:IDName init IDName.new
+		moduleName.initialize(self.name)
+		self.alloyName:=moduleName
+		var alloyNameExpr:Name_Expression init Name_Expression.new
+		alloyNameExpr.initialize(self.alloyName)
+		self.alloyModule := Module.new
+		self.alloyModule.initialize(moduleName)
+		//Trace
+		self.scaleLog.numberOfModules:=self.scaleLog.numberOfModules+1
+		self.scaleLog.numberOfNameExpressions:=self.scaleLog.numberOfNameExpressions + 1
+		
+		//Insert Module into Alloy Model
+		trace.alloyModel.setModule(alloyModule)
+	end
+	
+	method toAlloyPass2(trace: Kermeta2AlloyTrace) :Void is do
+		
+	end
+	
+}
+
+aspect class ClassDefinition 
+{
+	//Reference to a an Alloy Signature Declaration for a Kermeta Class Definition
+	reference alloySigDecl : SigDecl
+	reference alloySigQual : SigQual
+	reference alloySigExt : SigExt
+	reference alloyFields : Decl [0..*]
+	reference subClasses: ClassDefinition[0..*]
+	//For Composition constraints
+	//reference containerClasses : ClassDefinition[0..*]
+	//The properties that are contain the instances of a class defintion
+	//reference containerProperties : Property[0..*]
+	//Containers of a class
+	reference containers : ContainerProperty[0..*]
+
+	method toAlloyPass1(trace : Kermeta2AlloyTrace) : Void is do
+		self.containers.addAll(OrderedSet<ContainerProperty>.new)
+	 	var sigName:IDName init IDName.new
+	 	
+	 	sigName.initialize(self.name)
+	
+	 	self.alloyName:=sigName
+	 	var alloyNameAsCollection : Name[0..*] init OrderedSet<Name>.new
+	 	alloyNameAsCollection.add(self.alloyName) 
+	 	self.alloyNameAsCollection.addAll(alloyNameAsCollection)
+	 	var alloyNameExpr:Name_Expression init Name_Expression.new
+		alloyNameExpr.initialize(self.alloyName)
+		self.alloyNameExpr := alloyNameExpr
+		
+
+		 
+	end
+	
+	method toAlloyPass2(trace : Kermeta2AlloyTrace) : Void is do
+		//Create the Signature Qualifier
+	 	if self.isAbstract then
+	 		self.alloySigQual := AbstractSigQual.new
+	 	else
+	 		self.alloySigQual := EmptySigQual.new
+	 	end
+	 	
+	 	//Create the Signature Extension
+	 	self.alloySigExt := EmptySigExt.new
+	 	
+	 	//If there is no 
+		if trace.atmostSingleInheritance == true then
+	 		if self.superType.size == 1 then
+	 			var superClass_Reference: NameReference
+	 			superClass_Reference := NameReference.new
+	 			//Bad Design : Cannot do better at the moment
+	 			if self.superType.one.toString != "Object" then
+	 				
+	 				
+	 	
+	 				superClass_Reference.initialize(self.superType.one.asType(Class).classDefinition.alloyName)
+	 				
+	 				self.alloySigExt:=ExtendsSigExt.new
+	 				self.alloySigExt.initialize(superClass_Reference)
+	 			end						
+	 		
+	 	end
+	 	
+	 	if trace.hasMultipleInheritance == true then
+	 		
+	 		self.alloySigExt := EmptySigExt.new			
+	 		
+	 	end
+	 	
+	 	
+	 	
+	 	//Assign all possible containers of an attribute
+	 	self.allAttribute.each{ a| 
+									
+									if a.isComposite==true and  a.type.isInstanceOf(Class)  then
+										
+										if trace.isPropertyInMetamodel(a) then
+										//stdio.writeln("Attribute "+a.name+" is composite")
+										//stdio.writeln("Attribute containing class "+self.name)
+										//stdio.writeln("Attribute type "+a.type.toString)
+										var attribContainer: ContainerProperty[1..1] init ContainerProperty.new
+										attribContainer.containerClass:=a.type.asType(Class).classDefinition
+										attribContainer.containerProperty:=a
+										if not a.type.asType(Class).classDefinition.isExistingContainer(attribContainer) then
+											a.type.asType(Class).classDefinition.containers.add(attribContainer)
+										end
+										
+											
+										end
+									end
+								}
+		
+	 	
+	 	end
+	 	
+	 	
+	 	
+	 	
+	 	//Create the Signature Declaraion
+	 	self.alloySigDecl := SigDecl.new
+	 	self.scaleLog.numberOfSignatureDecls := self.scaleLog.numberOfSignatureDecls +1
+	 	
+	 	
+	end
+	
+	
+	method toAlloyPass3 ( trace:Kermeta2AlloyTrace): Void is do
+		var fields : Decl[0..*]
+		fields := OrderedSet<Decl>.new
+		
+		//Insert the fields representing attributes in the Signature declaration
+		if trace.hasMultipleInheritance==false then
+		self.ownedAttribute.each { prop | fields.add(prop.alloyField)}
+		self.alloyFields.addAll(fields)
+		self.alloySigDecl.initialize(self.alloySigQual,self.alloyName,self.alloySigExt, self.alloyFields)
+		trace.alloyModel.addParagraph(self.alloySigDecl)
+		end
+		//If multiple inheritance exists add all properties. Inheritance Emancipation
+		if trace.hasMultipleInheritance==true then
+		self.allAttribute.each { prop | 
+		
+		if trace.isPropertyInMetamodel(prop) then
+			fields.add(prop.alloyField)
+		end	
+			}
+		self.alloyFields.addAll(fields)
+		self.alloySigDecl.initialize(self.alloySigQual,self.alloyName,self.alloySigExt, self.alloyFields)
+		trace.alloyModel.addParagraph(self.alloySigDecl)
+		end
+		//If container of a class then add to the list of containers of the contained class. Check all attributes including those of super classes.
+		//In each class of the meta-model
+		//Select each all attributes ofn a class including inherited attributes (in the metamodel)
+		//If the attribute is composite and is of type class
+		// Then owning class self of the attribute and all its sub classes are possible containers for the attribute
+		//We add all these containers to set of possible containers for attribute 
+		//and trace.isPropertyInMetamodel(a)
+		//a.isComposite == true and 
+		self.allAttribute.each{ a| if  a.isComposite == true and  a.type.isInstanceOf(Class) and trace.isPropertyInMetamodel(a)  then
+										
+										//Add all direct containers of a class
+										//stdio.writeln(" Class Name: "+self.name+" CP:"+a.type.asType(Class).classDefinition.name+"."+a.name)
+										var attributeType:ClassDefinition init ClassDefinition.new
+										attributeType :=a.type.asType(Class).classDefinition
+										
+										if not a.type.isVoid and attributeType.name!="Object" then
+											//a.type.asType(Class).classDefinition.containerClasses.add(a.owningClass)
+											//attributeType.containerClasses.add(a.type.asType(Class).classDefinition)
+											//attributeType.containerProperties.add(a)
+											
+											var tempContainer : ContainerProperty init ContainerProperty.new
+											tempContainer.containerClass := ClassDefinition.new 
+											tempContainer.containerClass := a.owningClass
+											tempContainer.containerProperty :=Property.new 
+											tempContainer.containerProperty := a
+											//stdio.writeln("\n <<"+attributeType.name+" containers>> \n ")
+											//stdio.writeln("Class ="+a.owningClass.name+" attribute name="+a.name)
+											if not attributeType.isExistingContainer(tempContainer)   then
+		
+												attributeType.containers.add(tempContainer)
+											end
+											
+											
+											//a.type.asType(Class).classDefinition
+											a.owningClass.allSubClassDefs(trace).each { s |
+											if s.isInstanceOf(ClassDefinition) then
+												var subType:ClassDefinition init ClassDefinition.new
+											 	subType:=s
+											 	//stdio.writeln("Class ="+a.owningClass.name+" Sub-class= "+subType.name+" attribute name="+a.name)
+											 	if trace.isClassInMetamodel(subType) then
+											 		var tempContainerSu : ContainerProperty init ContainerProperty.new
+													tempContainerSu.containerClass := ClassDefinition.new 
+													tempContainerSu.containerClass := subType
+													tempContainerSu.containerProperty :=Property.new 
+													tempContainerSu.containerProperty := a
+											
+													if not attributeType.isExistingContainer(tempContainerSu) then
+														
+														//stdio.writeln(tempContainerSu.containerClass.name+" dgsd "+tempContainerSu.containerProperty.name)
+														attributeType.containers.add(tempContainerSu)
+													end
+											 	end
+											end
+											}
+										end 
+										
+				
+									end 
+								}
+	
+		//self.subClasses.each{s | stdio.writeln(self.name+" has sub types "+s.name)}
+	end
+	
+
+	
+	
+	
+		
+	method toAlloyPass4(trace:Kermeta2AlloyTrace): Void is do
+	
+		//Add all containers of super class to containers of itself.
+		//self.containerClasses.addAll(self.getAllContainers(self.containerClasses))
+		//self.containerProperties.addAll(self.getAllContainerProperties(self.containerProperties))
+		//self.containerProperties.each{c | stdio.writeln("Class :"+self.name+ "Container :"+c.name)}
+		
+		//self.containers.each { c| stdio.writeln("Class "+self.name+" contained in "+c.containerClass.name+"."+c.containerProperty.name)}
+		//Create Alloy Name Expressions
+		self.containers.each{ c | if not c.isVoid and not c.containerClass.name.isVoid and not c.containerProperty.name.isVoid then
+									var alloyName:IDName init IDName.new 
+									var alloyNameExpr: Name_Expression init Name_Expression.new
+									alloyName.initialize(c.containerClass.name+"."+c.containerProperty.name)
+									alloyNameExpr.initialize(alloyName)
+									c.AlloyNameExpr:=alloyNameExpr
+									
+								end
+								}
+	end
+}
+
+
+
+aspect class Property 
+{
+	reference alloyField : Decl
+	reference alloyUnOpExpression : UnOp_Expression
+	reference alloySignature : IDName
+	reference alloySigNameExpression : Name_Expression
+	reference multiplicityOp : UnOp
+	reference oppositeFactCreated: Boolean
+	
+	method toAlloyPass1(trace : Kermeta2AlloyTrace):Void is do
+		//Initialize that opposite fact is not created
+	
+		self.oppositeFactCreated :=Boolean.new
+		self.oppositeFactCreated := false
+		
+		var propertyName:IDName init IDName.new
+		
+		propertyName.initialize(self.name)
+		self.alloyName:=propertyName
+		
+		var alloyNameAsCollection : Name[0..*] init OrderedSet<Name>.new
+	 	alloyNameAsCollection.add(self.alloyName) 
+	 	self.alloyNameAsCollection.addAll(alloyNameAsCollection)
+	 	var alloyNameExpr:Name_Expression init Name_Expression.new
+	
+		alloyNameExpr.initialize(self.alloyName)
+		self.alloyNameExpr := alloyNameExpr
+		//Detect existence of Primitive Type in Class Form
+		if self.type.isInstanceOf(Class) then
+			//Detect the existence of a Boolean Type
+			if self.type.asType(Class).classDefinition.name == "Boolean" then
+				trace.containsBoolean:=true
+			end
+			//Detect the existence of a Integer Type
+			if self.type.asType(Class).classDefinition.name == "Integer" then
+				trace.containsInteger:=true
+			end
+			//Detect the existence of a String Type
+			if self.type.asType(Class).classDefinition.name == "String" then
+				trace.containsString:=true
+			end
+			
+			if self.type.asType(Class).classDefinition.name == "Real" then
+				trace.containsReal:=true
+			end
+		end
+		//Detect the existence of a Primitive Type
+		if self.type.isInstanceOf(PrimitiveType) then
+			//Detect the existence of a Boolean Type
+			if self.type.asType(PrimitiveType).instanceType.toString == "Boolean" then
+				trace.containsBoolean:=true
+			end
+			//Detect the existence of a Integer Type
+			if self.type.asType(PrimitiveType).instanceType.toString == "Integer" then
+				trace.containsInteger:=true
+			end
+			//Detect the existence of a String Type
+			if self.type.asType(PrimitiveType).instanceType.toString == "String" then
+				trace.containsString:=true
+			end
+			
+			if self.type.asType(PrimitiveType).instanceType.toString == "Real" then
+				trace.containsReal:=true
+			end
+		end
+		
+	end
+	
+	//At the end of pass 2 we have all Signature Names
+	method toAlloyPass2(trace : Kermeta2AlloyTrace):Void is do
+		//Multiplicty of the property
+		
+		var primitiveSignature : IDName
+		self.multiplicityOp := void
+
+		//Obtain signature of property from containing class
+		
+		if self.type.isInstanceOf(Class) then
+		
+			self.alloySignature:=self.type.asType(Class).classDefinition.alloyName
+			
+			if self.type.asType(Class).classDefinition.name == "Boolean" then
+				primitiveSignature := IDName.new
+				primitiveSignature.initialize("Bool")
+				self.alloySignature := primitiveSignature
+				
+			end
+			
+			if self.type.asType(Class).classDefinition.name == "String" then
+				if trace.useIntForString==true then
+				primitiveSignature := IDName.new
+				//primitiveSignature.initialize("Integer")
+				primitiveSignature.initialize("Int")
+				self.alloySignature := primitiveSignature
+				
+				else
+				primitiveSignature := IDName.new
+				primitiveSignature.initialize("String")
+				self.alloySignature := primitiveSignature
+				end
+			end
+		
+			if self.type.asType(Class).classDefinition.name == "Integer" then
+				primitiveSignature := IDName.new
+				//primitiveSignature.initialize("Integer")
+				primitiveSignature.initialize("Int")
+				self.alloySignature := primitiveSignature
+			end
+			
+			if self.type.asType(Class).classDefinition.name == "Real" then
+				primitiveSignature := IDName.new
+				primitiveSignature.initialize("Real")
+				self.alloySignature := primitiveSignature
+			end
+			
+			
+		end
+		if self.type.isInstanceOf(Enumeration) then
+			self.alloySignature:=self.type.asType(Enumeration).alloyName
+		end
+		if self.type.isInstanceOf(PrimitiveType) then
+		
+			if self.type.asType(PrimitiveType).instanceType.toString == "Boolean" then
+				primitiveSignature := IDName.new
+				primitiveSignature.initialize("Bool")
+				self.alloySignature := primitiveSignature
+			end
+			if self.type.asType(PrimitiveType).instanceType.toString == "String" then
+				if trace.useIntForString==true then
+				primitiveSignature := IDName.new
+				//primitiveSignature.initialize("Integer")
+				primitiveSignature.initialize("Int")
+				self.alloySignature := primitiveSignature
+				
+				else
+				primitiveSignature := IDName.new
+				primitiveSignature.initialize("String")
+				self.alloySignature := primitiveSignature
+				end
+			end
+		
+			if self.type.asType(PrimitiveType).instanceType.toString == "Integer" then
+				primitiveSignature := IDName.new
+				//primitiveSignature.initialize("Integer")
+				primitiveSignature.initialize("Int")
+				self.alloySignature := primitiveSignature
+			end
+			
+			if self.type.asType(PrimitiveType).instanceType.toString == "Real" then
+				primitiveSignature := IDName.new
+				primitiveSignature.initialize("Real")
+				self.alloySignature := primitiveSignature
+			end
+		
+		end
+		//Obtain multiplicty of property from containing class
+		
+		
+		if multiplicityOp == void and self.asType(MultiplicityElement).lower == 1 and self.asType(MultiplicityElement).upper == 1 then
+			multiplicityOp := one_UnOp.new
+		end
+		if multiplicityOp == void and self.asType(MultiplicityElement).lower == 0 and self.asType(MultiplicityElement).upper == 1 then
+			multiplicityOp := lone_UnOp.new
+			
+		end
+		
+		if multiplicityOp == void and self.asType(MultiplicityElement).lower == 1 and self.asType(MultiplicityElement).upper == -1 then
+			multiplicityOp := some_UnOp.new
+		end
+		
+		if multiplicityOp == void and self.asType(MultiplicityElement).lower == 0 and self.asType(MultiplicityElement).upper == -1 then
+			multiplicityOp := set_UnOp.new
+			if self.isOrdered == true then
+				multiplicityOp := seq_UnOp.new
+			end
+			if self.isOrdered == true and self.isUnique==true then
+				multiplicityOp := set_UnOp.new
+			end
+		end
+		
+		if multiplicityOp == void and self.asType(MultiplicityElement).lower >= 0 and self.asType(MultiplicityElement).upper >= self.asType(MultiplicityElement).lower and  self.asType(MultiplicityElement).upper > 0  then
+			multiplicityOp := set_UnOp.new
+			if self.isOrdered == true then
+				multiplicityOp := seq_UnOp.new
+			end
+			if self.isOrdered == true and self.isUnique==true then
+				multiplicityOp := set_UnOp.new
+			end
+		end
+		
+		if multiplicityOp==void and self.asType(MultiplicityElement).lower == 0 and self.asType(MultiplicityElement).upper == 0 then
+			multiplicityOp := no_UnOp.new
+		end
+		
+		//Create Declaration Expression
+		
+		self.alloyUnOpExpression := UnOp_Expression.new
+		self.alloySigNameExpression := Name_Expression.new
+		self.alloySigNameExpression.initialize(self.alloySignature)
+		self.alloyUnOpExpression.initialize(self.alloySigNameExpression, multiplicityOp)
+		
+		self.alloyField := Decl.new
+		var alloyNameDecl : Name[0..*] 
+		alloyNameDecl := OrderedSet<Name>.new
+		alloyNameDecl.add(self.alloyName)
+		self.alloyField.initialize(alloyNameDecl,self.alloyUnOpExpression,false,false)
+
+	end
+	
+	
+} 
+
+
+
+
+aspect class Enumeration
+{
+	reference alloyEnumDecl : EnumDecl
+	
+	method toAlloyPass1(trace : Kermeta2AlloyTrace):Void is do
+	
+		//Transforming a Kermeta Enumeration to an Alloy Enumeration
+		if not self.name.isVoid then
+			var alloyLiterals : Name[1..*]
+			self.alloyName := IDName.new
+			
+			var alloyNameAsCollection : Name[0..*] init OrderedSet<Name>.new
+	 		alloyNameAsCollection.add(self.alloyName) 
+	 		self.alloyNameAsCollection.addAll(alloyNameAsCollection)
+	 		var alloyNameExpr:Name_Expression init Name_Expression.new
+	 		self.scaleLog.numberOfNameExpressions := self.scaleLog.numberOfNameExpressions + 1
+			alloyNameExpr.initialize(self.alloyName)
+			self.alloyNameExpr := alloyNameExpr
+			
+			self.alloyName.initialize(self.name)
+			alloyLiterals := OrderedSet<Name>.new
+			self.ownedLiteral.each{ enumLiteral | 
+							var alloyLiteral : IDName
+							alloyLiteral := IDName.new
+							alloyLiteral.initialize(enumLiteral.name)
+							alloyLiterals.add(alloyLiteral)
+							}
+			self.alloyEnumDecl := EnumDecl.new
+			self.alloyEnumDecl.initialize(self.alloyName,alloyLiterals)
+			trace.alloyModel.addParagraph(self.alloyEnumDecl)
+			self.scaleLog.numberOfEnumerationDecls := self.scaleLog.numberOfEnumerationDecls + 1
+		else
+			trace.log.add("Log Message: Enumeration has name field is void")
+		end 
+	
+	end
+}

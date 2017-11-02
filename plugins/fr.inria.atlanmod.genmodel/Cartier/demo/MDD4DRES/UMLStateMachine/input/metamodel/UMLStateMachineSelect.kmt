@@ -1,0 +1,127 @@
+@uri "http://umlstatemachineselect/1.0"
+package umlstatemachineselect;
+
+require "kermeta"
+require "http://www.eclipse.org/emf/2002/Ecore"
+class StateMachine inherits Behavior
+{
+	attribute region : Region[1..*]#stateMachine
+
+	reference submachineState : set State[0..*]#submachine
+
+	attribute connectionPoint : PseudoState[0..*]#stateMachine
+
+}
+class Region
+{
+	reference stateMachine : StateMachine#region
+
+	attribute subvertex : Vertex[0..*]#container
+
+	attribute transition : Transition[0..*]#container
+
+	reference state : State#region
+
+}
+class Vertex
+{
+	reference container : Region#subvertex
+
+	reference outgoing : Transition[0..*]#source
+
+	reference incoming : Transition[0..*]#target
+
+}
+class Transition
+{
+	reference container : Region[1..1]#transition
+
+	attribute kind : TransitionKind
+
+	reference target : Vertex[1..1]#incoming
+
+	reference source : Vertex[1..1]#outgoing
+
+	attribute effect : Behavior
+
+	attribute guard : Constraint
+
+	attribute trigger : Trigger[0..*]
+
+}
+enumeration TransitionKind
+{
+	internal;
+	local;
+	external;
+}
+enumeration PseudostateKind
+{
+	initial;
+	deepHistory;
+	shallowHistory;
+	join;
+	fork;
+	junction;
+	choice;
+	entryPoint;
+	exitPoint;
+	terminate;
+}
+class State inherits Vertex
+{
+	attribute isComposite : ecore::EBoolean
+
+	attribute isOrthogonal : ecore::EBoolean
+
+	attribute isSimple : ecore::EBoolean
+
+	attribute isSubmachineState : ecore::EBoolean
+
+	attribute region : set Region[0..*]#state
+
+	attribute connection : set ConnectionPointReference[0..*]#state
+
+	reference submachine : StateMachine#submachineState
+
+	attribute entry : Behavior
+
+	attribute exit : Behavior
+
+	attribute doActivity : Behavior
+
+	attribute stateInvariant : Constraint
+
+	attribute deferrableTrigger : Trigger[0..*]
+
+}
+class FinalState inherits State
+{
+}
+class PseudoState inherits Vertex
+{
+	attribute kind : PseudostateKind
+
+	
+
+	reference stateMachine : StateMachine#connectionPoint
+
+}
+class ConnectionPointReference inherits Vertex
+{
+	reference state : State#connection
+
+	reference entry : set PseudoState[0..*]
+
+	reference exit : set PseudoState[0..*]
+
+}
+class Behavior
+{
+}
+class Constraint
+{
+}
+class Trigger
+{
+}

@@ -1,0 +1,730 @@
+/* $Id:$ 
+ * Creation : March 16, 2009
+ * Licence  : EPL 
+ * Copyright:
+ * Authors  : 
+ *            sagarsen
+ */
+@mainClass "root_package::Main"
+@mainOperation "main"
+
+
+package root_package;
+
+
+require kermeta
+require "mmprunerHelper.kmt"
+require "staticAnalyzerOfModelTransformation.kmt"
+
+using kermeta::standard
+using kermeta::utils
+using kermeta::persistence
+using kermeta::io
+using kermeta::language::structure
+using kermeta::persistence
+
+class Main
+{
+	
+	attribute metamodelPruner:MetamodelPruner
+	reference reqClasses: String[0..*]
+	
+	operation initializeRequriedClasses(): Void is do
+		//Initialize manually or extract from a transformation
+		self.reqClasses.addAll(OrderedSet<String>.new)
+		//For UML State Machines
+		//self.reqClasses.add("State")
+		//For KNES Activity Diagram
+		 self.reqClasses.add("InitialNode")
+		 self.reqClasses.add("ActivityEdge")
+		 self.reqClasses.add("ActivityNode")
+		 self.reqClasses.add("AcceptEventAction")
+		 self.reqClasses.add("CallOperationAction")
+		 self.reqClasses.add("ReadStructuralFeatureAction")
+		 self.reqClasses.add("DecisionNode")
+		 self.reqClasses.add("ActivityFinalNode")
+		 self.reqClasses.add("OpaqueExpression")
+		 self.reqClasses.add("ControlFlow")
+		 self.reqClasses.add("ActivityFinalNode")
+		 //Manually added
+		 self.reqClasses.add("ValueSpecification")
+		 self.reqClasses.add("PackageableElement")
+		 self.reqClasses.add("NamedElement")
+		 self.reqClasses.add("ParameterableElement")
+		 self.reqClasses.add("Element")
+		 self.reqClasses.add("TypedElement")
+		 self.reqClasses.add("RedefinableElement")
+		 self.reqClasses.add("CallAction")
+		 self.reqClasses.add("InvocationAction")
+		 self.reqClasses.add("Action")
+		 self.reqClasses.add("ExecutableNode")
+		 self.reqClasses.add("ControlNode")
+		 self.reqClasses.add("FinalNode")
+		 self.reqClasses.add("StructuralFeatureAction")
+		 //More for KNES
+		 self.reqClasses.add("Operation")
+		 self.reqClasses.add("BehavioralFeature")
+		 
+		//For Memon UML Class Diagram Transformation
+		/*
+		self.reqClasses.add("Model")
+		self.reqClasses.add("Package")
+		self.reqClasses.add("Class")
+		self.reqClasses.add("Property")
+		self.reqClasses.add("Operation")
+		self.reqClasses.add("Parameter")
+		self.reqClasses.add("Enumeration")
+		self.reqClasses.add("EnumerationLiteral")
+		self.reqClasses.add("Generalization")
+		self.reqClasses.add("Association")
+		*/
+		//Added for checking
+		//self.reqClasses.add("Comment")
+		//self.reqClasses.add("Boolean")
+		//self.reqClasses.add("Element")
+	end
+	
+	operation searchRequiredClasses(metamodelURI:String, modelTransfoURI:String): Void is do
+		
+		var mtAnalysis : StaticAnalyzerOfModelTransformation init StaticAnalyzerOfModelTransformation.new
+		
+		mtAnalysis.initialize(metamodelURI,modelTransfoURI)
+		
+		//Obtain required classes through static analysis of model transformation
+		mtAnalysis.analyze
+		mtAnalysis.requiredClasses.each { c |
+		stdio.writeln(c)
+		}
+		self.reqClasses.addAll(mtAnalysis.requiredClasses)
+		
+	end 
+	operation main() : Void is do 
+		//self.searchRequiredClasses("platform:/resource/Cartier/testModels/UMLMARTE2ECORE/uml.km","platform:/resource/Cartier/testModels/UMLMARTE2ECORE/UMLProfile2Ecore.km")
+		self.prune("platform:/resource/Cartier/testModels/UML.km")
+	end
+	
+	
+	operation prune(metamodelURI:String):Void is do
+		
+		self.metamodelPruner:=MetamodelPruner.new
+		self.initializeRequriedClasses
+		
+		self.metamodelPruner.headerNotice
+		
+		//Load Modelling Domain
+		self.metamodelPruner.load(metamodelURI)
+		//Intiliaze with the required classes
+		self.metamodelPruner.initialize(self.reqClasses)
+		//Preprocess the metamodel
+		
+		if self.metamodelPruner.preprocess then
+			stdio.write("---Pre-processing Step---")
+			stdio.writeln("OK")
+		
+		
+			self.metamodelPruner.transform
+			
+			stdio.write("---Save Final Meta-model---")
+			metamodelPruner.save("platform:/resource/Cartier/testModels/UMLKNESpruned.km")
+		stdio.writeln("OK")
+		end
+	
+	end
+}
+
+class MetamodelPruner
+{
+	/* Input Kermeta Meta-model */
+	reference inputKermetaMetamodel : ModelingUnit
+	/* Kermeta Objects */
+	reference inputKermetaObjects : bag Object[0..*]
+	/* Required Meta-classes */
+	reference requiredMetaClasses : String[0..*]
+	reference requiredKermetaMetaClasses : ClassDefinition[0..*]
+	reference requiredKermetaMetaClasses_initial : ClassDefinition[0..*]
+	/* Bag of all Kermeta objects in Meta-model */ 
+	reference kermetaObjects : bag Object[0..*]
+	/* Removed Classes*/
+	reference removedClasses: ClassDefinition[0..*]
+	
+	
+	operation headerNotice(): Void is do
+		stdio.writeln("Metamodel Pruner (Beta) Pruning Meta-model\n")
+	end
+	
+	
+	operation initialize(requiredClasses:String[0..*]):Void is do
+		//Intialize Required Meta-classes from main functions
+		self.requiredMetaClasses.addAll(OrderedSet<String>.new)
+		self.requiredMetaClasses.addAll(requiredClasses)
+		//Initialize Kermeta Objects
+		self.requiredKermetaMetaClasses.addAll(OrderedSet<ClassDefinition>.new)
+		self.requiredKermetaMetaClasses_initial.addAll(OrderedSet<ClassDefinition>.new)
+		self.removedClasses.addAll(OrderedSet<ClassDefinition>.new)
+	end
+	
+	operation modelMetrics():Void is do
+	
+		var numberOfProperties:Integer init Integer.new
+		var numberOfClasses:Integer init Integer.new
+		
+		
+		numberOfProperties:=0
+		numberOfClasses:=0
+		
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							
+							if object.isInstanceOf(ClassDefinition) then
+								numberOfClasses:=numberOfClasses+1
+								object.asType(ClassDefinition).ownedAttribute.each 
+								{
+								 prop | 	numberOfProperties:=numberOfProperties+1
+								 }
+							end
+						}
+					}
+		stdio.writeln("Number of classes in meta-model="+numberOfClasses.toString)
+		stdio.writeln("Number of properties in meta-model="+numberOfProperties.toString)
+											
+	end
+	
+	operation subTypeChecker():Void is do
+	
+	end
+	operation showMetaClasses():Void is do
+		
+		self.requiredKermetaMetaClasses.each{ c | stdio.writeln("Required Meta-class="+c.name)}
+	end
+	operation preprocess(): Boolean is do
+		
+		/* Accumulate All Kermeta objects in the metamodel */
+		self.getKermetaObjects
+		var isExisting:Boolean init Boolean.new
+		var canProceed:Boolean init Boolean.new
+		canProceed:=true
+		//Check if all required classes exist in the input metamodel
+		self.requiredMetaClasses.each{ c | isExisting:=false 
+											self.kermetaObjects.each{ o | if o.isInstanceOf(ClassDefinition) then 
+																			if o.asType(TypeDefinition).name==c then
+																				isExisting:=true
+																				self.requiredKermetaMetaClasses.add(o.asType(ClassDefinition))
+																				//stdio.writeln(" The Class Definition " + c +" exists in the meta-model")
+																			end
+																		end
+																	}	
+											if isExisting==false then
+												stdio.writeln(" The Class Definition " + c +" does not exists in the meta-model")
+												
+												canProceed:=false
+											end
+												
+									}
+		if not canProceed then
+				stdio.writeln(" Some required classes are not present in the meta-model") 
+				stdio.writeln("\t\tPre-processing Notification: Cannot proceed with pruning operation. All Classes Not Present.")
+				result:=false
+		else
+				stdio.writeln("\t\tPre-processing Notification: Can proceed with pruning operation. All Classes Present.")
+				//Add all super classes of required classes
+				self.AddRequiredSuperClasses
+				//self.showMetaClasses
+				self.modelMetrics
+				result:=true
+		end
+		result:=true
+	end
+	
+	/*Load Input Kermeta meta-model*/
+	operation load(uri:String): Void is do
+		var repository : EMFRepository init EMFRepository.new
+		var resource : Resource init repository.createResource(uri,"http://www.kermeta.org/kermeta/1_2_0//kermeta")
+		stdio.write("---Loading Input Kermeta meta-model..")
+		resource.load
+		self.inputKermetaMetamodel ?= resource.one
+		stdio.writeln("OK")
+	end
+	
+	/*Transform Kermeta input meta-model to pruned output meta-model*/
+	operation transform(): Void is do
+		
+		stdio.writeln("---Step 0: All Operations/Tag Removal Step---")
+		//This step is taken since we do not use operations in a declarative model
+			self.OperationRemoval
+			//self.TagRemoval
+		stdio.write("---Step 1: Property Removal Step---")
+			//self.TestPropertyRemoval("package")
+			//self.TestPropertyRemoval("ownedType")
+			self.PropertyRemoval
+			//self.checkMetaModel
+		stdio.writeln("OK")
+		
+		stdio.writeln("---Step 2: Class Removal Step---")
+			//self.TestClassRemoval("Comment")
+			self.ClassRemoval
+		stdio.writeln("OK")
+		stdio.writeln("---Step 3: Remaining Property Removal Step---")
+			self.RemainingPropertyRemoval
+		stdio.writeln("OK")
+			stdio.writeln("---Step 4: Enumeration Removal Step---")
+			self.EnumerationRemoval
+			stdio.writeln("Number of classes and properties in output metamodel")
+			self.modelMetrics
+		stdio.writeln("OK")
+		
+		stdio.writeln("---End of Transformation---")	
+		
+	end
+	
+	operation AddRequiredSuperClasses():Void is do
+		self.requiredKermetaMetaClasses.each { c |
+											self.inputKermetaMetamodel.packages.each
+											{ p | 
+											p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+											{ 
+											object | 
+											if object.isInstanceOf(ClassDefinition) then
+												
+												if c==object then
+													
+													object.asType(ClassDefinition).allSuperTypes.each{ st | 
+													
+													if st.isInstanceOf(Class) and self.isClassInMM(st.asType(Class).classDefinition) then
+														
+														self.requiredKermetaMetaClasses.add(st.asType(Class).classDefinition)
+													end
+													}
+												end
+											end
+											}
+											}
+									 }
+		
+	end
+	operation OperationRemoval():Void is do
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								object.asType(ClassDefinition).ownedOperation.each 
+								{
+								 op |  	object.asType(ClassDefinition).ownedOperation.remove(op)
+								}
+							end
+						}
+					}
+	end
+	
+	operation TagRemoval():Void is do
+	//Remove all Tags for Modelling Unit
+	self.inputKermetaMetamodel.ownedTags.each
+					{ tag | 
+						self.inputKermetaMetamodel.ownedTags.remove(tag)
+							
+					}
+	//Remove all Tags from packages
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+						p.tag.each{ t | p.tag.remove(t)}
+						p.asType(TypeDefinitionContainer).ownedTags.each
+						{ 
+							object | 
+							p.ownedTags.remove(object)
+						}
+							
+					}
+	
+	end
+	
+	operation TestPropertyRemoval(pr:String): Void is do
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								object.asType(ClassDefinition).ownedAttribute.each 
+								{
+								 prop | if prop.name==pr  then 
+								 			stdio.writeln("\nProperty "+prop.name+" removed from class "+object.asType(ClassDefinition).name)
+								 			object.asType(ClassDefinition).ownedAttribute.remove(prop)
+								 		end
+								 }
+							end
+						}
+					}
+	end
+	operation PropertyRemoval(): Void is do
+		var removeProperty:Boolean init Boolean.new
+								 			
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							removeProperty:=true
+							if object.isInstanceOf(ClassDefinition) then
+								object.asType(ClassDefinition).ownedAttribute.each 
+								{
+								 prop | 	
+								 			
+								 			
+								 			self.requiredKermetaMetaClasses.each { c | 
+								 												//If property is of primitive type and mandatory
+								 			
+								 												if prop.type.isInstanceOf(PrimitiveType) and prop.lower>0 then
+								 													removeProperty:=false
+										 										end	
+										 										//If property at least one instance is mandatory then dont
+										 										if prop.lower>0 then
+										 											removeProperty:=false
+										 										end
+										 										//If property type is a class that is in the set of required meta-classes then don't remove it.
+								 												if prop.type.isInstanceOf(Class) then
+								 													//stdio.writeln("Property Type:"+prop.type.asType(Class).classDefinition.name)
+								 													//stdio.writeln("Class Def:"+c.name)
+								 													
+								 													if   prop.type.asType(Class).classDefinition.name=="Tag"  then
+								 														//stdio.writeln("Property Type:"+prop.type.asType(Class).classDefinition.name)
+								 														//stdio.writeln("Class Def:"+c.name)
+								 														removeProperty:=true
+								 														
+								 													end
+								 													
+								 													if   prop.type.asType(Class).classDefinition==c  then
+								 														//stdio.writeln("Property Type:"+prop.type.asType(Class).classDefinition.name)
+								 														//stdio.writeln("Class Def:"+c.name)
+								 														removeProperty:=false
+								 														
+								 													end
+								 												
+								 												end
+								 												//If property is used in a constraint
+								 												if prop.isConstrained then
+								 													removeProperty:=false
+								 												end
+								 												
+								 												//If property is used in a transformed
+								 												if prop.isTransformed then
+								 													removeProperty:=false
+								 												end
+								 												
+								 												
+								 								
+								 												}
+								 												
+								 												
+								 												
+								 			if removeProperty==true then								
+								 				stdio.writeln("Removing property "+prop.name+" of class "+ object.name +"...")
+								 				object.asType(ClassDefinition).ownedAttribute.remove(prop)
+								 		
+								 					
+								 				if not prop.opposite.isVoid  then
+								 					if not prop.opposite.owningClass.isVoid then
+								 					stdio.writeln("Removing opposite property "+prop.opposite.name+" of class "+ prop.opposite.owningClass.name +"...")
+								 					prop.opposite.owningClass.ownedAttribute.remove(prop.opposite)
+								 					end
+								 				end
+								 			end
+								}	
+							end	
+						}
+					}
+	end
+	
+	operation TestClassRemoval(cla: String): Void is do
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+								
+									if object.isInstanceOf(ClassDefinition) then
+										if object.asType(ClassDefinition).name==cla then								
+								 			stdio.writeln("Test Removing Class "+object.asType(ClassDefinition).name+"...")
+								 			p.asType(TypeDefinitionContainer).ownedTypeDefinition.remove(object)
+								 		end
+									end
+									
+								
+							
+						}
+					
+					}
+	end
+	operation ClassRemoval():Void is do
+	var removeClass:Boolean init Boolean.new
+								 			
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+								removeClass:=true
+								if object.isInstanceOf(ClassDefinition) then
+									//If the class is in the set of required classes
+									if self.requiredKermetaMetaClasses.contains(object.asType(ClassDefinition)) then 
+												//stdio.writeln(" Not removable Class:"+object.asType(ClassDefinition).name)
+												removeClass:=false
+									end 
+																		
+																		
+									//If the class is used in a constraint
+									if object.asType(ClassDefinition).isConstrained then
+										removeClass:=false
+									end
+									if removeClass==true then								
+								 		//stdio.writeln("Removing Class "+object.asType(ClassDefinition).name+"...")
+								 		
+								 		p.asType(TypeDefinitionContainer).ownedTypeDefinition.remove(object)
+								 		self.removedClasses.add(object.asType(ClassDefinition))
+									end
+									
+								end
+							
+						}
+					
+					}
+	end
+	operation EmptyClassRemoval():Void is do
+		var removeClass:Boolean init Boolean.new
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+								removeClass:=false
+								if object.isInstanceOf(ClassDefinition) then
+									//If the class is in the set of required classes
+									if not self.requiredKermetaMetaClasses.contains(object.asType(ClassDefinition)) and  object.asType(ClassDefinition).ownedAttribute.isVoid then 
+												//stdio.writeln(" Not removable Class:"+object.asType(ClassDefinition).name)
+												removeClass:=true
+									end 
+																		
+																		
+									
+									if removeClass==true then								
+								 		stdio.writeln("Removing Empty Class "+object.asType(ClassDefinition).name+"...")
+								 		
+								 		p.asType(TypeDefinitionContainer).ownedTypeDefinition.remove(object)
+								 		self.removedClasses.add(object.asType(ClassDefinition))
+									end
+									
+								end
+							
+						}
+					
+					}
+	end
+	
+	operation isExistingEnumProp(e:Enumeration):Boolean is do
+		var isExisting:Boolean init Boolean.new
+		isExisting:=false
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							
+							if object.isInstanceOf(ClassDefinition) then
+								object.asType(ClassDefinition).ownedAttribute.each 
+								{
+								 prop | 	if prop.type.isInstanceOf(Enumeration) then 
+								 				
+								 				if prop.type.asType(Enumeration)==e then
+								 					isExisting:=true
+								 				end
+								 			end
+								 }
+							end
+						}
+					
+					}
+								 				
+		
+		result:=isExisting
+		
+	end
+	operation EnumerationRemoval():Void is do
+		var removeEnum:Boolean init Boolean.new
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 	
+							object | 
+							removeEnum:=true
+							if object.isInstanceOf(Enumeration) then
+								if isExistingEnumProp(object.asType(Enumeration)) then
+										removeEnum:=false
+								end
+							
+							
+							if removeEnum==true then 
+								stdio.writeln("Removing Enumeration "+object.asType(Enumeration).name+"...")
+								p.asType(TypeDefinitionContainer).ownedTypeDefinition.remove(object)
+							end
+							end
+								
+						}
+					}
+	end
+
+	
+	operation RemainingPropertyRemoval():Void is do
+		var removeProperty:Boolean init Boolean.new
+								 			
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							removeProperty:=false
+							if object.isInstanceOf(ClassDefinition) then
+								object.asType(ClassDefinition).ownedAttribute.each 
+								{
+								 prop | if prop.type.isInstanceOf(Class) then
+								 			
+								 			if self.removedClasses.contains(prop.type.asType(Class).classDefinition) then
+								 					
+								 					removeProperty:=true
+								 			end
+										end	
+										 										
+								 												
+								 			if removeProperty==true then								
+								 				stdio.writeln("Removing remaining property "+prop.name+" of class "+ object.name +"...")
+								 				object.asType(ClassDefinition).ownedAttribute.remove(prop)
+								 				if not prop.opposite.isVoid  then
+								 					if not prop.opposite.owningClass.isVoid then
+								 					stdio.writeln("Removing remaining opposite property "+prop.opposite.name+" of class "+ prop.opposite.owningClass.name +"...")
+								 					prop.opposite.owningClass.ownedAttribute.remove(prop.opposite)
+								 					end
+								 				end
+								 			end
+								}	
+							end	
+						}
+					}
+	end
+	
+	
+	operation checkMetaModel():Void is do
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								object.asType(ClassDefinition).ownedAttribute.each 
+								{
+								 prop | 
+								 			stdio.writeln("Property="+prop.name)
+								}	
+							end	
+						}
+					}
+	end
+	operation getKermetaObjects():Void is do
+		//Add all Package objects
+		self.inputKermetaMetamodel.packages.each 
+		{ 
+			object | 
+			if object.isInstanceOf(Package) then
+				self.kermetaObjects.add(object)
+			end
+		}
+		//Add all Class objects
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								self.kermetaObjects.add(object)	
+							end	
+							
+						}
+					}
+		//Add all Enumeration objects
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(Enumeration) then
+								self.kermetaObjects.add(object)	
+							end	
+						}
+					}
+		//Add all Property objects
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								object.asType(ClassDefinition).ownedAttribute.each 
+								{
+								 prop | self.kermetaObjects.add(prop)
+								//stdio.writeln("Property :"+prop.name+" Property Owning Class: "+prop.owningClass.name)
+								}	
+							end	
+						}
+					}
+		//Add all Constraint objects
+		
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								object.asType(ClassDefinition).~inv.each 
+								{
+								 constraint | self.kermetaObjects.add(constraint)
+								}	
+							end	
+						}
+					}
+				
+	end
+	
+	//
+	operation isClassInMM(c:ClassDefinition):Boolean is do
+		var isExisting:Boolean init Boolean.new
+		isExisting:=false
+		self.inputKermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								if c==object.asType(ClassDefinition) then
+									isExisting:=true
+								end
+							end	
+						}
+					}
+		result:=isExisting
+	end
+	/* Save Output Kermeta Model*/
+	operation save(uri: String): Void is do
+		//self.inputKermetaMetamodel.
+		 var repository : EMFRepository init EMFRepository.new
+ 	     var resource : EMFResource 
+ 		 resource ?= repository.createResource(uri, "http://www.kermeta.org/kermeta/1_2_0//kermeta")
+		 resource.add(self.inputKermetaMetamodel)
+		 resource.save
+	end 
+}
+

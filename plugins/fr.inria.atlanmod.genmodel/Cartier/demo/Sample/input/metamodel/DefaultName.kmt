@@ -1,0 +1,4 @@
+@uri "http://defaultname/1.0"
+package defaultname;
+
+require "kermeta"

@@ -1,0 +1,780 @@
+
+
+package kermeta::language::structure;
+require "metamodels/alloy.kmt"
+//require "ToAlloy.kmt"
+require "Kermeta2AlloyTrace.kmt"
+require kermeta
+require "TransformationBase.kmt"
+
+using kermeta::standard
+using kermeta::utils
+using Cartier::Kermeta2AlloyTrace
+using Cartier::AlloyMM
+using kermeta::language::structure
+
+aspect class Object
+{
+
+	operation toAlloyPassImplicitFacts(trace: Kermeta2AlloyTrace) : Void is do
+	end
+	
+}
+
+aspect class ClassDefinition
+{
+//Create an Alloy fact to determine the container for a class when there are one or more container. The test must check if there is one or more containers.
+method toAlloyPassImplicitFacts(trace : Kermeta2AlloyTrace) : Void is do
+	
+	
+		/* Create containment predicate of the form
+		
+		fact <self.alloyName>_containers
+		{
+			(all o:<self.alloyNameExpr> | (o in self.containers[i].alloyNameExpr or ...))  and  (all o1: self.containers[1].alloyNameExpr+self.containers[1].alloyNameExpr, .. |disj[o1,o1..])
+
+		}
+		
+		*/
+		if self.containers.size>0 then
+		
+			//stdio.writeln("Containers for class " + self.name +" are ")
+			//self.containers.each{ c | stdio.writeln(c.containerClass.name+"."+c.containerProperty.name)}
+			
+		var inExpressions : CompareOp_Expression[0..*] init OrderedSet<CompareOp_Expression>.new
+		
+		//Creating Essential Name Expressions
+		var oVar : IDName init IDName.new
+		var oVarExpr: Name_Expression init Name_Expression.new
+		oVar.initialize("o")
+		oVarExpr.initialize(oVar)
+		
+		//BlockOrBar for Quant Expression
+		var container1_blockOrBar: Expr_BlockOrBar init Expr_BlockOrBar.new
+		
+		//Accumulate all in expressions
+		
+			self.containers.each{ c |
+			//Create IN expressions
+			var inExpr: CompareOp_Expression init CompareOp_Expression.new
+			c.getExpression
+			
+			//stdio.writeln(c.containerClass.name+" "+c.containerProperty.name)
+			if c.containerClass.allAttribute.contains(c.containerProperty) then
+			//stdio.writeln(c.AlloyNameExpr.getDefinition)
+			inExpr.initialize(oVarExpr,c.AlloyNameExpr,in_CompareOp.new,false)
+			inExpressions.add(inExpr)
+			end
+			}
+		
+		//Create Containment Expression
+		//If there is only one container
+		
+		if inExpressions.size==1 then
+			var containment_Expr: CompareOp_Expression init CompareOp_Expression.new
+			containment_Expr:=inExpressions.elementAt(0)
+			//stdio.writeln(containment_Expr.getDefinition)
+			//Initialize block or bar for quant expression
+			container1_blockOrBar.initialize(containment_Expr)
+		end
+		//Create OR expression from all in expressions if number of inExpressions is >=2
+		if inExpressions.size==2 then
+			var containment_Expr: BinOp_Expression init BinOp_Expression.new
+			containment_Expr.initialize(inExpressions.elementAt(0), inExpressions.elementAt(1),or_BinOp.new)
+			//stdio.writeln(containment_Expr.getDefinition)
+			//Initialize block or bar
+			container1_blockOrBar.initialize(containment_Expr)
+		end 
+		
+		if inExpressions.size >2 then
+			
+			var containment_Expr: BinOp_Expression init BinOp_Expression.new
+			containment_Expr.initialize(inExpressions.elementAt(0), inExpressions.elementAt(1),or_BinOp.new)
+			
+			from var i : Integer init 2
+			until i == inExpressions.size
+			loop
+				
+				var tempExpr:Name_Expression init Name_Expression.new
+				var tempName:IDName init IDName.new
+				tempName.initialize(containment_Expr.getDefinition)
+				tempExpr.initialize(tempName)
+				containment_Expr.initialize(tempExpr,inExpressions.elementAt(i),or_BinOp.new)
+				
+    			i := i + 1
+			end
+			//stdio.writeln(containment_Expr.getDefinition)
+			//Initialize block or bar
+			container1_blockOrBar.initialize(containment_Expr)
+		end
+		
+		//Create Quantifier expression 
+		//all o:<self.alloyNameExpr> | o in self.containers[i].alloyNameExpr or ...  
+		
+		
+		var container_decls : Decl[1..*] init OrderedSet<Decl>.new
+		var container_decl : Decl init Decl.new
+		var container_decl_names:Name[1..*] init OrderedSet<Name>.new
+		container_decl_names.add(oVar)
+		container_decl.initialize(container_decl_names,self.alloyNameExpr,false,false)
+		container_decls.add(container_decl)
+		
+		var container_quantExpr:Quant_Expression init Quant_Expression.new
+		container_quantExpr.initialize(all_Quantifier.new,container_decls,container1_blockOrBar)
+		//stdio.writeln(container_quantExpr.getDefinition)
+		//Create Parenthesis Expression 
+		//(all o:<self.alloyNameExpr> | (o in self.containers[i].alloyNameExpr or ...)) 
+		var quant1_ParenExpr:Paren_Expression init Paren_Expression.new
+		quant1_ParenExpr.initialize(container_quantExpr)
+		
+		//Create Quant Expression
+		//(all o1: self.containers[1].alloyNameExpr, o2: self.containers[2].alloyNameExpr, .. |disj[o1,o2..])
+		var oVarI:Integer init Integer.new
+		oVarI:=1
+		var quant2_decls:Decl[1..*] init OrderedSet<Decl>.new
+		var disj_Expr: Disj_Expression init Disj_Expression.new
+		
+		var q2_names:Name[1..*] init OrderedSet<Name>.new
+		q2_names.clear
+		
+		self.containers.each { con |
+		var oV : IDName init IDName.new
+		var q_decl:Decl init Decl.new
+		
+		if con.containerClass.allAttribute.contains(con.containerProperty) then
+		oV.initialize("o"+oVarI.toString)
+		oVarI:=oVarI+1
+		var q_name:Name[1..*] init OrderedSet<Name>.new
+		q_name.clear
+		q_name.add(oV)
+	
+		q2_names.add(oV)
+	
+		q_decl.initialize(q_name,con.getExpression,false,false)
+		quant2_decls.add(q_decl)
+		//Define Disjoint expression
+		//
+		end
+		}
+		
+		disj_Expr.initialize(q2_names)
+		
+		var quant2_blockOrBar:Expr_BlockOrBar init Expr_BlockOrBar.new
+		quant2_blockOrBar.initialize(disj_Expr)
+		
+		var quant2_Expr:Quant_Expression init Quant_Expression.new
+		quant2_Expr.initialize(all_Quantifier.new,quant2_decls,quant2_blockOrBar)
+		
+		var quant2_ParenExpr : Paren_Expression init Paren_Expression.new
+		
+		quant2_ParenExpr.initialize(quant2_Expr)
+		
+		//stdio.writeln(quant2_Paren.getDefinition)
+		
+		//Create and expression (all o:<self.alloyNameExpr> | (o in self.containers[i].alloyNameExpr or ...))  and  (all o1: self.containers[1].alloyNameExpr+self.containers[1].alloyNameExpr, .. |disj[o1,o1..])
+		var quant_AndExpr:BinOp_Expression init BinOp_Expression.new
+		if inExpressions.size>=2 then
+		quant_AndExpr.initialize( quant1_ParenExpr,quant2_ParenExpr,and_BinOp.new)
+		end
+		
+		
+		
+		//Create container fact
+		/*
+		fact <self.alloyName>_containers
+		{
+		quant_AndExpr
+		}
+		*/
+		var container_factDecl : FactDecl init FactDecl.new
+		var factBlock : Block init Block.new
+		var factBlock_Exprs: Expression[0..*] init OrderedSet<Expression>.new
+		var factName :IDName init IDName.new
+		if inExpressions.size>1 and not quant_AndExpr.isVoid then
+		
+		factBlock_Exprs.add(quant_AndExpr)
+		end
+		if inExpressions.size<=1 then
+	
+		factBlock_Exprs.add(quant1_ParenExpr)
+		end
+		
+		factName.initialize(self.alloyName.getDefinition+"_containers")
+		factBlock.initialize(factBlock_Exprs)
+		container_factDecl.initialize(factName,factBlock)
+		
+		trace.alloyModel.addParagraph(container_factDecl)
+		end //if container>0
+	
+end
+
+//Helper function to conjugate Alloy AND expressions for Paren Expressions
+
+operation multipleAndParenExpr(andInputs : BinOp_Expression[0..*]): BinOp_Expression is do
+	var multipleAndExpr:BinOp_Expression init BinOp_Expression.new
+	
+	if andInputs.size >=2 then
+		multipleAndExpr:=BinOp_Expression.new
+		multipleAndExpr.initialize(andInputs.first,andInputs.elementAt(1),and_BinOp.new) 
+		
+		andInputs.each{ ai |
+						if ai != andInputs.one and ai != andInputs.elementAt(1) then
+						    var tempExpr : BinOp_Expression init BinOp_Expression.new
+							tempExpr.initialize(multipleAndExpr,ai,and_BinOp.new)
+							multipleAndExpr:=tempExpr 
+						end
+					 }
+		//stdio.writeln(multipleAndExpr.getDefinition)
+		result:=multipleAndExpr	
+	end
+
+		
+end
+
+//Helper function to conjugate Alloy AND expressions for BinOp Expressions
+
+operation multipleAndBinOpExpr(andInputs : BinOp_Expression[0..*]): BinOp_Expression is do
+	var multipleAndExpr:BinOp_Expression init BinOp_Expression.new
+	
+	if andInputs.size >=2 then
+		multipleAndExpr:=BinOp_Expression.new
+		multipleAndExpr.initialize(andInputs.first,andInputs.elementAt(1),and_BinOp.new) 
+		
+		andInputs.each{ ai |
+						if ai != andInputs.one and ai != andInputs.elementAt(1) then
+						    var tempExpr : BinOp_Expression init BinOp_Expression.new
+							tempExpr.initialize(multipleAndExpr,ai,and_BinOp.new)
+							multipleAndExpr:=tempExpr 
+						end
+					 }
+		//stdio.writeln(multipleAndExpr.getDefinition)
+		result:=multipleAndExpr	
+	end
+
+		
+end
+//Helper function to conjugate Alloy AND expressions for CompOp Expressions
+operation multipleAndCompOpExpr(andInputs : CompareOp_Expression[0..*]): BinOp_Expression is do
+	var multipleAndExpr:BinOp_Expression init BinOp_Expression.new
+	
+	
+	if andInputs.size >=2 then
+		multipleAndExpr:=BinOp_Expression.new
+		multipleAndExpr.initialize(andInputs.first,andInputs.elementAt(1),and_BinOp.new) 
+		//stdio.writeln(multipleAndExpr.getDefinition)
+		andInputs.each{ ai |
+						if ai != andInputs.one and ai != andInputs.elementAt(1) then
+						    var tempExpr : BinOp_Expression init BinOp_Expression.new
+							tempExpr.initialize(multipleAndExpr,ai,and_BinOp.new)
+							multipleAndExpr:=tempExpr 
+						end
+					 }
+		
+	end
+	
+	result:=multipleAndExpr		
+end
+
+}
+
+aspect class Property 
+{
+	reference alloyCompositeFactName : IDName
+	reference alloyCompositeFact : FactDecl
+	//For partition predicates
+	reference partitionPredicateNames:Name[0..*] 
+	
+	method toAlloyPassImplicitFacts(trace : Kermeta2AlloyTrace) : Void is do
+	
+		//In Pass 3 we synthesize Alloy facts for implicit constraints on properties on the meta-model
+		//Initialize partition predicate names
+		//Used in TransformationGeneratePartitions
+		self.partitionPredicateNames.clear
+		
+		//Transforming isComposite
+		
+		if self.isComposite == true and self.type.isInstanceOf(Class) and not self.type.isInstanceOf(PrimitiveType) and  not self.type.isInstanceOf(Enumeration) then
+		/*
+			 fact <self.owningClass_name>_<self.property_name>_composite
+				{
+					all p: <self.alloySignature> | p in <self.owningClass> . <self.alloyName>[.elems for seq] and
+					all owningClassObject1 : <self.owningClass>, owningClassObject2 : <self.owningClass> | 
+					all property1 : owningClassObject1.<self.alloyName>, property2 : owningClassObject2.<self.alloyName>|
+					property1 = property2 implies owningClassObject1 = owningClassObject2
+				} 
+				//Constraint needs to change to..(just removing the first constraint
+				fact <self.owningClass_name>_<self.property_name>_composite
+				{
+					all owningClassObject1 : <self.owningClass>, owningClassObject2 : <self.owningClass> | 
+					all property1 : owningClassObject1.<self.alloyName>, property2 : owningClassObject2.<self.alloyName>|
+					property1 = property2 implies owningClassObject1 = owningClassObject2
+				} 
+			*/
+			
+			//Create  CompareOp Expression for owningClassObject1 = owningClassObject2
+			var owningClassObject1_Name : IDName init IDName.new
+			var owningClassObject2_Name : IDName init IDName.new
+			var owningClassObject1_Name_Expr : Name_Expression init Name_Expression.new
+			var owningClassObject2_Name_Expr : Name_Expression init Name_Expression.new
+			//Trace
+			self.scaleLog.numberOfNameExpressions := self.scaleLog.numberOfNameExpressions + 2
+			
+			//owningClassObject1_Name.initialize("owningClassObject1")
+			//owningClassObject2_Name.initialize("owningClassObject2")
+			owningClassObject1_Name.initialize("o1")
+			owningClassObject2_Name.initialize("o2")
+			owningClassObject1_Name_Expr.initialize(owningClassObject1_Name)
+			owningClassObject2_Name_Expr.initialize(owningClassObject2_Name)
+			
+			var equal_owningClassObject_CompareOp_Expr : CompareOp_Expression init CompareOp_Expression.new
+			//Trace
+			self.scaleLog.numberOfCompareOpExpressions := self.scaleLog.numberOfCompareOpExpressions + 1
+			
+			equal_owningClassObject_CompareOp_Expr.initialize(owningClassObject1_Name_Expr,owningClassObject2_Name_Expr,equal_CompareOp.new,false)
+			//Create CompareOp expression for property1=property2
+			var property1_Name: IDName init IDName.new
+			var property2_Name: IDName init IDName.new
+			var property1_Name_Expr : Name_Expression init Name_Expression.new
+			var property2_Name_Expr : Name_Expression init Name_Expression.new
+			
+			//property1_Name.initialize("property1")
+			//property2_Name.initialize("property2")
+			
+			property1_Name.initialize("p1")
+			property2_Name.initialize("p2")
+			property1_Name_Expr.initialize(property1_Name)
+			property2_Name_Expr.initialize(property2_Name)
+			var equal_property_CompareOp_Expr : CompareOp_Expression init CompareOp_Expression.new
+			
+			equal_property_CompareOp_Expr.initialize(property1_Name_Expr,property2_Name_Expr,equal_CompareOp.new,false)
+			//Create BinOp expression property1 = property2 implies owningClassObject1 = owningClassObject2
+			var implies_property_owningClass_BinOp_Expr : BinOp_Expression init BinOp_Expression.new
+			implies_property_owningClass_BinOp_Expr.initialize(equal_property_CompareOp_Expr,equal_owningClassObject_CompareOp_Expr,implies_BinOp.new)
+			//Create declarations for quant expression 
+			var property_Decls:Decl[1..*] init OrderedSet<Decl>.new
+			var property1_Decl_names: Name[0..*] init OrderedSet<Name>.new
+			var property2_Decl_names: Name[0..*] init OrderedSet<Name>.new
+			var property1_Decl:Decl init Decl.new
+			var property2_Decl:Decl init Decl.new
+			var owningClass_Name_Expr : Name_Expression init Name_Expression.new
+			
+	
+			owningClass_Name_Expr.initialize(self.owningClass.alloyName)
+			property1_Decl_names.add(property1_Name)
+			property2_Decl_names.add(property2_Name)
+			
+			//Create Name expressions for owningClassObject1.<self.alloyName.getDefinition> and owningClassObject2.<self.alloyName.getDefinition>
+			var owningClassObject1_prop_Name:IDName init IDName.new
+			var owningClassObject2_prop_Name:IDName init IDName.new
+			owningClassObject1_prop_Name.initialize("o1."+self.alloyName.getDefinition)
+			owningClassObject2_prop_Name.initialize("o2."+self.alloyName.getDefinition)
+			
+			var owningClassObject1_prop_Name_Expr:Name_Expression init Name_Expression.new
+			var owningClassObject2_prop_Name_Expr:Name_Expression init Name_Expression.new
+			
+			owningClassObject1_prop_Name_Expr.initialize(owningClassObject1_prop_Name)
+			owningClassObject2_prop_Name_Expr.initialize(owningClassObject2_prop_Name)
+			
+			property1_Decl.initialize(property1_Decl_names,owningClassObject1_prop_Name_Expr,false,false)
+			property2_Decl.initialize(property2_Decl_names,owningClassObject2_prop_Name_Expr,false,false)
+			property_Decls.add(property1_Decl)
+			property_Decls.add(property2_Decl)
+			//Create Quant Expression for property1, property2
+			var property_Quant_Expr: Quant_Expression init Quant_Expression.new
+		
+			var property_Quant_BlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+			property_Quant_BlockOrBar.initialize(implies_property_owningClass_BinOp_Expr)
+			property_Quant_Expr.initialize(all_Quantifier.new,property_Decls,property_Quant_BlockOrBar)
+			//Create declaration for quant expression for owningClassObject1
+			var owningClass_Decls : Decl[1..*] init OrderedSet<Decl>.new
+			var owningClass1_Decl : Decl init Decl.new
+			var owningClass2_Decl : Decl init Decl.new
+			var owningClass1_Decl_names : Name[0..*] init OrderedSet<Name>.new
+			var owningClass2_Decl_names : Name[0..*] init OrderedSet<Name>.new
+			owningClass1_Decl_names.add(owningClassObject1_Name)
+			owningClass2_Decl_names.add(owningClassObject2_Name)
+			
+			owningClass1_Decl.initialize(owningClass1_Decl_names,self.owningClass.alloyNameExpr,false,false)
+			owningClass2_Decl.initialize(owningClass2_Decl_names,self.owningClass.alloyNameExpr,false,false)
+			owningClass_Decls.add(owningClass1_Decl)
+			owningClass_Decls.add(owningClass2_Decl)
+			//Create quantifier expression for owningClass1, owningClass2
+			var owningClass_Quant_Expr: Quant_Expression init Quant_Expression.new
+		
+			var owningClass_Quant_BlockOrBar: Expr_BlockOrBar init Expr_BlockOrBar.new
+			owningClass_Quant_BlockOrBar.initialize(property_Quant_Expr)
+			owningClass_Quant_Expr.initialize(all_Quantifier.new, owningClass_Decls, owningClass_Quant_BlockOrBar)
+			//Create CompareOp Expression  p in <self.owningClass> . <self.alloyName>
+			var p_in_owningClass_CompareOp_Expr:CompareOp_Expression init CompareOp_Expression.new
+			
+			var owningClass_property_Name:IDName init IDName.new
+			var owningClass_property_Name_Expr:Name_Expression init Name_Expression.new
+		
+			var p_Name:IDName init IDName.new
+			p_Name.initialize("p")
+			var p_Name_Expr:Name_Expression init Name_Expression.new
+		
+			p_Name_Expr.initialize(p_Name)
+			
+			//stdio.write(self.container.toString + " " + self.alloyName.getDefinition+":")
+			//stdio.writeln(self.owningClass.toString)
+			
+			owningClass_property_Name.initialize(self.owningClass.alloyName.getDefinition+"."+self.alloyName.getDefinition)
+			
+			if self.multiplicityOp.isInstanceOf(seq_UnOp) then
+				owningClass_property_Name.initialize(self.owningClass.alloyName.getDefinition+"."+self.alloyName.getDefinition+".elems")
+			end
+			owningClass_property_Name_Expr.initialize(owningClass_property_Name)
+			p_in_owningClass_CompareOp_Expr.initialize(p_Name_Expr,owningClass_property_Name_Expr,in_CompareOp.new,false)
+			//Create declaration for  p: <self.alloySignature>
+			var typeClass_Name:IDName init IDName.new
+			
+			//stdio.writeln(self.alloyName.getDefinition+":"+self.alloySignature.toString)
+			
+			//stdio.writeln(self.type.isInstanceOf(Class).toString)
+			/*if self.alloySignature.isVoid  then
+			
+				typeClass_Name.initialize(self.type.toString)
+			end
+			
+			if not self.alloySignature.isVoid then
+			typeClass_Name.initialize(self.alloySignature.getDefinition)
+			end*/
+			typeClass_Name.initialize(self.alloySignature.getDefinition)
+			var typeClass_Name_Expr:Name_Expression init Name_Expression.new
+			
+			typeClass_Name_Expr.initialize(typeClass_Name)
+			
+			var p_Decl_names:Name[1..*] init OrderedSet<Name>.new
+			p_Decl_names.add(p_Name)
+			var p_type_Decl:Decl init Decl.new
+			p_type_Decl.initialize(p_Decl_names,typeClass_Name_Expr,false,false)
+			//Create quant expression all p: <self.alloySignature> | p in <self.owningClass> . <self.alloyName> 
+			var p_type_Quant_Expr : Quant_Expression init Quant_Expression.new
+
+			var p_type_Quant_BlockOrBar:Expr_BlockOrBar init Expr_BlockOrBar.new
+			var p_type_Quant_Decls:Decl[1..*] init OrderedSet<Decl>.new
+			p_type_Quant_Decls.add(p_type_Decl)
+			p_type_Quant_BlockOrBar.initialize(p_in_owningClass_CompareOp_Expr)
+			p_type_Quant_Expr.initialize(all_Quantifier.new,p_type_Quant_Decls,p_type_Quant_BlockOrBar)
+			//Create BinOp expression for two quant expressions
+			//var And_BinOp_Expression:BinOp_Expression init BinOp_Expression.new
+			//Trace
+			//self.scaleLog.numberOfBinOpExpressions := self.scaleLog.numberOfBinOpExpressions + 1
+			//And_BinOp_Expression.initialize(p_type_Quant_Expr,owningClass_Quant_Expr,and_BinOp.new)
+			//Create FactDecl for isComposite
+			var composite_FactDecl:FactDecl init FactDecl.new
+			var block_FactDecl:Block init Block.new
+			var block_Exprs:Expression[0..*] init OrderedSet<Expression>.new
+			block_Exprs.add(owningClass_Quant_Expr)
+			block_FactDecl.initialize(block_Exprs)
+			var composite_Fact_Name:IDName init IDName.new
+			composite_Fact_Name.initialize(self.owningClass.alloyName.getDefinition+"_"+self.alloyName.getDefinition+"_composite")
+			composite_FactDecl.initialize(composite_Fact_Name,block_FactDecl)
+			//Add fact declaration to the Alloy Model
+			trace.alloyModel.addParagraph(composite_FactDecl)
+			self.scaleLog.numberOfFactDecls:=self.scaleLog.numberOfFactDecls+1
+		end
+		
+		
+		
+	
+		/* If a property isID = true..edited from isUnique=true so there are some variables with misleading old names*/
+		if self.isID == true  then
+		
+			/* fact <self.owningClass_name>_<self.property_name>_ID
+				{
+				
+					all owningClassObject1 : <self.owningClass.alloyNameExpr>, owningClassObject2 : <self.owningClass.alloyNameExpr> |
+					owningClassObject1.<self.alloyName>[.value for String] = owningClassObject2.<self.alloyName>[.value for String] implies 
+					owningClassObject1 = owningClassObject2
+				}
+			*/
+			//Create Name Expressions for owningClassObject1 and owningClassObject2
+			var owningClassObject1_Name:IDName init IDName.new
+			var owningClassObject2_Name:IDName init IDName.new
+			var owningClassObject1_Expr:Name_Expression init Name_Expression.new
+			var owningClassObject2_Expr:Name_Expression init Name_Expression.new
+			//Trace
+			self.scaleLog.numberOfNameExpressions := self.scaleLog.numberOfNameExpressions + 2
+			
+			owningClassObject1_Name.initialize("owningClassObject1")
+			owningClassObject2_Name.initialize("owningClassObject2")
+			owningClassObject1_Expr.initialize(owningClassObject1_Name)
+			owningClassObject2_Expr.initialize(owningClassObject2_Name)
+			//Create CompareOp Expression owningClassObject1 = owningClassObject2
+			var owningClassObject_Equal_CompareOp : CompareOp_Expression init CompareOp_Expression.new
+			//Trace
+			self.scaleLog.numberOfCompareOpExpressions := self.scaleLog.numberOfCompareOpExpressions + 1
+			
+			owningClassObject_Equal_CompareOp.initialize(owningClassObject1_Expr,owningClassObject2_Expr,equal_CompareOp.new,false)
+			//Create Name Expressions for owningClassObject1.<self.alloyName> , owningClassObject2.<self.alloyName>
+			var owningClassObject1_property_Name : IDName init IDName.new
+			var owningClassObject2_property_Name : IDName init IDName.new
+			var owningClassObject1_property_Expr : Name_Expression init Name_Expression.new
+			var owningClassObject2_property_Expr : Name_Expression init Name_Expression.new
+			//Trace
+			self.scaleLog.numberOfNameExpressions := self.scaleLog.numberOfNameExpressions + 2
+			
+			owningClassObject1_property_Name.initialize("owningClassObject1"+"."+self.alloyName.getDefinition)
+			owningClassObject2_property_Name.initialize("owningClassObject2"+"."+self.alloyName.getDefinition)
+			//If String, still BAD design to use the value String instead of performing an instanceOf
+			if self.type.asType(PrimitiveType).instanceType.toString == "String" then
+				owningClassObject1_property_Name.initialize("owningClassObject1"+"."+self.alloyName.getDefinition+".value")
+				owningClassObject2_property_Name.initialize("owningClassObject2"+"."+self.alloyName.getDefinition+".value")
+			end
+			owningClassObject1_property_Expr.initialize(owningClassObject1_property_Name)
+			owningClassObject2_property_Expr.initialize(owningClassObject2_property_Name)
+			//Create CompareOp Expression owningClassObject1.<self.alloyName> = owningClassObject2.<self.alloyName>
+			//Or, Create CompareOp Expression for String, owningClassObject1.<self.alloyName>.value = owningClassObject2.<self.alloyName>.value
+			var owningClassObject_property_Equal_CompareOp : CompareOp_Expression init CompareOp_Expression.new
+			//Trace
+			self.scaleLog.numberOfCompareOpExpressions := self.scaleLog.numberOfCompareOpExpressions + 1
+			
+			owningClassObject_property_Equal_CompareOp.initialize(owningClassObject1_property_Expr,owningClassObject2_property_Expr,equal_CompareOp.new,false)
+			//Create BinOp Expression owningClassObject1.<self.alloyName> = owningClassObject2.<self.alloyName> implies owningClassObject1 = owningClassObject2
+			//Or, Create BinOp Expression for String, owningClassObject1.<self.alloyName>.value = owningClassObject2.<self.alloyName>.value implies owningClassObject1 = owningClassObject2
+			var impliesBinOp_Expr : BinOp_Expression init BinOp_Expression.new
+			//Trace
+			self.scaleLog.numberOfBinOpExpressions := self.scaleLog.numberOfBinOpExpressions + 1
+			
+			impliesBinOp_Expr.initialize(owningClassObject_property_Equal_CompareOp,owningClassObject_Equal_CompareOp,implies_BinOp.new)
+			//Create Quant Expression Declarations owningClassObject1 : <self.owningClass.alloyNameExpr>, owningClassObject2 : <self.owningClass.alloyNameExpr> 
+			var unique_Quant_Decl : Decl[1..*] init OrderedSet<Decl>.new
+			var unique_Quant_Decl1 : Decl init Decl.new
+			var unique_Quant_Decl2 : Decl init Decl.new
+			
+			var unique_Quant_Decl1_NameSet:Name[0..*] init OrderedSet<Name>.new
+			unique_Quant_Decl1_NameSet.add(owningClassObject1_Name)
+			var unique_Quant_Decl2_NameSet:Name[0..*] init OrderedSet<Name>.new
+			unique_Quant_Decl2_NameSet.add(owningClassObject2_Name)
+			
+			/*unique_Quant_Decl1.initialize(OrderedSet<IDName>.new.add(owningClassObject1_Name),self.owningClass.alloyNameExpr,false,false)
+			unique_Quant_Decl2.initialize(OrderedSet<IDName>.new.add(owningClassObject2_Name),self.owningClass.alloyNameExpr,false,false)*/
+			unique_Quant_Decl1.initialize(unique_Quant_Decl1_NameSet,self.owningClass.alloyNameExpr,false,false)
+			unique_Quant_Decl2.initialize(unique_Quant_Decl2_NameSet,self.owningClass.alloyNameExpr,false,false)
+			
+			unique_Quant_Decl.add(unique_Quant_Decl1)
+			unique_Quant_Decl.add(unique_Quant_Decl2)
+			//Create Quant Expression for isID
+			var unique_Quant_Expr : Quant_Expression init Quant_Expression.new
+			//Trace
+			self.scaleLog.numberOfQuantExpressions := self.scaleLog.numberOfQuantExpressions + 1
+			
+			var unique_Quant_BlockOrBar: Expr_BlockOrBar init Expr_BlockOrBar.new
+			unique_Quant_BlockOrBar.initialize(impliesBinOp_Expr)
+			unique_Quant_Expr.initialize(all_Quantifier.new,unique_Quant_Decl,unique_Quant_BlockOrBar)
+			//Create Fact Declaration for isID
+			var unique_Fact_Decl : FactDecl init FactDecl.new
+			var unique_Fact_Decl_Block : Block init Block.new
+			var unique_Fact_Decl_Name : IDName init IDName.new
+			var fact_Expr_Set : Expression[0..*] init OrderedSet<Expression>.new
+			fact_Expr_Set.add(unique_Quant_Expr)
+			unique_Fact_Decl_Name.initialize(self.owningClass.alloyName.getDefinition+"_"+self.alloyName.getDefinition+"_ID")
+			
+			unique_Fact_Decl_Block.initialize(fact_Expr_Set)
+			unique_Fact_Decl.initialize(unique_Fact_Decl_Name,unique_Fact_Decl_Block)
+			//Insert Fact Declaration in Alloy Model
+			trace.alloyModel.addParagraph(unique_Fact_Decl)
+		
+		end
+		
+		if self.isReadOnly == true then
+			/* We inform the trace that we do no handle this characteristic of a property*/
+			var noReadOnlyLog: String init ""
+			noReadOnlyLog := "Read-only property of property "+self.name+" in owning Class "+self.owningClass.name+ " is not transformable by Cartier"
+			trace.log.add(noReadOnlyLog)
+		end
+	
+		
+		/* If the property is mapped to a set and the upper bound is not * then transform to a multiplicty constraint */
+		if self.multiplicityOp.isInstanceOf(set_UnOp) or self.multiplicityOp.isInstanceOf(seq_UnOp) and self.upper>self.lower then
+		/* fact <self.owningClass_name>_<self.property_name>_multiplicity
+				{
+				 all owningClassObject : <self.owningClass> | #owningClassObject.<self.alloyName> >= <self.lower> and #owningClassObject.<self.alloyName> <= <self.upper>
+				}
+				
+		*/
+	
+		//Creating Name Expressions for self.lower and self.upper
+		var Self_Lower : IDName init IDName.new
+		var Self_Upper  : IDName init IDName.new
+		var Self_Lower_Expr : Name_Expression init Name_Expression.new
+		var Self_Upper_Expr : Name_Expression init Name_Expression.new
+		//Trace
+			self.scaleLog.numberOfNameExpressions := self.scaleLog.numberOfNameExpressions + 2
+			
+		Self_Lower.initialize(self.lower.toString)
+		Self_Upper.initialize(self.upper.toString)
+		Self_Lower_Expr.initialize(Self_Lower)
+		Self_Upper_Expr.initialize(Self_Upper)
+		//Creating UnOp Expression for #owningClassObject.<self.alloyName> 
+		var owningClassObject_Self_AlloyName : IDName init IDName.new
+		var owningClassObject_Self_AlloyName_Expr : Name_Expression init Name_Expression.new
+		//Trace
+			self.scaleLog.numberOfNameExpressions := self.scaleLog.numberOfNameExpressions + 1
+			
+		var size_owningClassObject_Self_AlloyName_Expr : UnOp_Expression init UnOp_Expression.new
+		//Trace
+			self.scaleLog.numberOfUnOpExpressions := self.scaleLog.numberOfUnOpExpressions + 1
+			
+		owningClassObject_Self_AlloyName.initialize("owningClassObject"+"."+self.alloyName.getDefinition)
+		owningClassObject_Self_AlloyName_Expr.initialize(owningClassObject_Self_AlloyName)
+		size_owningClassObject_Self_AlloyName_Expr.initialize(owningClassObject_Self_AlloyName_Expr,size_UnOp.new)
+		//Creating CompareOp Expression for #owningClassObject.<self.alloyName> >= <self.lower>
+		var  lowerCompareOp_Expr : CompareOp_Expression init CompareOp_Expression.new
+		//Trace
+			self.scaleLog.numberOfCompareOpExpressions := self.scaleLog.numberOfCompareOpExpressions + 1
+			
+		lowerCompareOp_Expr.initialize(size_owningClassObject_Self_AlloyName_Expr, Self_Lower_Expr,greaterThanEqual_CompareOp.new,false)
+		//Creating CompareOp Expression for #owningClassObject.<self.alloyName> <= <self.upper>
+		var  upperCompareOp_Expr : CompareOp_Expression init CompareOp_Expression.new
+		//Trace
+			self.scaleLog.numberOfCompareOpExpressions := self.scaleLog.numberOfCompareOpExpressions + 1
+			
+		upperCompareOp_Expr.initialize(size_owningClassObject_Self_AlloyName_Expr, Self_Upper_Expr,lessThanEqual_CompareOp.new,false)
+		//Creating BinOp Expression for #owningClassObject.<self.alloyName> >= <self.lower> and #owningClassObject.<self.alloyName> <= <self.upper>
+		var lhsLowerAndrhsUpper : BinOp_Expression init BinOp_Expression.new
+		//Trace
+			self.scaleLog.numberOfBinOpExpressions := self.scaleLog.numberOfBinOpExpressions + 1
+			
+		lhsLowerAndrhsUpper.initialize(lowerCompareOp_Expr,upperCompareOp_Expr,and_BinOp.new)
+		//Creating Declaration(s) for Quant_Expression owningClassObject : <self.owningClass>
+		var owningClassObjectDecl : Decl[1..1] init Decl.new
+		var owningClassObject:IDName init IDName.new
+		var nameCollection_Decl : Name[1..*] init OrderedSet<Name>.new
+		var Self_owningClass_Expression : Name_Expression init Name_Expression.new
+		//Trace
+			self.scaleLog.numberOfNameExpressions := self.scaleLog.numberOfNameExpressions + 1
+			
+		Self_owningClass_Expression.initialize(self.owningClass.alloyName)
+		owningClassObject.initialize("owningClassObject")
+		nameCollection_Decl.add(owningClassObject)
+		owningClassObjectDecl.initialize(nameCollection_Decl,Self_owningClass_Expression,false,false)
+		//Creating Quant Expression all owningClassObject : <self.owningClass> | #owningClassObject.<self.alloyName> >= <self.lower> and #owningClassObject.<self.alloyName> <= <self.upper>
+		var multiplicity_Quant_Expr : Quant_Expression init Quant_Expression.new
+		//Trace
+			self.scaleLog.numberOfQuantExpressions := self.scaleLog.numberOfQuantExpressions + 1
+			
+		var multiplicity_Quant_Expr_Decls : Decl[1..*] init OrderedSet<Decl>.new
+		var multiplicity_Quant_Expr_BlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+		multiplicity_Quant_Expr_Decls.add(owningClassObjectDecl)
+		multiplicity_Quant_Expr_BlockOrBar.initialize(lhsLowerAndrhsUpper)
+		multiplicity_Quant_Expr.initialize(all_Quantifier.new, multiplicity_Quant_Expr_Decls,multiplicity_Quant_Expr_BlockOrBar)
+		//Creating Fact Declaration for <self.owningClass_name>_<self.property_name>_multiplicity
+		var multiplicity_FactDecl : FactDecl init FactDecl.new
+		var multiplicity_FactDecl_Name :IDName init IDName.new
+		var multiplicity_FactDecl_Block : Block init Block.new
+		var multiplicity_Block_Expressions : Expression[1..*] init OrderedSet<Expression>.new 
+		multiplicity_Block_Expressions.add(multiplicity_Quant_Expr)
+		multiplicity_FactDecl_Block.initialize(multiplicity_Block_Expressions)
+		multiplicity_FactDecl_Name.initialize(self.owningClass.alloyName.getDefinition+"_"+self.alloyName.getDefinition+"_multiplicity")
+		multiplicity_FactDecl.initialize(multiplicity_FactDecl_Name,multiplicity_FactDecl_Block)
+		//Inserting Fact Declaration in the Alloy Model
+		trace.alloyModel.addParagraph(multiplicity_FactDecl)
+		
+		end
+		//If there exists an opposite property
+		if not self.opposite.isVoid and self.oppositeFactCreated ==false  then
+		
+		if self.opposite.oppositeFactCreated == false then
+		/*
+		
+			fact <self.owningClass.name>_<self.property_name>_<self.opposite.owningClass.name>_<self.opposite.alloyName>_opposite
+			{
+
+				all object1 : <self.owningClass.alloyName>, object2: <self.opposite.owningClass.name>| object2 in object1.<self.alloyName>   implies object1 in object2.<self.opposite.alloyName>
+
+			}
+			
+			Number of Alloy Terms = 14
+		
+		*/
+		
+		//Create Fact Name
+		//<self.owningClass.name>_<self.property_name>_<self.opposite.owningClass.name>_<self.opposite.alloyName>_opposite
+		
+		var opposite_FactName:IDName init IDName.new
+		opposite_FactName.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_"+self.opposite.owningClass.name+"_"+self.opposite.alloyName.getDefinition+"_opposite")
+		
+		var object1_Name: IDName init IDName.new
+		var object2_Name: IDName init IDName.new
+		var object1_Name_Expr: Name_Expression init Name_Expression.new
+		var object2_Name_Expr: Name_Expression init Name_Expression.new
+		
+		//object1_Name.initialize("object1")
+		//object2_Name.initialize("object2")
+		
+		object1_Name.initialize("o1")
+		object2_Name.initialize("o2")
+		object1_Name_Expr.initialize(object1_Name)
+		object2_Name_Expr.initialize(object2_Name)
+		
+		var object1_property_Name : IDName init IDName.new
+		var object1_property_Name_Expr : Name_Expression init Name_Expression.new
+		object1_property_Name.initialize("o1."+self.alloyName.getDefinition)
+		object1_property_Name_Expr.initialize(object1_property_Name)
+		
+		var object2_opposite_Name : IDName init IDName.new
+		var object2_opposite_Name_Expr: Name_Expression init Name_Expression.new
+		object2_opposite_Name.initialize("o2."+self.opposite.alloyName.getDefinition)
+		object2_opposite_Name_Expr.initialize(object2_opposite_Name)
+		
+		//Create CompareOp Expression object1 in object2.<self.property_name>
+		var object1_in_object2prop_CompareExp: CompareOp_Expression init CompareOp_Expression.new
+		object1_in_object2prop_CompareExp.initialize(object1_Name_Expr,object2_opposite_Name_Expr,in_CompareOp.new, false)
+		
+		
+		//Create CompareOp Expression object2 in object1.<self.opposite.alloyName> 
+		var object2_in_object1_opposite_CompareExp: CompareOp_Expression init CompareOp_Expression.new
+		object2_in_object1_opposite_CompareExp.initialize(object2_Name_Expr, object1_property_Name_Expr, in_CompareOp.new, false)
+		
+		//Create BinOp Expression object2 in object1.<self.opposite.alloyName>   implies object1 in object2.<self.property_name>
+		var opposite_BinOp_Expr: BinOp_Expression init BinOp_Expression.new
+		opposite_BinOp_Expr.initialize(object2_in_object1_opposite_CompareExp,object1_in_object2prop_CompareExp,implies_BinOp.new)
+		
+		//Create declaration for object1 : <self.owningClass.alloyName>
+		var object1_owningClass_Decl:Decl init Decl.new
+		var object1_Names:Name[1..*] init OrderedSet<Name>.new
+		object1_Names.add(object1_Name)
+		
+		object1_owningClass_Decl.initialize(object1_Names,self.owningClass.alloyNameExpr, false,false)
+		//Create declaration for object2: <self.opposite.owningClass.name>
+		var object2_owningClass_Decl: Decl init Decl.new
+		var object2_Names:Name[1..*] init OrderedSet<Name>.new
+		
+		object2_Names.add(object2_Name)
+		object2_owningClass_Decl.initialize(object2_Names, self.opposite.owningClass.alloyNameExpr,false,false)
+		
+		//Create set of declarations for Quant Expression 
+		
+		
+		var object_Decls:Decl[1..*] init OrderedSet<Decl>.new
+		object_Decls.add(object1_owningClass_Decl)
+		object_Decls.add(object2_owningClass_Decl)
+		
+		//Create Quant Expression all object1 : <self.owningClass.alloyName>, object2: <self.opposite.owningClass.name>| object2 in object1.<self.opposite.alloyName>   implies object1 in object2.<self.property_name>
+		
+		var opposite_Quant_Expr: Quant_Expression init Quant_Expression.new
+		var opposite_Quant_BlockOrBar:Expr_BlockOrBar init Expr_BlockOrBar.new
+		opposite_Quant_BlockOrBar.initialize(opposite_BinOp_Expr)
+		opposite_Quant_Expr.initialize(all_Quantifier.new, object_Decls,opposite_Quant_BlockOrBar)
+		
+		// Create Fact Paragraph
+		var opposite_fact_Block:Block init Block.new
+		var opposite_fact_Block_Exprs:Expression[0..*] init OrderedSet<Expression>.new
+		opposite_fact_Block_Exprs.add(opposite_Quant_Expr)
+		opposite_fact_Block.initialize(opposite_fact_Block_Exprs)
+		var opposite_fact_Decl:FactDecl init FactDecl.new
+		opposite_fact_Decl.initialize(opposite_FactName,opposite_fact_Block)
+		//Insert into Alloy Model
+		trace.alloyModel.addParagraph(opposite_fact_Decl)
+		//Opposite fact has been created
+		self.oppositeFactCreated := true
+		self.opposite.oppositeFactCreated:=true
+		end
+		end
+	end
+} 
+
+

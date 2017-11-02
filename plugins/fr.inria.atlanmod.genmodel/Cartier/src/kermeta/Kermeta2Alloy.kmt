@@ -1,0 +1,265 @@
+/* $Id: Kermeta2Alloy.kmt,v 1.1 2009-02-11 07:55:17 ssen Exp $ 
+ * Creation : October 13, 2008
+ * Licence  : EPL 
+ * Copyright:
+ * Authors  : Sagar Sen
+ *            
+ */
+
+package Cartier::Kermeta2Alloy;
+
+//Source Meta-model is Kermeta
+//Target Meta-model is Alloy
+require "metamodels/alloy.kmt"
+require "Kermeta2AlloyTrace.kmt"
+require "TransformationBase.kmt"
+require "TransformationImplicitConstraints.kmt"
+require "TransformationInvariants.kmt"
+require "TransformationGeneratePartitions.kmt"
+require "TransformationGenerateModelFragments.kmt"
+
+using kermeta::standard
+using kermeta::utils
+using kermeta::persistence
+using kermeta::io
+using kermeta::language::structure
+using Cartier::AlloyMM
+using Cartier::Kermeta2AlloyTrace
+
+
+class Kermeta2Alloy
+{
+    /* Input Kermeta Meta-model */
+	reference kermetaMetamodel : ModelingUnit
+	/* Trace containing Alloy Model in Formation*/
+	reference trace: Kermeta2AlloyTrace
+	reference kermetaObjects : bag Object[0..*]
+	
+	operation headerNotice(): Void is do
+		stdio.writeln("Cartier (Beta) transforming to Alloy\n")
+	end
+	
+	operation initialize(trace: Kermeta2AlloyTrace): Void is do
+		self.trace := trace
+		self.trace.hasMultipleInheritance:=false
+		self.trace.atmostSingleInheritance:=true
+		self.kermetaObjects.clear
+	end
+	/*Load Kermeta meta-model*/
+	operation load(uri:String): Void is do
+		var repository : EMFRepository init EMFRepository.new
+		var resource : Resource init repository.createResource(uri,"http://www.kermeta.org/kermeta/1_2_0//kermeta")
+		stdio.write("---Loading Kermeta meta-model..")
+		resource.load
+		self.kermetaMetamodel ?= resource.one
+		stdio.writeln("OK")
+		self.trace.kermetaMetamodel:=kermetaMetamodel
+	end
+	
+	/*Transform Kermeta meta-model to Alloy Model*/
+	operation transform(): Void is do
+		
+		stdio.write("---Initialize target Alloy model...")
+		stdio.writeln("OK")
+		
+		stdio.write("---Initializing trace object for creating Alloy Model...")
+			
+			self.trace.initialize
+		stdio.writeln("OK")
+		stdio.write("---Creating bag of Kermeta objects...")
+			checkInheritance
+			if self.trace.hasMultipleInheritance then
+				//stdio.writeln("\nUse of Multiple Inheritance Detected\n")
+				//inEmancipation:=InheritanceEmancipation.new
+				//inEmancipation.initialize(self.kermetaMetamodel)
+				//inEmancipation.emancipate
+				//inEmancipation.display
+				 
+			end
+			getKermetaObjects
+			/*self.trace.kermetaMultiInheritanceProperties.each{ t |
+								if t.theClassDefinition.name=="Classifier" then
+									stdio.writeln("Property :"+t.theProperty.name+" Property Owning Class: "+t.theClassDefinition.name)
+								end}*/
+		stdio.writeln("OK")
+		
+		
+		
+		stdio.write("---Transforming Kermeta to Alloy...")
+			transformKermetaObjects
+			//self.transformMultiInheritanceProperty
+		//Inserting required Primitive Types
+			self.trace.insertPrimitives
+		stdio.writeln("---End of Transformation---")	
+		
+	end
+	operation printAlloy():Void is do
+		stdio.write("---Display Alloy Model...")
+			//self.trace.displayAlloy
+		stdio.writeln("\n----End of Alloy Model-----")
+	end
+	
+	operation printLogistics():Void is do
+		stdio.write("---Transformation Logistics---")
+		self.transformationLog
+		stdio.writeln("\n----End of Transformation Logistics-----")
+	end
+	
+	operation transformKermetaObjects():Void is do
+		self.kermetaObjects.each
+					{ 
+					object | object.scaleLog:=ExperimentLog.new
+							 object.scaleLog.initialize
+					}
+	
+		self.kermetaObjects.each
+					{ 
+					object | object.toAlloyPass1(self.trace) 
+					}
+		self.kermetaObjects.each
+					{ 
+					object | object.toAlloyPass2(self.trace) 
+					}
+		
+		self.kermetaObjects.each
+					{ 
+					object | object.toAlloyPass3(self.trace) 
+					}
+	    self.kermetaObjects.each
+					{ 
+					object | object.toAlloyPass4(self.trace) 
+					}
+		self.kermetaObjects.each
+					{ 
+					object | object.toAlloyPassImplicitFacts(self.trace) 
+					}
+		self.kermetaObjects.each
+					{ 
+					object | object.toAlloyPartitionPredicates(self.trace) 
+					}
+		self.kermetaObjects.each
+					{ 
+					object | object.toAlloyModelFragmentsAllRanges(self.trace) 
+					}
+		self.kermetaObjects.each
+					{ 
+					object | object.toAlloyModelFragmentsAllPartitions(self.trace) 
+					}
+		/*self.kermetaObjects.each
+					{ 
+					object | object.toAlloyPassExplicitFacts(self.trace) 
+					}*/
+		
+	end
+	
+
+	operation transformationLog():Void is do
+		self.kermetaObjects.each
+					{ 
+					object | object.showLog(self.trace) 
+					}
+	end
+	
+	operation checkInheritance():Void is do
+		self.kermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								if object.asType(ClassDefinition).superType.size > 1 then
+									self.trace.hasMultipleInheritance:=true
+									self.trace.atmostSingleInheritance:=false
+								end
+							end
+						}
+					}
+		
+	
+	end
+
+
+	operation getKermetaObjects():Void is do
+		//Add all Package objects
+		self.kermetaMetamodel.packages.each 
+		{ 
+			object | 
+			if object.isInstanceOf(Package) then
+				self.kermetaObjects.add(object)
+			end
+		}
+		//Add all Class objects
+		self.kermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								self.kermetaObjects.add(object)	
+							end	
+							
+						}
+					}
+		//Add all Enumeration objects
+		self.kermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(Enumeration) then
+								self.kermetaObjects.add(object)	
+							end	
+						}
+					}
+		//Add all Property objects
+		self.kermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								//if self.trace.hasMultipleInheritance==false then
+								object.asType(ClassDefinition).ownedAttribute.each 
+								{
+								 prop | self.kermetaObjects.add(prop)
+								//stdio.writeln("Property :"+prop.name+" Property Owning Class: "+prop.owningClass.name)
+								}
+								//end
+								
+							end	
+						}
+					}
+		//Add all Constraint objects
+		
+		self.kermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								object.asType(ClassDefinition).~inv.each 
+								{
+								 constraint | self.kermetaObjects.add(constraint)
+								}	
+							end	
+						}
+					}
+				
+	end
+	
+	
+	operation displayObjects():Void is do
+		self.kermetaObjects.each{object | stdio.writeln(object.asType(NamedElement).qualifiedName)}
+	end
+	
+	
+	/* Save Alloy Model to a text .als file*/
+	operation save(uri: String): Void is do
+		var ioHelper : FileIO init FileIO.new
+		ioHelper.writeTextFile(uri,self.trace.alloyModel.getDefinition)
+	end 
+	
+	
+	
+	
+}

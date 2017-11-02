@@ -1,0 +1,1422 @@
+package Cartier::AlloyMM;
+
+require kermeta
+using kermeta::standard
+using kermeta::utils
+using kermeta::persistence
+
+
+abstract class BlockOrBar
+{
+	operation getDefinition():String is abstract
+}
+
+class Block_BlockOrBar inherits BlockOrBar
+{
+	reference block:Block[1..1]
+	
+	operation initialize(block : Block) : Void is do
+		self.block:=block
+	end	
+	
+	method getDefinition():String is do
+		result:=self.block.getDefinition
+	end
+}
+
+class Expr_BlockOrBar inherits BlockOrBar
+{
+	reference expression:Expression[1..1]
+
+	operation initialize(expression : Expression) : Void is do
+		self.expression := expression
+	end
+	
+	method getDefinition():String is do
+		result:="|"+expression.getDefinition
+	end
+}
+
+abstract class Name
+{
+	operation getDefinition():String is abstract
+}
+
+class ThisName inherits Name
+{
+	method getDefinition():String is do
+		result:="this"
+	end
+}
+
+class IDName inherits Name
+{
+	attribute ID:String[1..1]
+	
+	operation initialize(ID:String) is do
+		self.ID:=ID
+	end
+	
+	method getDefinition():String is do
+		result:=self.ID
+	end
+}
+
+class QualifiedName inherits Name
+{
+	attribute ID:String[0..*]
+	
+	operation initialize(ID:String[0..*]) is do
+		self.ID.addAll(ID)
+	end
+	
+	method getDefinition():String is do
+		var qualifiedName:String init String.new
+		self.ID.each{id | qualifiedName:=qualifiedName + "/"+id}
+		result:=qualifiedName
+	end
+
+}
+abstract class Reference
+{
+	operation getDefinition():String is abstract
+}
+
+class NameReference inherits Reference
+{
+	reference name: Name
+	
+	operation initialize(name:Name) is do
+		self.name:=name
+	end
+	method getDefinition():String is do
+		result:=self.name.getDefinition
+	end
+}
+
+class UnivReference inherits Reference
+{
+	
+	method getDefinition():String is do
+		result:="univ"
+	end
+}
+
+class IntReference inherits Reference
+{
+	
+	method getDefinition():String is do
+		result:="Int"
+	end
+}
+
+class SeqIntReference inherits Reference
+{
+	
+	method getDefinition():String is do
+		result:="seq/Int"
+	end
+}
+
+
+
+class Decl
+{
+	reference names:Name[1..*]
+	reference expr : Expression[1..1]
+	attribute isDisjointLHS:Boolean
+	attribute isDisjointRHS:Boolean
+	
+	operation initialize(names:Name[1..*], expr:Expression,isDisjointLHS:Boolean,isDisjointRHS:Boolean) is do
+		self.names.addAll(names)
+		self.expr:=expr
+		self.isDisjointLHS:=isDisjointLHS
+		self.isDisjointRHS:=isDisjointRHS
+	end
+	
+	operation getDefinition():String is do
+		var declDefinition:String init String.new
+		declDefinition:=""
+		if self.isDisjointLHS and self.isDisjointRHS then
+			self.names.each{name | declDefinition:=declDefinition+"disj "+name.getDefinition+","}
+			declDefinition:=declDefinition.substring(0,declDefinition.size-1)
+			declDefinition:=declDefinition+" : "
+			declDefinition:=declDefinition+" disj "
+			declDefinition:=declDefinition+ self.expr.getDefinition
+		end
+		if self.isDisjointLHS and not self.isDisjointRHS then
+			self.names.each{name | declDefinition:=declDefinition+"disj "+name.getDefinition+","}
+			declDefinition:=declDefinition.substring(0,declDefinition.size-1)
+			declDefinition:=declDefinition+" : "
+			declDefinition:=declDefinition+ self.expr.getDefinition
+		end
+		if not self.isDisjointLHS and self.isDisjointRHS then
+			self.names.each{name | declDefinition:=declDefinition+ name.getDefinition+","}
+			declDefinition:=declDefinition.substring(0,declDefinition.size-1)
+			declDefinition:=declDefinition+" : "
+			declDefinition:=declDefinition+" disj "
+			declDefinition:=declDefinition+ self.expr.getDefinition
+		end
+		if not self.isDisjointLHS and not self.isDisjointRHS then
+			self.names.each{name | declDefinition:=declDefinition+name.getDefinition+","}
+			declDefinition:=declDefinition.substring(0,declDefinition.size-1)
+			declDefinition:=declDefinition+" : "
+			declDefinition:=declDefinition+ self.expr.getDefinition
+		end
+		result:=declDefinition
+	end
+}
+	
+
+
+class Module
+{
+	reference name: Name
+	
+	operation initialize(name: Name):Void is do
+		self.name:=name
+	end
+	
+	operation getDefinition():String is do
+		result:="module "+self.name.getDefinition
+	end
+}
+//Open Declaration Class in Alloy Model
+class OpenDecl inherits Paragraph
+{
+  reference qualifiedName : Name
+  reference name:Name
+  
+ 
+  operation initialize(qualifiedName:Name, name:Name): Void is do
+  	self.qualifiedName:=qualifiedName
+  	self.name:=name
+  end
+  
+
+  method getDefinition():String is do
+  	result:="open "+self.qualifiedName.getDefinition+" as "+self.name.getDefinition
+  end
+}
+//Declaration Class in an Alloy Model
+
+
+abstract class SigQual
+{
+operation getDefinition():String is abstract
+}
+
+class EmptySigQual inherits SigQual
+{
+	method getDefinition():String is do
+		result:=""
+	end
+}
+class AbstractSigQual inherits SigQual
+{
+	method getDefinition():String is do
+		result:="abstract"
+	end
+}
+
+class LoneSigQual inherits SigQual
+{
+	method getDefinition():String is do
+		result:="lone"
+	end
+}
+
+class OneSigQual inherits SigQual
+{
+	method getDefinition():String is do
+		result:="one"
+	end
+}
+
+class SomeSigQual inherits SigQual
+{
+	method getDefinition():String is do
+		result:="some"
+	end
+}
+
+abstract class SigExt
+{
+	reference aReference:Reference
+	
+	 operation initialize(aReference:Reference) is abstract
+	 operation getDefinition():String is abstract
+}
+
+class EmptySigExt inherits SigExt
+{
+	method getDefinition():String is do
+		result:=""
+	end
+}
+
+class ExtendsSigExt inherits SigExt
+{
+	
+	method initialize(aReference:Reference) is do
+		self.aReference:=aReference
+	end
+	
+	method getDefinition():String is do
+		result:="extends"+" "+self.aReference.getDefinition
+	end
+}
+
+class InSigExt inherits SigExt
+{
+	method initialize(aReference:Reference) is do
+		self.aReference:=aReference
+	end
+	
+	method getDefinition():String is do
+		result:="in"+" "+self.aReference.getDefinition
+	end
+}
+
+//A Paragraph in an Alloy Model
+abstract class Paragraph
+{
+	
+	operation  getDefinition() : String is abstract 
+}
+
+// An Alloy Model
+class AlloyModel
+{
+	attribute module : Module[1..1]
+	reference paragraphs: Paragraph[1..*] //An Alloy model consists of 1..* Paragraphs
+	
+	
+	operation setModule(module:Module) is do
+		self.module :=module
+	end
+	
+	operation addParagraph(paragraph:Paragraph) is do
+		self.paragraphs.add(paragraph)
+	end
+	
+	operation  getDefinition() : String is do 
+	   /* The String containing the textual concrete syntax of the Alloy Model */
+	   var alloyModelString:String init ""//Initialized as an empty string
+	   
+		if not self.isVoid then
+			if not self.module.isVoid then
+				alloyModelString := self.module.getDefinition+"\n\n"
+			end 
+			if not self.paragraphs.isVoid then
+			self.paragraphs.each{ 
+								  paragraph |
+								  if paragraph.isInstanceOf(OpenDecl) then
+								  	alloyModelString:=alloyModelString + paragraph.getDefinition+"\n\n"
+								  end
+								  }
+			self.paragraphs.each{ paragraph |			
+								  if paragraph.isInstanceOf(EnumDecl) then
+								  	alloyModelString := alloyModelString + paragraph.getDefinition+"\n"
+								  end
+								 }
+			self.paragraphs.each{ paragraph |
+								  if paragraph.isInstanceOf(SigDecl) then
+								  	alloyModelString := alloyModelString + paragraph.getDefinition+"\n"
+								  end
+								  }
+			self.paragraphs.each{ paragraph |								  
+								  if paragraph.isInstanceOf(FactDecl) then
+								  	alloyModelString := alloyModelString + paragraph.getDefinition+"\n"
+								  end
+								  }
+			self.paragraphs.each{ paragraph |					  
+								  if paragraph.isInstanceOf(FunDecl) then
+								  	alloyModelString := alloyModelString + paragraph.getDefinition+"\n"
+								  end
+								  }
+			self.paragraphs.each{ paragraph |					  
+								  if paragraph.isInstanceOf(PredDecl) then
+								  	alloyModelString := alloyModelString + paragraph.getDefinition+"\n"
+								  end
+								  }
+			self.paragraphs.each{ paragraph |					  
+								  if paragraph.isInstanceOf(AssertDecl) then
+								  	alloyModelString := alloyModelString + paragraph.getDefinition+"\n"
+								  end
+								 }
+			self.paragraphs.each{ paragraph |					  
+								  if paragraph.isInstanceOf(CmdDecl) then
+								  	alloyModelString := alloyModelString + paragraph.getDefinition +"\n"
+								  end
+								}
+			self.paragraphs.each{ paragraph |					  
+								  if paragraph.isInstanceOf(MultiLineComment) then
+								  	alloyModelString := alloyModelString + paragraph.getDefinition+"\n"
+								  end
+								}	
+			self.paragraphs.each{ paragraph |					  
+								  if paragraph.isInstanceOf(SingleLineComment) then
+								  	alloyModelString := alloyModelString + paragraph.getDefinition+"\n"
+								  end
+								}	
+			end
+			end
+	    	result:=alloyModelString
+  	end
+}
+
+
+class FactDecl inherits Paragraph
+{
+	reference name : Name
+	reference block : Block[1..1]
+	
+	operation initialize(name:Name,block:Block):Void is do
+		if not name.isVoid then
+			self.name:=name
+		end
+		
+		self.block:=block
+		
+	end
+	
+	
+	method getDefinition():String is do
+		var factDefinition:String init String.new
+		factDefinition := "\nfact "
+		if not self.name.isVoid then
+			factDefinition:=factDefinition+self.name.getDefinition
+		end
+		factDefinition := factDefinition + self.block.getDefinition
+		
+		result:=factDefinition
+	end
+	
+}
+
+class MultiLineComment inherits Paragraph
+{
+	reference comment : String
+	
+	operation initialize(commnet: String): Void is do
+		self.comment:=comment
+	end
+	
+	method getDefinition(): String is do
+		var commentDefn:String init String.new
+		commentDefn:="/*\n"+self.comment+"\n*/\n"
+		result:=commentDefn
+	end 
+	
+	
+}
+
+class SingleLineComment inherits Paragraph
+{
+	reference comment : String
+	
+	operation initialize(commnet: String): Void is do
+		self.comment:=comment
+	end
+	
+	method getDefinition(): String is do
+		var commentDefn:String init String.new
+		commentDefn:="//"+self.comment
+		result:=commentDefn
+	end 
+}
+class EnumDecl inherits Paragraph
+{
+	reference name:Name
+	reference literals:Name[1..*]
+	
+	operation initialize(name:Name, literals:Name[1..*]):Void is do
+		self.name:=name
+		self.literals.addAll(literals)
+	end
+	
+	method getDefinition():String is do
+		var enumDecl:String init String.new
+		enumDecl:="enum "+self.name.getDefinition +" { "
+		self.literals.each{l | enumDecl:=enumDecl + l.getDefinition+","}
+		enumDecl:=enumDecl.substring(0,enumDecl.size-1)
+		enumDecl:=enumDecl+" }\n\n "
+		result:=enumDecl
+	end
+}
+
+class CmdDecl inherits Paragraph
+{
+	reference name: Name
+	attribute isRun: Boolean
+	attribute isCheck : Boolean
+	reference scope: Scope
+	reference predName: Name
+	reference block:Block
+	
+	operation initialize(name:Name, isRun:Boolean, isCheck:Boolean, scope:Scope,predName:Name, block:Block):Void is do
+		self.name:=name
+		self.isRun:=isRun
+		self.isCheck:=isCheck
+		self.scope:=scope
+		self.block:=block
+		self.predName:=predName
+	end
+	
+	method getDefinition():String is do
+		var cmdDefn:String init String.new
+		cmdDefn:=""
+		if not name.isVoid then
+			cmdDefn:=self.name.getDefinition+":"
+		end
+		if self.isRun then
+			cmdDefn:=cmdDefn+"run"
+		end
+		if self.isCheck then
+			cmdDefn:=cmdDefn+"check"
+		end
+		
+		if not self.predName.isVoid then
+			cmdDefn:=cmdDefn+" "+self.predName.getDefinition+" "
+		end
+		if not self.block.isVoid then
+			cmdDefn:=cmdDefn+" "+self.block.getDefinition+" "
+		end
+		
+		cmdDefn:=cmdDefn+" "+self.scope.getDefinition
+	result:=cmdDefn
+	end
+	
+}
+
+abstract class Scope
+{
+	attribute isExpect:Boolean
+	attribute isExpectValue:Boolean
+	operation getDefinition():String is abstract 
+}
+
+class ForNumber_Scope inherits Scope
+{
+	attribute number:Integer
+	//reference typeScopes:TypeScope[1..*]
+	
+	operation initialize(number:Integer,isExpect:Boolean,isExpectValue:Boolean):Void is do
+		self.number:=number
+		self.isExpect:=isExpect
+		self.isExpectValue:=isExpectValue
+	end
+	
+	method getDefinition():String is do
+		var scopeDefinition:String init String.new
+		scopeDefinition:="for "+self.number.toString
+		if isExpect and isExpectValue then
+			scopeDefinition:=scopeDefinition+" expect 1"
+		end
+		if isExpect and not isExpectValue then
+			scopeDefinition:=scopeDefinition+" expect 0"
+		end
+		result:=scopeDefinition	
+	end
+	
+}
+
+
+
+class ForNumberBut_Scope inherits Scope
+{
+	attribute number:Integer
+	reference typeScopes:TypeScope[1..*]
+	
+	operation initialize(number:Integer,isExpect:Boolean,isExpectValue:Boolean,typeScopes:TypeScope[1..*]):Void is do
+		self.number:=number
+		self.isExpect:=isExpect
+		self.isExpectValue:=isExpectValue
+		self.typeScopes.addAll(typeScopes)
+	end
+	
+	method getDefinition():String is do
+		var scopeDefinition:String init String.new
+		scopeDefinition:="for "+self.number.toString+" but "
+		self.typeScopes.each{ ts | scopeDefinition:=scopeDefinition + ts.getDefinition+","}
+		scopeDefinition:=scopeDefinition.substring(0,scopeDefinition.size-1)
+		if isExpect and isExpectValue then
+			scopeDefinition:=scopeDefinition+" expect 1"
+		end
+		if isExpect and not isExpectValue then
+			scopeDefinition:=scopeDefinition+" expect 0"
+		end
+		result:=scopeDefinition	
+	end
+	
+
+}
+
+class ForTypeScope_Scope inherits Scope
+{
+
+	attribute number:Integer
+	reference typeScopes:TypeScope[1..*]
+	
+	operation initialize(number:Integer,isExpect:Boolean,isExpectValue:Boolean,typeScopes:TypeScope[1..*]):Void is do
+		self.number:=number
+		self.isExpect:=isExpect
+		self.isExpectValue:=isExpectValue
+		self.typeScopes.addAll(typeScopes)
+	end
+	
+	method getDefinition():String is do
+		var scopeDefinition:String init String.new
+		scopeDefinition:="for "
+		self.typeScopes.each{ ts | scopeDefinition:=scopeDefinition + ts.getDefinition+","}
+		scopeDefinition:=scopeDefinition.substring(0,scopeDefinition.size-1)
+		if isExpect and isExpectValue then
+			scopeDefinition:=scopeDefinition+" expect 1"
+		end
+		if isExpect and not isExpectValue then
+			scopeDefinition:=scopeDefinition+" expect 0"
+		end
+		result:=scopeDefinition	
+	end
+}
+class Empty_Scope inherits Scope
+{
+	
+	operation initialize(isExpect:Boolean,isExpectValue:Boolean):Void is do
+		self.isExpect:=isExpect
+		self.isExpectValue:=isExpectValue
+	end
+	method getDefinition():String is do
+		var scopeDefinition:String init String.new
+		scopeDefinition:=""
+		if isExpect and isExpectValue then
+			scopeDefinition:=scopeDefinition+"expect 1"
+		end
+		if isExpect and not isExpectValue then
+			scopeDefinition:=scopeDefinition+"expect 0"
+		end
+		result:=scopeDefinition	
+	end
+
+
+}
+
+
+class TypeScope 
+{
+	attribute number:Integer
+	reference name:Name
+	attribute isName:Boolean
+	attribute isInt:Boolean
+	attribute isSeq:Boolean
+	attribute isExactly:Boolean
+	
+	operation initialize(number:Integer, name:Name, isName:Boolean, isInt:Boolean,isSeq:Boolean, isExactly:Boolean):Void is do
+		self.number:=number
+		self.name:=name
+		self.isName:=isName
+		self.isInt:=isInt
+		self.isSeq:=isSeq
+		self.isExactly:=isExactly
+	end
+	
+	operation getDefinition():String is do
+		var typeScopeExpr:String init String.new
+		if isExactly then
+			typeScopeExpr:=typeScopeExpr+" exactly "
+		end
+		
+		typeScopeExpr:=typeScopeExpr+" "+self.number.toString
+		if isName then
+		 typeScopeExpr:=typeScopeExpr+" "+self.name.getDefinition
+		end
+		if isInt then
+		 typeScopeExpr:=typeScopeExpr+" int "
+		end
+		if isSeq then
+		 typeScopeExpr:=typeScopeExpr+" seq "
+		end
+		
+		result:=typeScopeExpr
+	end
+}
+
+
+class AssertDecl inherits Paragraph
+{
+  reference name:Name
+  reference block: Block[1..1]
+  
+  operation initialize(name:Name, block:Block) is do
+  	self.name:=name
+  	self.block:=block
+  end
+  
+  
+  method getDefinition():String is do
+  	result:="assert " +self.name.getDefinition + self.block.getDefinition
+  end
+}
+class FunDecl inherits Paragraph
+{
+	reference aReference:Reference
+	reference name:Name
+	reference block : Block[1..1]
+	reference params : Decl[0..*]
+	reference expr : Expression[1..1]
+	
+	
+	operation initialize(aReference:Reference,name:Name,block:Block,expr:Expression,params:Decl[0..*]):Void is do
+		self.aReference:=aReference
+		self.name:=name
+		self.block:=block
+		self.expr:=expr
+		self.params.addAll(params)
+	end
+	
+
+	method getDefinition():String is do
+		var funDefinition:String init String.new
+		if not self.params.isVoid then
+			if self.aReference.isVoid then
+				funDefinition:="fun"+" "+self.name.getDefinition+"("
+			end
+			if not self.aReference.isVoid then
+				funDefinition:="fun"+" "+self.aReference.getDefinition+"."+self.name.getDefinition+"("
+			end
+			self.params.each{param | funDefinition:=funDefinition+param.getDefinition+","}
+			funDefinition:=funDefinition.substring(0,funDefinition.size-1)
+			funDefinition:=funDefinition+")"+":"+expr.getDefinition+self.block.getDefinition
+		end
+		if self.params.isVoid then
+			funDefinition:="fun"+" "+self.name.getDefinition+"()"+":"+expr.getDefinition+self.block.getDefinition
+		end
+		result:=funDefinition
+	end
+	
+}
+
+class PredDecl inherits Paragraph
+{
+    reference aReference:Reference
+	reference name:Name
+	reference block : Block
+	reference params: Decl[0..*]
+	
+	
+	operation initialize(aReference:Reference,name:Name,block:Block,params:Decl[0..*]):Void is do
+		self.aReference:=aReference
+		self.name:=name
+		self.block:=block
+		if params.isVoid then
+			self.params.clear
+		end
+		if not params.isVoid then
+			self.params.addAll(params)
+		end
+		
+	end
+	
+
+	method getDefinition():String is do
+		var predDefinition:String init String.new
+		if self.params.isEmpty then
+			predDefinition:="pred"+" "+self.name.getDefinition+"\n"+self.block.getDefinition
+		end
+		if not self.params.isEmpty then
+			if self.aReference.isVoid then
+			predDefinition:="pred"+" "+self.name.getDefinition+"("
+			end
+			if not self.aReference.isVoid then
+			predDefinition:="pred"+" "+self.aReference.getDefinition+"."+self.name.getDefinition+"("
+			end
+			self.params.each{param | predDefinition:=predDefinition+param.getDefinition+","}
+			predDefinition:=predDefinition.substring(0,predDefinition.size-1)
+			predDefinition:=predDefinition+")"+"\n"+self.block.getDefinition
+		end
+		
+		result:=predDefinition
+	end
+}
+
+
+
+
+//A Signature Declaration contains fields
+class SigDecl inherits Paragraph 
+{
+  reference name : Name 
+  reference sigQual: SigQual
+  reference extension : SigExt
+  reference fields : Decl [0..*]
+  
+  
+  operation initialize(sigQual:SigQual,name:Name,extension:SigExt,fields : Decl[0..*]) is do
+  	if not name.isVoid then
+  		self.name:=name
+  	end
+  	if not sigQual.isVoid then
+  		self.sigQual:=sigQual
+  	end
+  	if not extension.isVoid then
+  		self.extension:=extension
+  	end
+  	if not fields.isVoid then
+  		self.fields.addAll(fields)
+  	end
+  end
+  
+  //Get string representation of a signature
+  method  getDefinition() : String is do 
+    /* The String containing the concrete syntax of an Alloy Signature*/
+    result:=""
+    var signatureDefinition:String init "" //We initialize an empty string
+	if not self.isVoid then
+		if not self.sigQual.isVoid then
+		signatureDefinition := sigQual.getDefinition
+		end
+		signatureDefinition := signatureDefinition+" sig "+self.name.getDefinition+" "
+		
+		if not self.extension.isVoid then
+			signatureDefinition := signatureDefinition+self.extension.getDefinition
+		end
+		
+		signatureDefinition := signatureDefinition+" \n{ \n"
+		
+		if not self.fields.isVoid then
+			self.fields.each{f| signatureDefinition := signatureDefinition + "\t"+f.getDefinition+","+"\n"}
+			signatureDefinition:=signatureDefinition.substring(0,signatureDefinition.size-2)
+		end
+        signatureDefinition:=signatureDefinition+ "\n}\n"
+	end
+	 result := signatureDefinition 
+   end
+ 
+}
+
+
+
+class Block
+{
+	reference expressions : Expression[0..*]
+	
+	operation initialize(exprs : Expression[0..*]):Void is do
+		if not exprs.isVoid then
+			self.expressions.addAll(exprs)
+		end
+		if exprs.isVoid then
+			self.expressions.clear
+		end
+	end
+	operation getDefinition():String is do
+		var blockExpressions:String init ""
+		if not self.expressions.isVoid then
+			blockExpressions:="\n{\n"
+			self.expressions.each{exp | blockExpressions:=blockExpressions+"\t"+exp.getDefinition}
+			blockExpressions:=blockExpressions+"\n}\n"
+		end
+		if self.expressions.isVoid then
+			blockExpressions:="\n{ }\n"
+		end
+		result:=blockExpressions
+	end
+}
+
+abstract class UnOp
+{
+	operation getDefinition():String is abstract
+}
+
+
+class not_UnOp inherits UnOp
+{
+	method getDefinition():String is do
+		result:="not"
+	end
+
+}
+
+class no_UnOp inherits UnOp
+{
+	method getDefinition():String is do
+		result:="no"
+	end
+
+}
+
+class some_UnOp inherits UnOp
+{
+	method getDefinition():String is do
+		result:="some"
+	end
+
+}
+
+class lone_UnOp inherits UnOp
+{
+	method getDefinition():String is do
+		result:="lone"
+	end
+
+}
+
+class one_UnOp inherits UnOp
+{
+	method getDefinition():String is do
+		result:="one"
+	end
+
+}
+
+class set_UnOp inherits UnOp
+{
+	method getDefinition():String is do
+		result:="set"
+	end
+
+}
+
+class seq_UnOp inherits UnOp
+{
+	method getDefinition():String is do
+		result:="seq"
+	end
+
+}
+
+class size_UnOp inherits UnOp
+{
+	method getDefinition():String is do
+		result:="#"
+	end
+
+}
+
+class transpose_UnOp inherits UnOp
+{
+
+	method getDefinition():String is do
+		result:="~"
+	end
+}
+
+class reflexiveTransitiveClosure_UnOp inherits UnOp
+{
+	method getDefinition():String is do
+		result:="*"
+	end
+
+}
+
+class transitiveClosure_UnOp inherits UnOp
+{
+	method getDefinition():String is do
+		result:="^"
+	end
+
+}
+
+abstract class CompareOp
+{
+	operation getDefinition():String is abstract
+} 
+
+class equal_CompareOp inherits CompareOp
+{
+	method getDefinition():String is do
+		result:="="
+	end
+}
+
+class in_CompareOp inherits CompareOp
+{
+	method getDefinition():String is do
+		result:="in"
+	end
+}
+
+class lessThan_CompareOp inherits CompareOp
+{
+	method getDefinition():String is do
+		result:="<"
+	end
+}
+
+class greaterThan_CompareOp inherits CompareOp
+{
+	method getDefinition():String is do
+		result:=">"
+	end
+}
+
+class lessThanEqual_CompareOp inherits CompareOp
+{
+	method getDefinition():String is do
+		result:="<="
+	end
+}
+
+class greaterThanEqual_CompareOp inherits CompareOp
+{
+	method getDefinition():String is do
+		result:=">="
+	end
+}
+
+
+abstract class BinOp
+{
+	operation getDefinition():String is abstract
+}
+
+
+
+class or_BinOp inherits BinOp
+{
+
+	method getDefinition():String is do
+		result:="or"
+	end
+}
+
+
+class and_BinOp inherits BinOp
+{
+
+	method getDefinition():String is do
+		result:="and"
+	end
+}
+
+class biImpl_BinOp inherits BinOp
+{
+
+	method getDefinition():String is do
+		result:="iff"
+	end
+}
+
+class implies_BinOp inherits BinOp
+{
+	method getDefinition():String is do
+		result:="implies"
+	end
+}
+
+class add_BinOp inherits BinOp
+{
+	method getDefinition():String is do
+		result:="+"
+	end
+}
+
+class diff_BinOp inherits BinOp
+{
+	method getDefinition():String is do
+		result:="-"
+	end
+}
+
+class join_BinOp inherits BinOp
+{
+	method getDefinition():String is do
+		result:="."
+	end
+}
+
+
+
+abstract class Quantifier 
+{
+
+ 	operation getDefinition():String is abstract
+}
+
+class all_Quantifier inherits Quantifier
+{
+	method getDefinition():String is do
+		result:="all"
+	end
+}
+
+class no_Quantifier inherits Quantifier
+{
+	method getDefinition():String is do
+		result:="no"
+	end
+}
+
+class some_Quantifier inherits Quantifier
+{
+	method getDefinition():String is do
+		result:="some"
+	end
+}
+
+class lone_Quantifier inherits Quantifier
+{
+	method getDefinition():String is do
+		result:="lone"
+	end
+}
+
+class one_Quantifier inherits Quantifier
+{
+	method getDefinition():String is do
+		result:="one"
+	end
+}
+
+class sum_Quantifier inherits Quantifier
+{
+	method getDefinition():String is do
+		result:="sum"
+	end
+}
+
+class empty_Quantifier inherits Quantifier
+{
+	method getDefinition():String is do
+		result:=""
+	end
+}
+
+class LetDecl
+{
+	reference name:Name
+	reference expr: Expression
+	
+	operation initialize(name:Name, expr:Expression): Void is do
+		self.name:=name
+		self.expr:=expr
+	end
+	
+	operation getDefinition():String is do
+		result:=self.name.getDefinition+"="+self.expr.getDefinition
+	end
+}
+
+
+abstract class Expression
+{
+	operation getDefinition():String is abstract
+}
+
+class Let_Expression inherits Expression
+{
+	reference letDecls:LetDecl[1..*]
+	reference blockOrBar:BlockOrBar
+	
+	operation initialize(letDecls:LetDecl[1..*],blockOrBar:BlockOrBar):Void is do
+		self.letDecls.addAll(letDecls)
+		self.blockOrBar:=blockOrBar
+	end
+	
+	method getDefinition():String is do
+		var letExpression:String init String.new
+		letExpression:="let "
+		self.letDecls.each{letDecl| letExpression:=letExpression + letDecl.getDefinition +","}
+		letExpression:=letExpression.substring(0,letExpression.size-1)
+		letExpression:=letExpression+ " "+self.blockOrBar.getDefinition
+		result:=letExpression
+	end
+}
+
+class UnOp_Expression inherits Expression
+{
+	reference expr : Expression[1..1]
+	reference unaryOp : UnOp[1..1]
+	
+	operation initialize(expr:Expression, unaryOp:UnOp):Void is do
+		if unaryOp.isVoid then
+			stdio.writeln("Expr="+expr.getDefinition)
+		end
+		if not unaryOp.isVoid and not expr.isVoid then
+			
+			self.expr:=expr
+			self.unaryOp:=unaryOp
+		end
+	end
+	method getDefinition():String is do
+		//if not self.unaryOp.isVoid and self.expr.isVoid then
+		 result:=self.unaryOp.getDefinition + " " +self.expr.getDefinition
+		//end
+	end
+}
+
+class Quant_Expression inherits Expression
+{
+	reference quant: Quantifier[1..1]
+	reference decls : Decl[1..*]
+	reference blockOrBar: BlockOrBar
+
+	operation initialize(quant:Quantifier, decls:Decl[1..*], blockOrBar:BlockOrBar) is do
+		self.quant:=quant
+		self.decls.addAll(decls)
+		self.blockOrBar:=blockOrBar
+	end
+	
+	method getDefinition():String is do
+		var quant_Expression: String init ""
+		quant_Expression := self.quant.getDefinition + " " 
+		self.decls.each { decl | quant_Expression := quant_Expression +" "+ decl.getDefinition +","}
+		quant_Expression := quant_Expression.substring(0,quant_Expression.size-1)
+		quant_Expression := quant_Expression + " "+ self.blockOrBar.getDefinition
+		result:=quant_Expression
+	end
+}
+
+
+class BinOp_Expression inherits Expression
+{
+	reference lhsexpr: Expression
+	reference rhsexpr: Expression
+	reference binaryOp: BinOp
+	
+	operation initialize(lhsexpr : Expression, rhsexpr : Expression, binaryOp:BinOp) is do
+		self.lhsexpr:=lhsexpr
+		self.rhsexpr:=rhsexpr
+		self.binaryOp:=binaryOp
+	end
+	
+	method getDefinition():String is do
+		var binOpExpression:String init String.new
+		
+		binOpExpression:=self.lhsexpr.getDefinition +" "+ self.binaryOp.getDefinition +" "+ self.rhsexpr.getDefinition 
+		result:=binOpExpression
+	end
+}
+
+class CompareOp_Expression inherits Expression
+{
+	attribute isNot : Boolean
+	reference lhsexpr: Expression
+	reference rhsexpr: Expression
+	reference compOp : CompareOp
+	
+	
+	operation initialize(lhsexpr:Expression, rhsexpr:Expression, compOp:CompareOp, isNot:Boolean):Void is do
+		self.lhsexpr:=lhsexpr
+		self.rhsexpr:=rhsexpr
+		self.compOp:=compOp
+		self.isNot:=isNot
+	end
+	
+	method getDefinition():String is do
+		var compareOpExpression:String init String.new
+		if self.isNot == true then
+			compareOpExpression:=self.lhsexpr.getDefinition+" not "+self.compOp.getDefinition+" "+self.rhsexpr.getDefinition
+		else
+			compareOpExpression:=self.lhsexpr.getDefinition+" "+self.compOp.getDefinition+" "+self.rhsexpr.getDefinition
+		end
+		result:=compareOpExpression
+	end
+}
+
+class ImpliesElse_Expression inherits Expression
+{
+ reference ifExpression: Expression
+ reference thenExpression: Expression
+ reference elseExpression: Expression
+ 
+ operation intialize(ifExpression:Expression, thenExpression:Expression, elseExpression:Expression) is do
+ 	self.ifExpression:=ifExpression
+ 	self.thenExpression:=thenExpression
+ 	self.elseExpression:=elseExpression
+ end
+ 
+ method getDefinition():String is do
+ 	result:=ifExpression.getDefinition + " implies "+self.thenExpression.getDefinition+" else "+self.elseExpression.getDefinition
+ end
+
+}
+
+class Bracket_Expression inherits Expression
+{
+
+	reference lhsExpression: Expression
+	reference rhsExpressions: Expression[0..*]
+	
+	operation initialize(lhsExpression:Expression, rhsExpressions:Expression[0..*]) is do
+		self.lhsExpression:=lhsExpression
+		self.rhsExpressions.addAll(rhsExpressions)
+	end
+	
+	method getDefinition():String is do
+		var bracketExpression:String init String.new
+		bracketExpression:=lhsExpression.getDefinition + "["
+		self.rhsExpressions.each{e|bracketExpression:=bracketExpression+e.getDefinition+","}
+		bracketExpression:=bracketExpression.substring(0,bracketExpression.size-1)
+		bracketExpression:=bracketExpression+"]"
+		result:=bracketExpression
+	end
+
+}
+
+
+
+class Number_Expression inherits Expression
+{
+	attribute number:Integer
+	
+	operation initialize(number:Integer) is do
+		self.number:=number
+	end
+	
+	method getDefinition():String is do
+		result:=self.number.toString
+	end
+
+}
+
+class MinusNumber_Expression inherits Expression
+{
+	attribute number:Integer
+	
+	operation initialize(number:Integer) is do
+		self.number:=number
+	end
+	
+	method getDefinition():String is do
+		result:="-"+self.number.toString
+	end
+}
+
+class None_Expression inherits Expression
+{
+	method getDefinition():String is do
+		result:="none"
+	end
+}
+
+
+class Iden_Expression inherits Expression
+{
+	method getDefinition():String is do
+		result:="iden"
+	end
+}
+
+class Univ_Expression inherits Expression
+{
+	method getDefinition():String is do
+		result:="univ"
+	end
+}
+
+class Int_Expression inherits Expression
+{
+	method getDefinition():String is do
+		result:="Int"
+	end
+}
+
+class SeqInt_Expression inherits Expression
+{
+	method getDefinition():String is do
+		result:="seq/Int"
+	end
+}
+
+class Paren_Expression inherits Expression
+{
+  reference expr:Expression
+  
+  operation initialize(expr:Expression) is do
+  	self.expr:=expr
+  end
+  
+  method getDefinition():String is do
+  	result:="("+expr.getDefinition+")"
+  end
+}
+
+
+
+class AtName_Expression inherits Expression
+{
+  reference name:Name
+  
+  operation initialize(name:Name):Void is do
+  	self.name:=name
+  end
+  
+  method getDefinition():String is do
+  	result:="@"+name.getDefinition
+  end
+  
+}
+
+
+class Name_Expression inherits Expression
+{
+  reference name:Name
+  
+  operation initialize(name:Name):Void is do
+  	self.name:=name
+  end
+  
+  method getDefinition():String is do
+  	result:=name.getDefinition
+  end
+  
+}
+
+
+class Block_Expression inherits Expression
+{
+   reference block: Block
+   
+   operation initialize(block:Block) is do
+   	self.block:=block
+   end
+   
+   method getDefinition():String is do
+   	result:=self.block.getDefinition
+   end
+}
+
+class DeclsBlockOrBar_Expression inherits Expression
+{
+	reference decls:Decl[1..*]
+	reference blockOrBar: BlockOrBar
+	
+	operation initialize(decls:Decl[1..*],blockOrBar:BlockOrBar):Void is do
+		self.decls.addAll(decls)
+		self.blockOrBar:=blockOrBar
+	end
+	
+	method getDefinition():String is do
+	
+		var dbbExpression:String init String.new
+		
+		dbbExpression:="{"
+		self.decls.each{d | dbbExpression:=dbbExpression+d.getDefinition}
+		dbbExpression:=dbbExpression+blockOrBar.getDefinition
+		dbbExpression:=dbbExpression + "}"
+		
+		result:=dbbExpression
+	end
+}
+
+class Disj_Expression inherits Expression
+{
+	reference names : Name[1..*]
+	
+	operation initialize(names:Name[1..*]) is do
+		self.names.addAll(names)
+	end
+	
+	method getDefinition():String is do
+	
+		var disj_Expression:String init String.new
+		
+		disj_Expression:="disj ["
+		self.names.each{ n |
+		disj_Expression:=disj_Expression + n.getDefinition+","
+		}
+		disj_Expression:=disj_Expression.substring(0,disj_Expression.size-1)+"]"
+		result:=disj_Expression
+	end
+}

@@ -1,0 +1,311 @@
+/* $Id: CartierExperiments.kmt,v 1.1 2009-02-11 07:55:17 ssen Exp $ 
+ * Creation : December 3, 2008
+ * Licence  : EPL 
+ * Copyright:
+ * Authors  : 
+ *            sagarsen
+ */
+
+
+
+package Cartier::CartierExperiments;
+//Source Meta-model is Kermeta
+//Target Meta-model is Alloy
+require "metamodels/alloy.kmt"
+require "Kermeta2AlloyTrace.kmt"
+
+require kermeta
+using kermeta::standard
+using kermeta::utils
+using kermeta::persistence
+using kermeta::io
+using kermeta::language::structure
+using Cartier::AlloyMM
+using Cartier::Kermeta2AlloyTrace
+
+class CartierExperiment
+{
+	reference trace : Kermeta2AlloyTrace
+	
+	operation initialize(trace: Kermeta2AlloyTrace):Void is do
+		self.trace:=trace
+	end
+	//Simple IsConsistent Experiment
+	operation createIsConsistentExperiement(scope: Integer):Void is do
+		/* 
+		//We add the empty predicate declaration 
+		
+		pred isConsistent {}
+		//And the run command 
+		run isConsistent for scope
+		*/
+		var isConsistent_Name:IDName init IDName.new
+		var isConsistent_Pred : PredDecl init PredDecl.new
+		
+		isConsistent_Name.initialize("isConsistent")
+
+		
+		isConsistent_Pred.initialize(void,isConsistent_Name,Block.new,void)
+		
+		//Include Predicate declartion in the Alloy Model
+		self.trace.alloyModel.addParagraph(isConsistent_Pred)
+		//Create Run Statement
+		var isConsistent_runCommand : CmdDecl init CmdDecl.new
+		var isConsistent_scope : ForNumber_Scope init ForNumber_Scope.new
+	
+		
+		isConsistent_scope.initialize(scope,false,false)
+		
+		isConsistent_runCommand.initialize(void,true,false,isConsistent_scope,isConsistent_Name,void)
+		//Include Run Command in the Alloy Model
+		self.trace.alloyModel.addParagraph(isConsistent_runCommand)
+	end	
+	
+	//A Simple Generate and Test Experiment
+	operation generateAndTestExperiementSimple():Void is do
+		/* 
+		//We add the empty predicate declaration 
+		
+		pred GenerateAndTestSimple {}
+		//And the run command 
+		run GenerateAndTestSimple for scope
+		*/
+		var generateAndTest_Name:IDName init IDName.new
+		var generateAndTest_Pred : PredDecl init PredDecl.new
+		
+		generateAndTest_Name.initialize("GenerateAndTestSimple")
+
+		
+		generateAndTest_Pred.initialize(void,generateAndTest_Name,Block.new,void)
+		
+		//Include Predicate declartion in the Alloy Model
+		self.trace.alloyModel.addParagraph(generateAndTest_Pred)
+		//Create Run Statement
+		var generateAndTest_runCommand : CmdDecl init CmdDecl.new
+		var generateAndTest_scope : ForNumber_Scope init ForNumber_Scope.new
+	
+		
+		generateAndTest_scope.initialize(trace.synthesisScope,false,false)
+		
+		generateAndTest_runCommand.initialize(void,true,false,generateAndTest_scope,generateAndTest_Name,void)
+		//Include Run Command in the Alloy Model
+		self.trace.alloyModel.addParagraph(generateAndTest_runCommand)
+	end	
+	
+	//A Custom Generate and Test for specified integer size and sequence size
+	operation generateAndTestExperiementCustom():Void is do
+		/* 
+		//We add the empty predicate declaration 
+		
+		pred GenerateAndTestSimple {}
+		//And the run command 
+		run GenerateAndTestSimple for <trace.synthesisScope> Class1, <trace.synthesisScope> Class2, ...., <trace.integerScope> int, <trace.stringScope> String, <trace.seqScope> seq
+		*/
+		var generateAndTest_Name:IDName init IDName.new
+		var generateAndTest_Pred : PredDecl init PredDecl.new
+		
+		generateAndTest_Name.initialize("GenerateAndTestCustom")
+		
+		
+		generateAndTest_Pred.initialize(void,generateAndTest_Name,Block.new,void)
+		
+		//Include Predicate declartion in the Alloy Model
+		self.trace.alloyModel.addParagraph(generateAndTest_Pred)
+		
+		//Create a set of type scopes 
+		var runTypeScopes : TypeScope[0..*] init OrderedSet<TypeScope>.new
+		runTypeScopes.clear
+		//Create Type Scopes for Classes
+		//Get the Scopable Classes to 
+		self.trace.getScopableClasses
+		self.trace.scopableClasses.each
+		{ sc |
+		//For each scopable class create a typescope
+		var classScope : TypeScope init TypeScope.new
+		classScope.initialize(self.trace.synthesisScope,sc.alloyName,true,false,false,false)
+		runTypeScopes.add(classScope)
+		//stdio.writeln(classScope.getDefinition)
+		}
+		//Create TypeScope for Integer
+		var intScope : TypeScope init TypeScope.new
+		intScope.initialize(self.trace.integerScope,void,false,true,false,false)
+		runTypeScopes.add(intScope)
+		
+		//Create TypeScope for Sequence
+		
+		var seqScope:TypeScope init TypeScope.new
+		seqScope.initialize(self.trace.seqScope,void,false,false,true,false)
+		runTypeScopes.add(seqScope)
+		
+		//Create TypeScope for String
+		
+		var stringScope:TypeScope init TypeScope.new
+		var stringName:IDName init IDName.new
+		stringName.initialize("String")
+		stringScope.initialize(self.trace.stringScope,stringName,true,false,false,false)
+		
+		if trace.useIntForString==false and trace.containsString==true  then
+			runTypeScopes.add(stringScope)
+		end
+		//Create ForTypeScope_Scope
+		
+		var forTypeScope:ForTypeScope_Scope init ForTypeScope_Scope.new
+		forTypeScope.initialize(0,false,false,runTypeScopes)
+		//Create Run Statement
+		var generateAndTestCustom_runCommand : CmdDecl init CmdDecl.new
+		
+		
+		
+		generateAndTestCustom_runCommand.initialize(void,true,false,forTypeScope,generateAndTest_Name,void)
+		//Include Run Command in the Alloy Model
+		//stdio.writeln(generateAndTestCustom_runCommand.getDefinition)
+		self.trace.alloyModel.addParagraph(generateAndTestCustom_runCommand)
+		
+		
+	end	
+	
+	
+	
+	//Model Fragment AllRanges Experiment
+	
+	operation mfAllRangesExperiement():Void is do
+		/* 
+		//We add the empty predicate declaration 
+		
+		pred GenerateAndTestSimple {}
+		//And the run command 
+		run mfAllRanges1 for <trace.synthesisScope> Class1, <trace.synthesisScope> Class2, ...., <trace.integerScope> int, <trace.stringScope> String, <trace.seqScope> seq
+		*/
+		
+		//Get scopable classes
+		self.trace.getScopableClasses
+		
+		self.trace.mfAllRangesNames.each
+		{ 
+			criteria |
+			
+		//Create a set of type scopes 
+		var runTypeScopes : TypeScope[0..*] init OrderedSet<TypeScope>.new
+		runTypeScopes.clear
+		//Create Type Scopes for Classes
+		//Get the Scopable Classes to 
+		
+		self.trace.scopableClasses.each
+		{ sc |
+		//For each scopable class create a typescope
+		var classScope : TypeScope init TypeScope.new
+		classScope.initialize(self.trace.synthesisScope,sc.alloyName,true,false,false,false)
+		runTypeScopes.add(classScope)
+		//stdio.writeln(classScope.getDefinition)
+		}
+		//Create TypeScope for Integer
+		var intScope : TypeScope init TypeScope.new
+		intScope.initialize(self.trace.integerScope,void,false,true,false,false)
+		runTypeScopes.add(intScope)
+		
+		//Create TypeScope for Sequence
+		
+		var seqScope:TypeScope init TypeScope.new
+		seqScope.initialize(self.trace.seqScope,void,false,false,true,false)
+		runTypeScopes.add(seqScope)
+		
+		//Create TypeScope for String
+		
+		var stringScope:TypeScope init TypeScope.new
+		var stringName:IDName init IDName.new
+		stringName.initialize("String")
+		stringScope.initialize(self.trace.stringScope,stringName,true,false,false,false)
+		if trace.useIntForString==false and trace.containsString==true  then
+			runTypeScopes.add(stringScope)
+		end
+		
+		//Create ForTypeScope_Scope
+		
+		var forTypeScope:ForTypeScope_Scope init ForTypeScope_Scope.new
+		forTypeScope.initialize(0,false,false,runTypeScopes)
+		//Create Run Statement
+		var strategy_runCommand : CmdDecl init CmdDecl.new
+		
+		
+		
+		strategy_runCommand.initialize(void,true,false,forTypeScope,criteria,void)
+		//Include Run Command in the Alloy Model
+		//stdio.writeln(strategy_runCommand.getDefinition)
+		self.trace.alloyModel.addParagraph(strategy_runCommand)
+		
+		}
+	end	
+	
+	
+	//Model Fragment AllPartition Experiment
+	
+	operation mfAllPartitionsExperiement():Void is do
+		/* 
+		//We add the empty predicate declaration 
+		
+		pred GenerateAndTestSimple {}
+		//And the run command 
+		run mfAllRanges1 for <trace.synthesisScope> Class1, <trace.synthesisScope> Class2, ...., <trace.integerScope> int, <trace.stringScope> String, <trace.seqScope> seq
+		*/
+		
+		//Get scopable classes
+		self.trace.getScopableClasses
+		
+		self.trace.mfAllPartitionNames.each
+		{ 
+			criteria |
+			
+			
+		//Create a set of type scopes 
+		var runTypeScopes : TypeScope[0..*] init OrderedSet<TypeScope>.new
+		runTypeScopes.clear
+		//Create Type Scopes for Classes
+		//Get the Scopable Classes to 
+		
+		self.trace.scopableClasses.each
+		{ sc |
+		//For each scopable class create a typescope
+		var classScope : TypeScope init TypeScope.new
+		classScope.initialize(self.trace.synthesisScope,sc.alloyName,true,false,false,false)
+		runTypeScopes.add(classScope)
+		//stdio.writeln(classScope.getDefinition)
+		}
+		//Create TypeScope for Integer
+		var intScope : TypeScope init TypeScope.new
+		intScope.initialize(self.trace.integerScope,void,false,true,false,false)
+		runTypeScopes.add(intScope)
+		
+		//Create TypeScope for Sequence
+		
+		var seqScope:TypeScope init TypeScope.new
+		seqScope.initialize(self.trace.seqScope,void,false,false,true,false)
+		runTypeScopes.add(seqScope)
+		
+		//Create TypeScope for String
+		
+		var stringScope:TypeScope init TypeScope.new
+		var stringName:IDName init IDName.new
+		stringName.initialize("String")
+		stringScope.initialize(self.trace.stringScope,stringName,true,false,false,false)
+		if trace.useIntForString==false and trace.containsString==true then
+			runTypeScopes.add(stringScope)
+		end
+		
+		//Create ForTypeScope_Scope
+		
+		var forTypeScope:ForTypeScope_Scope init ForTypeScope_Scope.new
+		forTypeScope.initialize(0,false,false,runTypeScopes)
+		//Create Run Statement
+		var strategy_runCommand : CmdDecl init CmdDecl.new
+		
+		
+		
+		strategy_runCommand.initialize(void,true,false,forTypeScope,criteria,void)
+		//Include Run Command in the Alloy Model
+		//stdio.writeln(strategy_runCommand.getDefinition)
+		self.trace.alloyModel.addParagraph(strategy_runCommand)
+		
+		}
+	end	
+	
+}

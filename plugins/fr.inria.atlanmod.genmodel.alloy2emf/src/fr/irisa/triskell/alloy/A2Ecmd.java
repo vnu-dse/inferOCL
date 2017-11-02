@@ -1,0 +1,38 @@
+package fr.irisa.triskell.alloy;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EPackage;
+
+import edu.mit.csail.sdg.alloy4.Err;
+import edu.mit.csail.sdg.alloy4.XMLNode;
+import edu.mit.csail.sdg.alloy4viz.AlloyInstance;
+import edu.mit.csail.sdg.alloy4viz.StaticInstanceReader;
+
+public class A2Ecmd {
+	/**
+	 * 
+	 * @param args 0= ecore meta-model 1= xml file 2= xmi instance destination 3= root class
+	 */
+	public static void main(String args[]){
+		File xmlFile=new File(args[1]);
+		XMLNode xml;
+			AlloyInstance result;
+			try {
+				
+				EPackage obj=(EPackage) EMFHelper.loadModel(args[0]);
+				EMFConverter converter=new EMFConverter(obj,args[3]);
+				result = StaticInstanceReader.parseInstance(xmlFile);
+				AlloyToEMF alloy2emf=new AlloyToEMF(converter,result);
+				alloy2emf.convert();
+				EMFHelper.save(converter.getMainOnstance(), args[2]);
+				System.out.println("Done");
+			} catch (Err e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	}
+}

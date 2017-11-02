@@ -1,0 +1,37 @@
+
+
+package kermeta::language::structure;
+
+require "metamodels/alloy.kmt"
+//require "ToAlloy.kmt"
+require "Kermeta2AlloyTrace.kmt"
+require kermeta
+require "TransformationBase.kmt"
+
+using kermeta::standard
+using kermeta::utils
+using Cartier::Kermeta2AlloyTrace
+using Cartier::AlloyMM
+using kermeta::language::structure
+using kermeta::language::behavior
+
+aspect class Object
+{
+
+	operation toAlloyPassExplicitFacts(trace: Kermeta2AlloyTrace) : Void is do
+	end
+	
+}
+
+
+aspect class Constraint 
+{
+	method toAlloyPassExplicitFacts(trace : Kermeta2AlloyTrace) : Void is do
+		self.alloyName := IDName.new
+		self.alloyName.initialize(self.name)
+		stdio.writeln("\n"+self.body.asType(CallExpression).name)
+		
+	end
+} 
+
+

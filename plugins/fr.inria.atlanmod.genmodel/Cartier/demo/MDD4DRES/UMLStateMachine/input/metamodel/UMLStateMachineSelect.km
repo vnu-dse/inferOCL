@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kermeta_language_structure:ModelingUnit xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:kermeta_language_structure="http://www.kermeta.org/kermeta/1_2_0//kermeta/language/structure" referencedModelingUnits="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#/ Ecore.km#/">
+  <packages name="umlstatemachineselect" uri="http://umlstatemachineselect/1.0">
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="StateMachine"
+        superType="#//@packages.0/StateMachine/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Behavior"/>
+      <ownedAttribute name="region" type="#//@packages.0/StateMachine/region/@containedType.0"
+          isOrdered="true" lower="1" upper="-1" opposite="#//@packages.0/Region/stateMachine"
+          isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Region"/>
+      </ownedAttribute>
+      <ownedAttribute name="submachineState" type="#//@packages.0/StateMachine/submachineState/@containedType.0"
+          upper="-1" opposite="#//@packages.0/State/submachine">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/State"/>
+      </ownedAttribute>
+      <ownedAttribute name="connectionPoint" type="#//@packages.0/StateMachine/connectionPoint/@containedType.0"
+          isOrdered="true" upper="-1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/PseudoState"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Region"
+        superType="#//@packages.0/Region/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+      <ownedAttribute name="stateMachine" type="#//@packages.0/Region/stateMachine/@containedType.0"
+          isOrdered="true" upper="1" opposite="#//@packages.0/StateMachine/region">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/StateMachine"/>
+      </ownedAttribute>
+      <ownedAttribute name="subvertex" type="#//@packages.0/Region/subvertex/@containedType.0"
+          isOrdered="true" upper="-1" opposite="#//@packages.0/Vertex/container" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Vertex"/>
+      </ownedAttribute>
+      <ownedAttribute name="transition" type="#//@packages.0/Region/transition/@containedType.0"
+          isOrdered="true" upper="-1" opposite="#//@packages.0/Transition/container"
+          isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Transition"/>
+      </ownedAttribute>
+      <ownedAttribute name="state" type="#//@packages.0/Region/state/@containedType.0"
+          isOrdered="true" upper="1" opposite="#//@packages.0/State/region">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/State"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Vertex"
+        superType="#//@packages.0/Vertex/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+      <ownedAttribute name="container" type="#//@packages.0/Vertex/container/@containedType.0"
+          isOrdered="true" upper="1" opposite="#//@packages.0/Region/subvertex">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Region"/>
+      </ownedAttribute>
+      <ownedAttribute name="outgoing" type="#//@packages.0/Vertex/outgoing/@containedType.0"
+          isOrdered="true" upper="-1" opposite="#//@packages.0/Transition/source">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Transition"/>
+      </ownedAttribute>
+      <ownedAttribute name="incoming" type="#//@packages.0/Vertex/incoming/@containedType.0"
+          isOrdered="true" upper="-1" opposite="#//@packages.0/Transition/target">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Transition"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Transition"
+        superType="#//@packages.0/Transition/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+      <ownedAttribute name="container" type="#//@packages.0/Transition/container/@containedType.0"
+          isOrdered="true" lower="1" upper="1" opposite="#//@packages.0/Region/transition">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Region"/>
+      </ownedAttribute>
+      <ownedAttribute name="kind" type="#//@packages.0/TransitionKind" isOrdered="true"
+          upper="1" isComposite="true"/>
+      <ownedAttribute name="target" type="#//@packages.0/Transition/target/@containedType.0"
+          isOrdered="true" lower="1" upper="1" opposite="#//@packages.0/Vertex/incoming">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Vertex"/>
+      </ownedAttribute>
+      <ownedAttribute name="source" type="#//@packages.0/Transition/source/@containedType.0"
+          isOrdered="true" lower="1" upper="1" opposite="#//@packages.0/Vertex/outgoing">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Vertex"/>
+      </ownedAttribute>
+      <ownedAttribute name="effect" type="#//@packages.0/Transition/effect/@containedType.0"
+          isOrdered="true" upper="1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Behavior"/>
+      </ownedAttribute>
+      <ownedAttribute name="guard" type="#//@packages.0/Transition/guard/@containedType.0"
+          isOrdered="true" upper="1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Constraint"/>
+      </ownedAttribute>
+      <ownedAttribute name="trigger" type="#//@packages.0/Transition/trigger/@containedType.0"
+          isOrdered="true" upper="-1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Trigger"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:Enumeration" name="TransitionKind">
+      <ownedLiteral name="internal"/>
+      <ownedLiteral name="local"/>
+      <ownedLiteral name="external"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:Enumeration" name="PseudostateKind">
+      <ownedLiteral name="initial"/>
+      <ownedLiteral name="deepHistory"/>
+      <ownedLiteral name="shallowHistory"/>
+      <ownedLiteral name="join"/>
+      <ownedLiteral name="fork"/>
+      <ownedLiteral name="junction"/>
+      <ownedLiteral name="choice"/>
+      <ownedLiteral name="entryPoint"/>
+      <ownedLiteral name="exitPoint"/>
+      <ownedLiteral name="terminate"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="State"
+        superType="#//@packages.0/State/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Vertex"/>
+      <ownedAttribute name="isComposite" type="Ecore.km#//@packages.0/EBoolean" isOrdered="true"
+          upper="1" isComposite="true"/>
+      <ownedAttribute name="isOrthogonal" type="Ecore.km#//@packages.0/EBoolean" isOrdered="true"
+          upper="1" isComposite="true"/>
+      <ownedAttribute name="isSimple" type="Ecore.km#//@packages.0/EBoolean" isOrdered="true"
+          upper="1" isComposite="true"/>
+      <ownedAttribute name="isSubmachineState" type="Ecore.km#//@packages.0/EBoolean"
+          isOrdered="true" upper="1" isComposite="true"/>
+      <ownedAttribute name="region" type="#//@packages.0/State/region/@containedType.0"
+          upper="-1" opposite="#//@packages.0/Region/state" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Region"/>
+      </ownedAttribute>
+      <ownedAttribute name="connection" type="#//@packages.0/State/connection/@containedType.0"
+          upper="-1" opposite="#//@packages.0/ConnectionPointReference/state" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ConnectionPointReference"/>
+      </ownedAttribute>
+      <ownedAttribute name="submachine" type="#//@packages.0/State/submachine/@containedType.0"
+          isOrdered="true" upper="1" opposite="#//@packages.0/StateMachine/submachineState">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/StateMachine"/>
+      </ownedAttribute>
+      <ownedAttribute name="entry" type="#//@packages.0/State/entry/@containedType.0"
+          isOrdered="true" upper="1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Behavior"/>
+      </ownedAttribute>
+      <ownedAttribute name="exit" type="#//@packages.0/State/exit/@containedType.0"
+          isOrdered="true" upper="1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Behavior"/>
+      </ownedAttribute>
+      <ownedAttribute name="doActivity" type="#//@packages.0/State/doActivity/@containedType.0"
+          isOrdered="true" upper="1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Behavior"/>
+      </ownedAttribute>
+      <ownedAttribute name="stateInvariant" type="#//@packages.0/State/stateInvariant/@containedType.0"
+          isOrdered="true" upper="1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Constraint"/>
+      </ownedAttribute>
+      <ownedAttribute name="deferrableTrigger" type="#//@packages.0/State/deferrableTrigger/@containedType.0"
+          isOrdered="true" upper="-1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Trigger"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="FinalState"
+        superType="#//@packages.0/FinalState/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/State"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="PseudoState"
+        superType="#//@packages.0/PseudoState/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Vertex"/>
+      <ownedAttribute name="kind" type="#//@packages.0/PseudostateKind" isOrdered="true"
+          upper="1" isComposite="true"/>
+      <ownedAttribute name="stateMachine" type="#//@packages.0/PseudoState/stateMachine/@containedType.0"
+          isOrdered="true" upper="1" opposite="#//@packages.0/StateMachine/connectionPoint">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/StateMachine"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="ConnectionPointReference"
+        superType="#//@packages.0/ConnectionPointReference/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Vertex"/>
+      <ownedAttribute name="state" type="#//@packages.0/ConnectionPointReference/state/@containedType.0"
+          isOrdered="true" upper="1" opposite="#//@packages.0/State/connection">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/State"/>
+      </ownedAttribute>
+      <ownedAttribute name="entry" type="#//@packages.0/ConnectionPointReference/entry/@containedType.0"
+          upper="-1">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/PseudoState"/>
+      </ownedAttribute>
+      <ownedAttribute name="exit" type="#//@packages.0/ConnectionPointReference/exit/@containedType.0"
+          upper="-1">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/PseudoState"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Behavior"
+        superType="#//@packages.0/Behavior/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Constraint"
+        superType="#//@packages.0/Constraint/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Trigger"
+        superType="#//@packages.0/Trigger/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+    </ownedTypeDefinition>
+  </packages>
+  <requires uri="kermeta"/>
+  <requires uri="http://www.eclipse.org/emf/2002/Ecore"/>
+  <usings qualifiedName="umlstatemachineselect"/>
+</kermeta_language_structure:ModelingUnit>

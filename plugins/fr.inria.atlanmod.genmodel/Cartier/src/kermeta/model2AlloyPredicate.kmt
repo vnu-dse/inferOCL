@@ -1,0 +1,98 @@
+/* $Id: model2AlloyPredicate.kmt,v 1.1 2009-02-11 07:55:17 ssen Exp $ 
+ * Creation : December 29, 2008
+ * Licence  : EPL 
+ * Copyright:
+ * Authors  : 
+ *            sagarsen
+ */
+@mainClass "root_package::Model2Predicate"
+@mainOperation "main"
+
+
+package root_package;
+
+
+require kermeta
+require "metamodels/alloy.kmt"
+//Require the meta-model for which we want to load a model
+require "platform:/resource/Cartier/testModels/simpleUML_MM.ecore"
+
+
+using Cartier::AlloyMM
+using kermeta::standard
+using kermeta::utils
+using kermeta::persistence
+using kermeta::io
+using kermeta::language::structure
+using simpleUML_MM
+
+class Model2Predicate
+{
+	//Root Model of the input meta-model
+	reference inputModel : ClassModel
+	
+	reference alloyModel : AlloyModel
+	reference modelObjects : bag Object[0..*]
+	
+	operation initialize():Void is do
+		self.alloyModel:=AlloyModel.new
+	end
+	operation load(uri:String,metamodel:String):Void is do
+		var repository : EMFRepository init EMFRepository.new
+		var resource : Resource init repository.createResource(uri,metamodel)
+		stdio.write("---Loading model..")
+		resource.load
+		//Create a new root object
+		self.inputModel :=ClassModel.new
+		self.inputModel ?= resource.one
+		stdio.writeln("OK")
+	end
+	
+	/*
+	Eg:
+	pred partialModel3_Fact
+	{
+		some s1:State,s2:State,s3:State,s4:State,
+		t1:Transition, t2:Transition|
+		s1!=s2 and s2!=s3 and s3!=s4 and s1!=s3 and
+		s1!=s4 and s2!=s4 and t1!=t2 and
+		t1 in s2.incomingTransition and t2 in
+		s3.incomingTransition and t1 in s1.outgoingTransition
+		and t2 in s1.outgoingTransition and
+		s2.isInitial = True and s4.isFinal = True
+	}
+	
+		Predicate Structure
+		pred <self.inputModel.name>_PartialAlloyModel
+		{
+			some o1i:Class_i, o2i:Class_i,...,o1j:Class_j,o2j:Class_j|
+			o1i!=o2i and...and
+			o1j!=o2j and ...and
+			o1i.<attribute
+			
+		}
+	*/
+	operation collectObjects():Void is do
+		//self.inputModel.
+	end
+	operation displayObjects():Void is do
+		
+	end
+	
+	operation main():Void is do
+		self.load("platform:/resource/Cartier/testModels/simpleUMLCDmodels/testManual.simpleUML_MM","platform:/resource/Cartier/testModels/simpleUML_MM.ecore")
+		self.collectObjects
+	end
+	operation transform2PartialAlloyModel():Void is do
+	
+	end
+	
+	operation transform2ExactAlloyModel():Void is do
+	
+	end
+	operation save(uri:String):Void is do
+		var ioHelper : FileIO init FileIO.new
+		ioHelper.writeTextFile(uri,self.alloyModel.getDefinition)
+	end 
+	
+}

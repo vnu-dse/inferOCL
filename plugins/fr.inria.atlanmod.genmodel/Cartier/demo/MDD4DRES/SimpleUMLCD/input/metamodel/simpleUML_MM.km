@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kermeta_language_structure:ModelingUnit xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:kermeta_language_structure="http://www.kermeta.org/kermeta/1_2_0//kermeta/language/structure" referencedModelingUnits="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#/ Ecore.km#/">
+  <packages name="simpleUML_MM" uri="http://simpleUML_MM.ecore">
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Classifier"
+        isAbstract="true" superType="#//@packages.0/Classifier/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+      <ownedAttribute name="name" type="Ecore.km#//@packages.0/EString" isOrdered="true"
+          upper="1" isComposite="true"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Association"
+        superType="#//@packages.0/Association/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+      <ownedAttribute name="name" type="Ecore.km#//@packages.0/EString" isOrdered="true"
+          upper="1" isComposite="true"/>
+      <ownedAttribute name="src" type="#//@packages.0/Association/src/@containedType.0"
+          isOrdered="true" lower="1" upper="1">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Class"/>
+      </ownedAttribute>
+      <ownedAttribute name="dest" type="#//@packages.0/Association/dest/@containedType.0"
+          isOrdered="true" lower="1" upper="1">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Class"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Attribute"
+        superType="#//@packages.0/Attribute/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+      <ownedAttribute name="type" type="#//@packages.0/Attribute/type/@containedType.0"
+          isOrdered="true" lower="1" upper="1">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Classifier"/>
+      </ownedAttribute>
+      <ownedAttribute name="name" type="Ecore.km#//@packages.0/EString" isOrdered="true"
+          upper="1" isComposite="true"/>
+      <ownedAttribute name="is_primary" type="Ecore.km#//@packages.0/EBoolean" isOrdered="true"
+          upper="1" isComposite="true"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Class"
+        superType="#//@packages.0/Class/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Classifier"/>
+      <ownedAttribute name="is_persistent" type="Ecore.km#//@packages.0/EBoolean"
+          isOrdered="true" upper="1" isComposite="true"/>
+      <ownedAttribute name="attrs" type="#//@packages.0/Class/attrs/@containedType.0"
+          isOrdered="true" lower="1" upper="-1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Attribute"/>
+      </ownedAttribute>
+      <ownedAttribute name="parent" type="#//@packages.0/Class/parent/@containedType.0"
+          isOrdered="true" upper="1">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Class"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="PrimitiveDataType"
+        superType="#//@packages.0/PrimitiveDataType/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Classifier"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="ClassModel"
+        superType="#//@packages.0/ClassModel/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+      <ownedAttribute name="classifier" type="#//@packages.0/ClassModel/classifier/@containedType.0"
+          isOrdered="true" upper="-1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Classifier"/>
+      </ownedAttribute>
+      <ownedAttribute name="association" type="#//@packages.0/ClassModel/association/@containedType.0"
+          isOrdered="true" upper="-1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Association"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+  </packages>
+  <requires uri="kermeta"/>
+  <requires uri="Ecore.kmt"/>
+  <usings qualifiedName="simpleUML_MM"/>
+</kermeta_language_structure:ModelingUnit>

@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.1/notation" xmi:id="_m2vTwNwSEd2JkJwGbPLgrQ" type="EcoreTools" name="AlloyInstance.ecorediag" measurementUnit="Pixel">
+  <children xmi:type="notation:Node" xmi:id="_m3IVUNwSEd2JkJwGbPLgrQ" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_m3JjcNwSEd2JkJwGbPLgrQ" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_m3KKgNwSEd2JkJwGbPLgrQ" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3KKgdwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3KKgtwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3KKg9wSEd2JkJwGbPLgrQ"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3KxkNwSEd2JkJwGbPLgrQ" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3KxkdwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3KxktwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3Kxk9wSEd2JkJwGbPLgrQ"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_m3IVUdwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="0"/>
+    <element xmi:type="ecore:EClass" href="AlloyInstance.ecore#//AlloyType"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_m3IVUtwSEd2JkJwGbPLgrQ" x="162" y="492"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_m3KxlNwSEd2JkJwGbPLgrQ" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_m3LYoNwSEd2JkJwGbPLgrQ" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_m3LYodwSEd2JkJwGbPLgrQ" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_m3L_sNwSEd2JkJwGbPLgrQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="AlloyInstance.ecore#//AtomType/name"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3L_sdwSEd2JkJwGbPLgrQ"/>
+      </children>
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3LYotwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3LYo9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3LYpNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3LYpdwSEd2JkJwGbPLgrQ" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3LYptwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3LYp9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3LYqNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_m3KxldwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="0"/>
+    <element xmi:type="ecore:EClass" href="AlloyInstance.ecore#//AtomType"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_m3KxltwSEd2JkJwGbPLgrQ" x="162"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_m3L_stwSEd2JkJwGbPLgrQ" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_m3MmwNwSEd2JkJwGbPLgrQ" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_m3MmwdwSEd2JkJwGbPLgrQ" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_m3NN0NwSEd2JkJwGbPLgrQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="AlloyInstance.ecore#//DocumentRoot/mixed"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3NN0dwSEd2JkJwGbPLgrQ"/>
+      </children>
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3MmwtwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3Mmw9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3MmxNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3MmxdwSEd2JkJwGbPLgrQ" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3MmxtwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3Mmx9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3MmyNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_m3L_s9wSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="0"/>
+    <element xmi:type="ecore:EClass" href="AlloyInstance.ecore#//DocumentRoot"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_m3L_tNwSEd2JkJwGbPLgrQ" x="135" y="592"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_m3NN0twSEd2JkJwGbPLgrQ" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_m3N04NwSEd2JkJwGbPLgrQ" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_m3N04dwSEd2JkJwGbPLgrQ" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_m3Ob9NwSEd2JkJwGbPLgrQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="AlloyInstance.ecore#//FieldType/name"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3Ob9dwSEd2JkJwGbPLgrQ"/>
+      </children>
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3N04twSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3N049wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3N05NwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3Ob8NwSEd2JkJwGbPLgrQ" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3Ob8dwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3Ob8twSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3Ob89wSEd2JkJwGbPLgrQ"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_m3NN09wSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="0"/>
+    <element xmi:type="ecore:EClass" href="AlloyInstance.ecore#//FieldType"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_m3NN1NwSEd2JkJwGbPLgrQ" x="325" y="230"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_m3Ob9twSEd2JkJwGbPLgrQ" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_m3PDANwSEd2JkJwGbPLgrQ" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_m3PDAdwSEd2JkJwGbPLgrQ" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_m3PqENwSEd2JkJwGbPLgrQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="AlloyInstance.ecore#//InstanceType/group"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3PqEdwSEd2JkJwGbPLgrQ"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_m3PqEtwSEd2JkJwGbPLgrQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="AlloyInstance.ecore#//InstanceType/bitwidth"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3PqE9wSEd2JkJwGbPLgrQ"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_m3PqFNwSEd2JkJwGbPLgrQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="AlloyInstance.ecore#//InstanceType/command"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3PqFdwSEd2JkJwGbPLgrQ"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_m3PqFtwSEd2JkJwGbPLgrQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="AlloyInstance.ecore#//InstanceType/filename"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3QRINwSEd2JkJwGbPLgrQ"/>
+      </children>
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3PDAtwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3PDA9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3PDBNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3PDBdwSEd2JkJwGbPLgrQ" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3PDBtwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3PDB9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3PDCNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_m3Ob99wSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="0"/>
+    <element xmi:type="ecore:EClass" href="AlloyInstance.ecore#//InstanceType"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_m3Ob-NwSEd2JkJwGbPLgrQ" x="136" y="337"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_m3QRIdwSEd2JkJwGbPLgrQ" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_m3QRJNwSEd2JkJwGbPLgrQ" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_m3QRJdwSEd2JkJwGbPLgrQ" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_m3RfQNwSEd2JkJwGbPLgrQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="AlloyInstance.ecore#//SetType/name"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3RfQdwSEd2JkJwGbPLgrQ"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_m3RfQtwSEd2JkJwGbPLgrQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="AlloyInstance.ecore#//SetType/type"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3RfQ9wSEd2JkJwGbPLgrQ"/>
+      </children>
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3QRJtwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3QRJ9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3QRKNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3Q4MNwSEd2JkJwGbPLgrQ" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3Q4MdwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3Q4MtwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3Q4M9wSEd2JkJwGbPLgrQ"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_m3QRItwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="0"/>
+    <element xmi:type="ecore:EClass" href="AlloyInstance.ecore#//SetType"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_m3QRI9wSEd2JkJwGbPLgrQ" y="107"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_m3RfRNwSEd2JkJwGbPLgrQ" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_m3SGUNwSEd2JkJwGbPLgrQ" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_m3SGUdwSEd2JkJwGbPLgrQ" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_m3SGWdwSEd2JkJwGbPLgrQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="AlloyInstance.ecore#//SigType/extends"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3SGWtwSEd2JkJwGbPLgrQ"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_m3StYNwSEd2JkJwGbPLgrQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="AlloyInstance.ecore#//SigType/name"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3StYdwSEd2JkJwGbPLgrQ"/>
+      </children>
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3SGUtwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3SGU9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3SGVNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3SGVdwSEd2JkJwGbPLgrQ" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3SGVtwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3SGV9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3SGWNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_m3RfRdwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="0"/>
+    <element xmi:type="ecore:EClass" href="AlloyInstance.ecore#//SigType"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_m3RfRtwSEd2JkJwGbPLgrQ" x="160" y="107"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_m3StYtwSEd2JkJwGbPLgrQ" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_m3StZdwSEd2JkJwGbPLgrQ" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_m3TUcNwSEd2JkJwGbPLgrQ" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3TUcdwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3TUctwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3TUc9wSEd2JkJwGbPLgrQ"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3TUdNwSEd2JkJwGbPLgrQ" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3TUddwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3TUdtwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3TUd9wSEd2JkJwGbPLgrQ"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_m3StY9wSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="0"/>
+    <element xmi:type="ecore:EClass" href="AlloyInstance.ecore#//TupleType"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_m3StZNwSEd2JkJwGbPLgrQ" x="325" y="107"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_m3TUeNwSEd2JkJwGbPLgrQ" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_m3T7gNwSEd2JkJwGbPLgrQ" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_m3T7gdwSEd2JkJwGbPLgrQ" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3T7gtwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3T7g9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3T7hNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3T7hdwSEd2JkJwGbPLgrQ" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3T7htwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3T7h9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3T7iNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_m3TUedwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="0"/>
+    <element xmi:type="ecore:EClass" href="AlloyInstance.ecore#//TypesType"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_m3TUetwSEd2JkJwGbPLgrQ" x="485" y="107"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_m3T7idwSEd2JkJwGbPLgrQ" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_m3UikNwSEd2JkJwGbPLgrQ" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_m3UikdwSEd2JkJwGbPLgrQ" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_m3VJoNwSEd2JkJwGbPLgrQ" type="2001">
+        <element xmi:type="ecore:EAttribute" href="AlloyInstance.ecore#//TypeType/name"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3VJodwSEd2JkJwGbPLgrQ"/>
+      </children>
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3UiktwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3Uik9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3UilNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3UildwSEd2JkJwGbPLgrQ" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3UiltwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3Uil9wSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3UimNwSEd2JkJwGbPLgrQ"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_m3T7itwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="0"/>
+    <element xmi:type="ecore:EClass" href="AlloyInstance.ecore#//TypeType"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_m3T7i9wSEd2JkJwGbPLgrQ" x="485"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_m3VwsNwSEd2JkJwGbPLgrQ" type="1003">
+    <children xmi:type="notation:Node" xmi:id="_m3Vws9wSEd2JkJwGbPLgrQ" type="4007"/>
+    <children xmi:type="notation:Node" xmi:id="_m3WXwNwSEd2JkJwGbPLgrQ" type="5007">
+      <children xmi:type="notation:Node" xmi:id="_m3W-0NwSEd2JkJwGbPLgrQ" type="2007">
+        <element xmi:type="ecore:EStringToStringMapEntry" href="AlloyInstance.ecore#//%http:%2F%2F%2Forg%2Feclipse%2Femf%2Fecore%2Futil%2FExtendedMetaData%/@details.0"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_m3W-0dwSEd2JkJwGbPLgrQ"/>
+      </children>
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_m3WXwdwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_m3WXwtwSEd2JkJwGbPLgrQ"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_m3WXw9wSEd2JkJwGbPLgrQ"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_m3VwsdwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10" fillColor="14668776" lineColor="0"/>
+    <element xmi:type="ecore:EAnnotation" href="AlloyInstance.ecore#//%http:%2F%2F%2Forg%2Feclipse%2Femf%2Fecore%2Futil%2FExtendedMetaData%"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_m3VwstwSEd2JkJwGbPLgrQ" x="645"/>
+  </children>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_m2vTwdwSEd2JkJwGbPLgrQ"/>
+  <element xmi:type="ecore:EPackage" href="AlloyInstance.ecore#/"/>
+  <edges xmi:type="notation:Edge" xmi:id="_m3YM8NwSEd2JkJwGbPLgrQ" type="3002" source="_m3IVUNwSEd2JkJwGbPLgrQ" target="_m3Ob9twSEd2JkJwGbPLgrQ">
+    <children xmi:type="notation:Node" xmi:id="_m3Y0ANwSEd2JkJwGbPLgrQ" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3Y0AdwSEd2JkJwGbPLgrQ" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3Y0AtwSEd2JkJwGbPLgrQ" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3Y0A9wSEd2JkJwGbPLgrQ" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_m3YM8dwSEd2JkJwGbPLgrQ" lineColor="0"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_m3YM8twSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="AlloyInstance.ecore#//AlloyType/instance"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_m3YM89wSEd2JkJwGbPLgrQ" points="[0, 0, 0, 60]$[0, -60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5YYENwSEd2JkJwGbPLgrQ" id="(0.5,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5YYEdwSEd2JkJwGbPLgrQ" id="(0.49673203,1.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_m3ZbENwSEd2JkJwGbPLgrQ" type="3002" source="_m3L_stwSEd2JkJwGbPLgrQ" target="_m3IVUNwSEd2JkJwGbPLgrQ">
+    <children xmi:type="notation:Node" xmi:id="_m3aCINwSEd2JkJwGbPLgrQ" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3aCIdwSEd2JkJwGbPLgrQ" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3aCItwSEd2JkJwGbPLgrQ" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3aCI9wSEd2JkJwGbPLgrQ" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_m3ZbEdwSEd2JkJwGbPLgrQ" lineColor="0"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_m3ZbEtwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="AlloyInstance.ecore#//DocumentRoot/alloy"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_m3ZbE9wSEd2JkJwGbPLgrQ" points="[0, 0, 0, 60]$[0, -60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5cpgNwSEd2JkJwGbPLgrQ" id="(0.4967742,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5dQkNwSEd2JkJwGbPLgrQ" id="(0.5,1.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_m3aCJNwSEd2JkJwGbPLgrQ" type="3002" source="_m3NN0twSEd2JkJwGbPLgrQ" target="_m3TUeNwSEd2JkJwGbPLgrQ">
+    <children xmi:type="notation:Node" xmi:id="_m3apMNwSEd2JkJwGbPLgrQ" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3apMdwSEd2JkJwGbPLgrQ" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3apMtwSEd2JkJwGbPLgrQ" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3apM9wSEd2JkJwGbPLgrQ" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_m3aCJdwSEd2JkJwGbPLgrQ" lineColor="0"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_m3aCJtwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="AlloyInstance.ecore#//FieldType/type"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_m3aCJ9wSEd2JkJwGbPLgrQ" points="[0, 0, -135, 83]$[135, -83, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5Y_INwSEd2JkJwGbPLgrQ" id="(0.75,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5Y_IdwSEd2JkJwGbPLgrQ" id="(0.5,1.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_m3apNNwSEd2JkJwGbPLgrQ" type="3002" source="_m3NN0twSEd2JkJwGbPLgrQ" target="_m3StYtwSEd2JkJwGbPLgrQ">
+    <children xmi:type="notation:Node" xmi:id="_m3apONwSEd2JkJwGbPLgrQ" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3apOdwSEd2JkJwGbPLgrQ" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3apOtwSEd2JkJwGbPLgrQ" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3apO9wSEd2JkJwGbPLgrQ" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_m3apNdwSEd2JkJwGbPLgrQ" lineColor="0"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_m3apNtwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="AlloyInstance.ecore#//FieldType/tuple"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_m3apN9wSEd2JkJwGbPLgrQ" points="[0, 0, 0, 83]$[0, -83, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5aNQNwSEd2JkJwGbPLgrQ" id="(0.5,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5aNQdwSEd2JkJwGbPLgrQ" id="(0.5,1.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_m3apPNwSEd2JkJwGbPLgrQ" type="3002" source="_m3Ob9twSEd2JkJwGbPLgrQ" target="_m3RfRNwSEd2JkJwGbPLgrQ">
+    <children xmi:type="notation:Node" xmi:id="_m3bQQNwSEd2JkJwGbPLgrQ" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3bQQdwSEd2JkJwGbPLgrQ" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3bQQtwSEd2JkJwGbPLgrQ" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3bQQ9wSEd2JkJwGbPLgrQ" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_m3apPdwSEd2JkJwGbPLgrQ" lineColor="0"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_m3apPtwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="AlloyInstance.ecore#//InstanceType/sig"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_m3apP9wSEd2JkJwGbPLgrQ" points="[0, 0, 0, 167]$[0, -167, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5eesNwSEd2JkJwGbPLgrQ" id="(0.49673203,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5eesdwSEd2JkJwGbPLgrQ" id="(0.4952381,1.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_m3bQRNwSEd2JkJwGbPLgrQ" type="3002" source="_m3Ob9twSEd2JkJwGbPLgrQ" target="_m3QRIdwSEd2JkJwGbPLgrQ">
+    <children xmi:type="notation:Node" xmi:id="_m3bQSNwSEd2JkJwGbPLgrQ" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3bQSdwSEd2JkJwGbPLgrQ" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3bQStwSEd2JkJwGbPLgrQ" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3bQS9wSEd2JkJwGbPLgrQ" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_m3bQRdwSEd2JkJwGbPLgrQ" lineColor="0"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_m3bQRtwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="AlloyInstance.ecore#//InstanceType/set"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_m3bQR9wSEd2JkJwGbPLgrQ" points="[0, 0, 124, 167]$[-124, -167, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5d3oNwSEd2JkJwGbPLgrQ" id="(0.24836601,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5d3odwSEd2JkJwGbPLgrQ" id="(0.5,1.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_m3b3UNwSEd2JkJwGbPLgrQ" type="3002" source="_m3Ob9twSEd2JkJwGbPLgrQ" target="_m3NN0twSEd2JkJwGbPLgrQ">
+    <children xmi:type="notation:Node" xmi:id="_m3b3VNwSEd2JkJwGbPLgrQ" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3b3VdwSEd2JkJwGbPLgrQ" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3b3VtwSEd2JkJwGbPLgrQ" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3b3V9wSEd2JkJwGbPLgrQ" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_m3b3UdwSEd2JkJwGbPLgrQ" lineColor="0"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_m3b3UtwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="AlloyInstance.ecore#//InstanceType/field"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_m3b3U9wSEd2JkJwGbPLgrQ" points="[0, 0, -125, 60]$[125, -60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5dQkdwSEd2JkJwGbPLgrQ" id="(0.74509805,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5dQktwSEd2JkJwGbPLgrQ" id="(0.5,1.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_m3b3WNwSEd2JkJwGbPLgrQ" type="3002" source="_m3QRIdwSEd2JkJwGbPLgrQ" target="_m3KxlNwSEd2JkJwGbPLgrQ">
+    <children xmi:type="notation:Node" xmi:id="_m3ceYNwSEd2JkJwGbPLgrQ" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3ceYdwSEd2JkJwGbPLgrQ" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3ceYtwSEd2JkJwGbPLgrQ" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3ceY9wSEd2JkJwGbPLgrQ" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_m3b3WdwSEd2JkJwGbPLgrQ" lineColor="0"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_m3b3WtwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="AlloyInstance.ecore#//SetType/atom"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_m3b3W9wSEd2JkJwGbPLgrQ" points="[0, 0, -137, 60]$[137, -60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5a0UNwSEd2JkJwGbPLgrQ" id="(0.5,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5a0UdwSEd2JkJwGbPLgrQ" id="(0.25,1.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_m3ceZNwSEd2JkJwGbPLgrQ" type="3002" source="_m3RfRNwSEd2JkJwGbPLgrQ" target="_m3KxlNwSEd2JkJwGbPLgrQ">
+    <children xmi:type="notation:Node" xmi:id="_m3ceaNwSEd2JkJwGbPLgrQ" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3ceadwSEd2JkJwGbPLgrQ" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3ceatwSEd2JkJwGbPLgrQ" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3cea9wSEd2JkJwGbPLgrQ" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_m3ceZdwSEd2JkJwGbPLgrQ" lineColor="0"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_m3ceZtwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="AlloyInstance.ecore#//SigType/atom"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_m3ceZ9wSEd2JkJwGbPLgrQ" points="[0, 0, 0, 60]$[0, -60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5cCcNwSEd2JkJwGbPLgrQ" id="(0.4952381,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5cCcdwSEd2JkJwGbPLgrQ" id="(0.5,1.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_m3dFcNwSEd2JkJwGbPLgrQ" type="3002" source="_m3StYtwSEd2JkJwGbPLgrQ" target="_m3KxlNwSEd2JkJwGbPLgrQ">
+    <children xmi:type="notation:Node" xmi:id="_m3dFdNwSEd2JkJwGbPLgrQ" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3dFddwSEd2JkJwGbPLgrQ" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3dFdtwSEd2JkJwGbPLgrQ" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3dFd9wSEd2JkJwGbPLgrQ" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_m3dFcdwSEd2JkJwGbPLgrQ" lineColor="0"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_m3dFctwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="AlloyInstance.ecore#//TupleType/atom"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_m3dFc9wSEd2JkJwGbPLgrQ" points="[0, 0, 138, 60]$[-138, -60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5bbYNwSEd2JkJwGbPLgrQ" id="(0.5,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5bbYdwSEd2JkJwGbPLgrQ" id="(0.75,1.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_m3dFeNwSEd2JkJwGbPLgrQ" type="3002" source="_m3TUeNwSEd2JkJwGbPLgrQ" target="_m3T7idwSEd2JkJwGbPLgrQ">
+    <children xmi:type="notation:Node" xmi:id="_m3dFfNwSEd2JkJwGbPLgrQ" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3dFfdwSEd2JkJwGbPLgrQ" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_m3dsgNwSEd2JkJwGbPLgrQ" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_m3dsgdwSEd2JkJwGbPLgrQ" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_m3dFedwSEd2JkJwGbPLgrQ" lineColor="0"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_m3dFetwSEd2JkJwGbPLgrQ" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="AlloyInstance.ecore#//TypesType/sig"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_m3dFe9wSEd2JkJwGbPLgrQ" points="[0, 0, 0, 60]$[0, -60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5XxANwSEd2JkJwGbPLgrQ" id="(0.5,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_m5XxAdwSEd2JkJwGbPLgrQ" id="(0.5,1.0)"/>
+  </edges>
+</notation:Diagram>

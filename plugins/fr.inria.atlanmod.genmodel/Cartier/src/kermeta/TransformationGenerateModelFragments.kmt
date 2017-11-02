@@ -1,0 +1,133 @@
+
+
+package kermeta::language::structure;
+require "metamodels/alloy.kmt"
+//require "ToAlloy.kmt"
+require "Kermeta2AlloyTrace.kmt"
+require kermeta
+require "TransformationBase.kmt"
+
+using kermeta::standard
+using kermeta::utils
+using Cartier::Kermeta2AlloyTrace
+using Cartier::AlloyMM
+using kermeta::language::structure
+
+aspect class Object
+{
+
+	operation toAlloyModelFragmentsAllRanges(trace: Kermeta2AlloyTrace) : Void is do
+	end
+	
+	operation toAlloyModelFragmentsAllPartitions(trace: Kermeta2AlloyTrace) : Void is do
+	end
+	
+}
+
+aspect class Property
+{
+	
+	reference mfNames : Name[0..*]
+	
+	method toAlloyModelFragmentsAllRanges(trace: Kermeta2AlloyTrace) : Void is do
+	/*
+		Create model fragment predicates of the form
+		
+		pred mfAllRanges_<self.partitionPredicateNames[1]>
+		{
+			self.partitionPredicateNames[1]
+		}
+		pred mfAllRanges_<self.partitionPredicateNames[2]>
+		{
+			self.partitionPredicateNames[2]
+		}
+		...
+		
+	
+	*/
+	
+	
+	if self.partitionPredicateNames.size>0 then
+	self.partitionPredicateNames.each 
+	{
+	predName |
+	
+		var mfAllRangesPred:PredDecl init PredDecl.new
+		var mfAllRangesPredBlock : Block init Block.new
+		var mfPredName : IDName init IDName.new
+		var mfPredName_Exprs:Expression[0..*] init OrderedSet<Expression>.new
+		var mfPredName_Expr :Name_Expression init Name_Expression.new
+		
+		mfPredName.initialize("mfAllRanges_"+predName.getDefinition)
+		self.mfNames.add(mfPredName)
+		trace.mfAllRangesNames.add(mfPredName)
+		mfPredName_Expr.initialize(predName)
+		mfPredName_Exprs.add(mfPredName_Expr)
+		mfAllRangesPredBlock.initialize(mfPredName_Exprs)
+		
+		
+		
+		mfAllRangesPred.initialize(void,mfPredName,mfAllRangesPredBlock,void)
+		
+		//stdio.writeln(mfAllRangesPred.getDefinition)
+		//Add partition to Alloy model
+		trace.alloyModel.addParagraph(mfAllRangesPred)
+	
+	}
+	end
+	
+	end
+	
+	method toAlloyModelFragmentsAllPartitions(trace : Kermeta2AlloyTrace) : Void is do
+		/*
+		
+		Create model fragment predicates of the form
+		
+		pred mfAllRanges_<self.partitionPredicateNames[1]>
+		{
+			self.partitionPredicateNames[1] and self.partitionPredicateNames[2] and ...
+		}
+	
+	  */
+	  
+	var mfPredName : IDName init IDName.new
+	var mfAllPartitionsPred:PredDecl init PredDecl.new
+	var mfAllPartitionsPredBlock : Block init Block.new
+	var mfPredName_Exprs:Expression[0..*] init OrderedSet<Expression>.new
+	var mfPredName_Expr :Name_Expression init Name_Expression.new
+	var andExprName:IDName init IDName.new
+	var mfPredNameString:String init "mfAllPartitions"
+	var predNameString:String init ""
+	
+	if self.partitionPredicateNames.size>0 then
+	self.partitionPredicateNames.each 
+	{
+	predName |
+	
+		mfPredNameString := mfPredNameString +"_"+ predName.getDefinition
+		predNameString := predNameString+predName.getDefinition+" and "
+		
+		
+	}
+	predNameString := predNameString.substring(0,predNameString.size-4)
+	andExprName.initialize(predNameString)
+	mfPredName.initialize(mfPredNameString)
+	
+	
+	self.mfNames.add(mfPredName)
+	trace.mfAllPartitionNames.add(mfPredName)
+	
+	
+	mfPredName_Expr.initialize(andExprName)		
+	mfPredName_Exprs.add(mfPredName_Expr)
+	
+	mfAllPartitionsPredBlock.initialize(mfPredName_Exprs)
+	mfAllPartitionsPred.initialize(void,mfPredName,mfAllPartitionsPredBlock,void)
+		
+	//	stdio.writeln(mfAllPartitionsPred.getDefinition)
+	trace.alloyModel.addParagraph(mfAllPartitionsPred)
+	end
+	
+	
+	end
+}

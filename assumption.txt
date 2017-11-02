@@ -1,0 +1,62 @@
+
+
+Các giả định và các hướng giải quyết:
+
+1. Tập trung vào 01 ràng buộc người dùng đang hướng đến 
+
+2. Đưa oclUndefined vào invalid snapshots
+
+3. Đưa oclUndefined vào valid snapshots
+
+
+Các câu hỏi:
+
+1. Một ràng buộc mà người dùng hướng tới có tương ứng với 1 thể hiện của 1 pattern không ?
+
+2. Một ràng buộc mà người dùng hướng tới có thể được chia nhỏ và tương ứng với nhiều hơn 01 pattern?
+
+3. Một phát biểu lỗi đối với 1 snapshot liên quan đến nhiều hơn 01 pattern?
+
+4. Người dùng có thể đặc tả 1 khuôn snapshot mà nó sẽ luôn vi phạm ràng buộc hiện thời
+/ hoặc luôn thỏa mãn ràng buộc hiện thời ?
+
+5. Khuôn invalid snapshot tương ứng với Snok1:
+
+   - Inv_i is relevant if it always rejects T<Snok1>
+   
+   - Inv_j is irrelevant if we could find a snapshot T<Snok1> that is accepted by it
+
+   - How to find such a snapshot? (domain restrictions được xác định dựa vào tập dữ liệu vào)
+
+6. Khuôn valid snapshot tương ứng với Sok1?
+
+
+
+Hướng giải quyết:
+
+Bước 1: Tiếp nhận tập đầu vào SOK, SNOK và sinh tập candidates INV = {Inv1, ..., InvN} như sau:
+
+===============================================================================================
+       | inv11   inv12 ... inv1n1 | inv21   inv22 ... inv2n2 | ... | invN1   invN2 ... invNnN |
+===============================================================================================
+Sok1   |  0        0         0    |   0       0         0    |     |  0        0         0    |
+-------+--------------------------+--------------------------+-----+--------------------------+
+Sok2   |  0        0         0    |   0       0         0    |     |  0        0         0    |
+-------+--------------------------+--------------------------+-----+--------------------------+
+....   |                          |                          |     |                          |                  
+-------+--------------------------+--------------------------+-----+--------------------------+
+SokH   |  0        0         0    |   0       0         0    |     |  0        0         0    |
+===============================================================================================
+Snok1  |  1        0         0    |   1       1         0    | ... |  0        1         0    |
+-------+--------------------------+--------------------------+-----+--------------------------+
+Snok2  |  0        1         0    |   0       1         0    | ... |  1        0         0    |
+-------+--------------------------+--------------------------+-----+--------------------------+
+...    |                          |                          |     |                          |
+-------+--------------------------+--------------------------+-----+--------------------------+
+SnokM  |  0        1         1    |   0       0         1    | ... |  1        0         1    |
+===============================================================================================
+
+Bước 2: 
+
+- Đặc tả khuôn invalid snapshot tương ứng với Snok1
+

@@ -1,0 +1,200 @@
+/* $Id: Kermeta2AlloyTrace.kmt,v 1.1 2009-02-11 07:55:17 ssen Exp $ 
+ * Creation : November 4, 2008
+ * Licence  : EPL 
+ * Copyright:
+ * Authors  : 
+ *            sagarsen
+ */
+package Cartier::Kermeta2AlloyTrace;
+
+require kermeta
+require "metamodels/alloy.kmt"
+
+
+using kermeta::utils
+using kermeta::persistence
+using kermeta::standard
+using Cartier::AlloyMM
+using kermeta::language::structure
+
+
+	
+
+class Kermeta2AlloyTrace
+{
+	
+	attribute alloyModel : AlloyModel
+	attribute containsBoolean : Boolean
+	attribute containsInteger : Boolean
+	attribute containsString : Boolean
+	attribute containsReal : Boolean
+	reference openBoolean : OpenDecl
+	reference openInteger : OpenDecl
+	reference openString : OpenDecl
+	attribute log : String[0..*]
+	attribute hasMultipleInheritance : Boolean[1..1]
+	attribute atmostSingleInheritance : Boolean[1..1]
+	reference kermetaMetamodel : ModelingUnit[1..1]
+	attribute partitionPreds : String[0..*]
+	attribute mfAllRangesPreds : String[0..*]
+	attribute mfAllPartitionsPreds : String[0..*]
+	//Partitioning Parameters
+	reference minInteger: Integer
+	reference minStringLength : Integer
+	reference minObjects : Integer
+	reference strategy : String
+	//Strategies are AllRanges, AllPartitions and GenTest
+	reference synthesisScope : Integer
+	reference integerScope : Integer
+	reference seqScope : Integer
+	reference stringScope : Integer
+	reference useIntForString: Boolean
+	reference scopableClasses : ClassDefinition[0..*]
+	//Partition Names
+	reference partitionNames : Name[0..*]
+	//Strategy Predicate Names
+	reference mfAllRangesNames: Name[0..*]
+	reference mfAllPartitionNames: Name[0..*]
+	
+	
+	operation initialize(): Void is do
+		self.alloyModel := AlloyModel.new
+		self.hasMultipleInheritance := Boolean.new
+		self.hasMultipleInheritance :=false
+		self.atmostSingleInheritance:= true
+		self.partitionPreds.clear
+		self.mfAllRangesPreds.clear
+		self.mfAllPartitionsPreds.clear
+		self.minInteger :=Integer.new
+		self.minInteger:= 5
+		self.minStringLength := Integer.new
+		self.minStringLength := 5
+		self.minObjects := Integer.new
+		self.minObjects := 5
+		self.strategy := String.new
+		self.strategy := "GenTest"
+		//self.synthesisScope := Integer.new
+		//self.synthesisScope := 20
+		//self.integerScope := Integer.new
+		//self.integerScope := 5
+		//self.seqScope := Integer.new
+		//self.seqScope := 5
+		self.stringScope := Integer.new
+		self.stringScope := 5
+		self.scopableClasses.clear
+		self.mfAllRangesNames.clear
+		self.mfAllPartitionNames.clear
+		self.partitionNames.clear
+	end
+	
+	operation getScopableClasses():Void is do
+		self.kermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								if self.isClassInMetamodel(object.asType(ClassDefinition)) then
+									self.scopableClasses.add(object.asType(ClassDefinition))
+								end
+							end
+						}
+					}
+	end
+	
+	operation isClassInMetamodel(c: ClassDefinition):Boolean is do
+  		var isExisting:Boolean init Boolean.new
+  		isExisting:=false
+  		self.kermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								if object.asType(ClassDefinition)==c then
+									isExisting:=true
+								end
+								
+							end
+							
+							
+						}
+					}
+		result:=isExisting
+  	
+  	end
+	operation isPropertyInMetamodel(pIN: Property):Boolean is do
+		var isExisting:Boolean init Boolean.new
+		isExisting:=false
+		self.kermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							
+							if object.isInstanceOf(ClassDefinition) then
+								object.asType(ClassDefinition).ownedAttribute.each 
+								{
+								 prop | 	
+								 			if pIN == prop then 
+								 				isExisting:=true
+								 			end
+								 }
+								 
+							end
+						}
+					}
+		result:=isExisting
+	end
+	operation insertPrimitives(): Void is do
+	/* The routine includes Alloy libraries for existing types in the Kermeta meta-model */
+		var booleanQualifiedName : IDName init IDName.new
+		var booleanName : IDName init IDName.new
+		var stringQualifiedName : IDName init IDName.new
+		var stringName : IDName init IDName.new
+		var integerQualifiedName : IDName init IDName.new
+		var integerName : IDName init IDName.new
+		
+		stdio.write("\n---Inserting Detected Primitive Types ...")
+		
+		if self.containsBoolean == true then
+			booleanQualifiedName.initialize("util/Boolean")
+			booleanName.initialize("Bool")
+			openBoolean :=OpenDecl.new
+			openBoolean.initialize(booleanQualifiedName,booleanName)
+			self.alloyModel.addParagraph(openBoolean)
+		end
+		if self.containsInteger == true then
+			integerQualifiedName.initialize("util/Integer")
+			integerName.initialize("Integer")
+			openInteger :=OpenDecl.new
+			openInteger.initialize(integerQualifiedName,integerName)
+			self.alloyModel.addParagraph(openInteger)
+		end
+		if self.useIntForString==false and self.containsInteger==false then
+			integerQualifiedName.initialize("util/Integer")
+			integerName.initialize("Integer")
+			openInteger :=OpenDecl.new
+			openInteger.initialize(integerQualifiedName,integerName)
+			self.alloyModel.addParagraph(openInteger)
+		end
+		
+		if self.containsString == true then
+			if self.useIntForString==false  then
+			stringQualifiedName.initialize("util/String")
+			stringName.initialize("String")
+			openString :=OpenDecl.new
+			openString.initialize(stringQualifiedName,stringName)
+			self.alloyModel.addParagraph(openString)
+			end
+		end
+	
+		stdio.writeln("OK")
+	end
+	/*Dispaly text verion of the resulting Alloy Model*/
+	operation displayAlloy(): Void is do
+		stdio.writeln("\nOutput Alloy Model:\n")
+		stdio.writeln(self.alloyModel.getDefinition)
+	end
+	
+}

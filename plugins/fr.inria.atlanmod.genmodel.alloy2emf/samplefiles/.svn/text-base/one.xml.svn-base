@@ -1,0 +1,357 @@
+<!-- /private/tmp/alloy4tmp38-freddy/tmp/301335/0.cnf.xml -->
+<alloy builddate="2008/08/07 16:29 EDT">
+
+<instance bitwidth="5" maxseq="4" command="Run genAutom for 5 int, 1 ClassModel, exactly 10 Class, exactly 20 Attribute, exactly 3 PrimitiveDataType, 25 Association" filename="/Users/freddy/Documents/Research/noFrags200Models.als">
+
+<sig label="univ" ID="0" builtin="yes">
+   <atom label="ClassModel$0"/>
+   <atom label="PrimitiveDataType$0"/>
+   <atom label="PrimitiveDataType$1"/>
+   <atom label="PrimitiveDataType$2"/>
+   <atom label="Class$0"/>
+   <atom label="Class$1"/>
+   <atom label="Class$2"/>
+   <atom label="Class$3"/>
+   <atom label="Class$4"/>
+   <atom label="Class$5"/>
+   <atom label="Class$6"/>
+   <atom label="Class$7"/>
+   <atom label="Class$8"/>
+   <atom label="Class$9"/>
+   <atom label="Attribute$0"/>
+   <atom label="Attribute$1"/>
+   <atom label="Attribute$2"/>
+   <atom label="Attribute$3"/>
+   <atom label="Attribute$4"/>
+   <atom label="Attribute$5"/>
+   <atom label="Attribute$6"/>
+   <atom label="Attribute$7"/>
+   <atom label="Attribute$8"/>
+   <atom label="Attribute$9"/>
+   <atom label="Attribute$10"/>
+   <atom label="Attribute$11"/>
+   <atom label="Attribute$12"/>
+   <atom label="Attribute$13"/>
+   <atom label="Attribute$14"/>
+   <atom label="Attribute$15"/>
+   <atom label="Attribute$16"/>
+   <atom label="Attribute$17"/>
+   <atom label="Attribute$18"/>
+   <atom label="Attribute$19"/>
+   <atom label="Bool/True"/>
+   <atom label="Bool/False"/>
+   <atom label="-16"/>
+   <atom label="-15"/>
+   <atom label="-14"/>
+   <atom label="-13"/>
+   <atom label="-12"/>
+   <atom label="-11"/>
+   <atom label="-10"/>
+   <atom label="-9"/>
+   <atom label="-8"/>
+   <atom label="-7"/>
+   <atom label="-6"/>
+   <atom label="-5"/>
+   <atom label="-4"/>
+   <atom label="-3"/>
+   <atom label="-2"/>
+   <atom label="-1"/>
+   <atom label="0"/>
+   <atom label="1"/>
+   <atom label="2"/>
+   <atom label="3"/>
+   <atom label="4"/>
+   <atom label="5"/>
+   <atom label="6"/>
+   <atom label="7"/>
+   <atom label="8"/>
+   <atom label="9"/>
+   <atom label="10"/>
+   <atom label="11"/>
+   <atom label="12"/>
+   <atom label="13"/>
+   <atom label="14"/>
+   <atom label="15"/>
+</sig>
+
+<sig label="Int" ID="1" parentID="0" builtin="yes">
+   <atom label="-16"/>
+   <atom label="-15"/>
+   <atom label="-14"/>
+   <atom label="-13"/>
+   <atom label="-12"/>
+   <atom label="-11"/>
+   <atom label="-10"/>
+   <atom label="-9"/>
+   <atom label="-8"/>
+   <atom label="-7"/>
+   <atom label="-6"/>
+   <atom label="-5"/>
+   <atom label="-4"/>
+   <atom label="-3"/>
+   <atom label="-2"/>
+   <atom label="-1"/>
+   <atom label="0"/>
+   <atom label="1"/>
+   <atom label="2"/>
+   <atom label="3"/>
+   <atom label="4"/>
+   <atom label="5"/>
+   <atom label="6"/>
+   <atom label="7"/>
+   <atom label="8"/>
+   <atom label="9"/>
+   <atom label="10"/>
+   <atom label="11"/>
+   <atom label="12"/>
+   <atom label="13"/>
+   <atom label="14"/>
+   <atom label="15"/>
+</sig>
+
+<sig label="seq/Int" ID="2" parentID="1" builtin="yes">
+   <atom label="0"/>
+   <atom label="1"/>
+   <atom label="2"/>
+   <atom label="3"/>
+</sig>
+
+<sig label="ClassModel" ID="3" parentID="0">
+   <atom label="ClassModel$0"/>
+</sig>
+
+<field label="classifier" ID="4" parentID="3">
+   <tuple> <atom label="ClassModel$0"/> <atom label="PrimitiveDataType$0"/> </tuple>
+   <tuple> <atom label="ClassModel$0"/> <atom label="PrimitiveDataType$1"/> </tuple>
+   <tuple> <atom label="ClassModel$0"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="ClassModel$0"/> <atom label="Class$0"/> </tuple>
+   <tuple> <atom label="ClassModel$0"/> <atom label="Class$1"/> </tuple>
+   <tuple> <atom label="ClassModel$0"/> <atom label="Class$2"/> </tuple>
+   <tuple> <atom label="ClassModel$0"/> <atom label="Class$3"/> </tuple>
+   <tuple> <atom label="ClassModel$0"/> <atom label="Class$4"/> </tuple>
+   <tuple> <atom label="ClassModel$0"/> <atom label="Class$5"/> </tuple>
+   <tuple> <atom label="ClassModel$0"/> <atom label="Class$6"/> </tuple>
+   <tuple> <atom label="ClassModel$0"/> <atom label="Class$7"/> </tuple>
+   <tuple> <atom label="ClassModel$0"/> <atom label="Class$8"/> </tuple>
+   <tuple> <atom label="ClassModel$0"/> <atom label="Class$9"/> </tuple>
+   <types> <type ID="3"/> <type ID="5"/> </types>
+</field>
+
+<field label="association" ID="6" parentID="3">
+   <types> <type ID="3"/> <type ID="7"/> </types>
+</field>
+
+<sig label="Classifier" ID="5" parentID="0" abstract="yes">
+   <atom label="PrimitiveDataType$0"/>
+   <atom label="PrimitiveDataType$1"/>
+   <atom label="PrimitiveDataType$2"/>
+   <atom label="Class$0"/>
+   <atom label="Class$1"/>
+   <atom label="Class$2"/>
+   <atom label="Class$3"/>
+   <atom label="Class$4"/>
+   <atom label="Class$5"/>
+   <atom label="Class$6"/>
+   <atom label="Class$7"/>
+   <atom label="Class$8"/>
+   <atom label="Class$9"/>
+</sig>
+
+<field label="name" ID="8" parentID="5">
+   <tuple> <atom label="PrimitiveDataType$0"/> <atom label="12"/> </tuple>
+   <tuple> <atom label="PrimitiveDataType$1"/> <atom label="10"/> </tuple>
+   <tuple> <atom label="PrimitiveDataType$2"/> <atom label="-14"/> </tuple>
+   <tuple> <atom label="Class$0"/> <atom label="14"/> </tuple>
+   <tuple> <atom label="Class$1"/> <atom label="8"/> </tuple>
+   <tuple> <atom label="Class$2"/> <atom label="4"/> </tuple>
+   <tuple> <atom label="Class$3"/> <atom label="-13"/> </tuple>
+   <tuple> <atom label="Class$4"/> <atom label="9"/> </tuple>
+   <tuple> <atom label="Class$5"/> <atom label="0"/> </tuple>
+   <tuple> <atom label="Class$6"/> <atom label="-2"/> </tuple>
+   <tuple> <atom label="Class$7"/> <atom label="11"/> </tuple>
+   <tuple> <atom label="Class$8"/> <atom label="15"/> </tuple>
+   <tuple> <atom label="Class$9"/> <atom label="13"/> </tuple>
+   <types> <type ID="5"/> <type ID="1"/> </types>
+</field>
+
+<sig label="PrimitiveDataType" ID="9" parentID="5">
+   <atom label="PrimitiveDataType$0"/>
+   <atom label="PrimitiveDataType$1"/>
+   <atom label="PrimitiveDataType$2"/>
+</sig>
+
+<sig label="Class" ID="10" parentID="5">
+   <atom label="Class$0"/>
+   <atom label="Class$1"/>
+   <atom label="Class$2"/>
+   <atom label="Class$3"/>
+   <atom label="Class$4"/>
+   <atom label="Class$5"/>
+   <atom label="Class$6"/>
+   <atom label="Class$7"/>
+   <atom label="Class$8"/>
+   <atom label="Class$9"/>
+</sig>
+
+<field label="is_persistent" ID="11" parentID="10">
+   <tuple> <atom label="Class$0"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Class$1"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Class$2"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Class$3"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Class$4"/> <atom label="Bool/True"/> </tuple>
+   <tuple> <atom label="Class$5"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Class$6"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Class$7"/> <atom label="Bool/True"/> </tuple>
+   <tuple> <atom label="Class$8"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Class$9"/> <atom label="Bool/False"/> </tuple>
+   <types> <type ID="10"/> <type ID="12"/> </types>
+</field>
+
+<field label="parent" ID="13" parentID="10">
+   <types> <type ID="10"/> <type ID="10"/> </types>
+</field>
+
+<field label="attrs" ID="14" parentID="10">
+   <tuple> <atom label="Class$0"/> <atom label="Attribute$18"/> </tuple>
+   <tuple> <atom label="Class$1"/> <atom label="Attribute$17"/> </tuple>
+   <tuple> <atom label="Class$2"/> <atom label="Attribute$19"/> </tuple>
+   <tuple> <atom label="Class$3"/> <atom label="Attribute$12"/> </tuple>
+   <tuple> <atom label="Class$4"/> <atom label="Attribute$16"/> </tuple>
+   <tuple> <atom label="Class$5"/> <atom label="Attribute$10"/> </tuple>
+   <tuple> <atom label="Class$6"/> <atom label="Attribute$14"/> </tuple>
+   <tuple> <atom label="Class$7"/> <atom label="Attribute$15"/> </tuple>
+   <tuple> <atom label="Class$8"/> <atom label="Attribute$13"/> </tuple>
+   <tuple> <atom label="Class$9"/> <atom label="Attribute$11"/> </tuple>
+   <types> <type ID="10"/> <type ID="15"/> </types>
+</field>
+
+<sig label="Association" ID="7" parentID="0">
+</sig>
+
+<field label="name" ID="16" parentID="7">
+   <types> <type ID="7"/> <type ID="1"/> </types>
+</field>
+
+<field label="dest" ID="17" parentID="7">
+   <types> <type ID="7"/> <type ID="10"/> </types>
+</field>
+
+<field label="src" ID="18" parentID="7">
+   <types> <type ID="7"/> <type ID="10"/> </types>
+</field>
+
+<sig label="Attribute" ID="15" parentID="0">
+   <atom label="Attribute$0"/>
+   <atom label="Attribute$1"/>
+   <atom label="Attribute$2"/>
+   <atom label="Attribute$3"/>
+   <atom label="Attribute$4"/>
+   <atom label="Attribute$5"/>
+   <atom label="Attribute$6"/>
+   <atom label="Attribute$7"/>
+   <atom label="Attribute$8"/>
+   <atom label="Attribute$9"/>
+   <atom label="Attribute$10"/>
+   <atom label="Attribute$11"/>
+   <atom label="Attribute$12"/>
+   <atom label="Attribute$13"/>
+   <atom label="Attribute$14"/>
+   <atom label="Attribute$15"/>
+   <atom label="Attribute$16"/>
+   <atom label="Attribute$17"/>
+   <atom label="Attribute$18"/>
+   <atom label="Attribute$19"/>
+</sig>
+
+<field label="name" ID="19" parentID="15">
+   <tuple> <atom label="Attribute$0"/> <atom label="13"/> </tuple>
+   <tuple> <atom label="Attribute$1"/> <atom label="13"/> </tuple>
+   <tuple> <atom label="Attribute$2"/> <atom label="13"/> </tuple>
+   <tuple> <atom label="Attribute$3"/> <atom label="5"/> </tuple>
+   <tuple> <atom label="Attribute$4"/> <atom label="5"/> </tuple>
+   <tuple> <atom label="Attribute$5"/> <atom label="5"/> </tuple>
+   <tuple> <atom label="Attribute$6"/> <atom label="5"/> </tuple>
+   <tuple> <atom label="Attribute$7"/> <atom label="-2"/> </tuple>
+   <tuple> <atom label="Attribute$8"/> <atom label="-2"/> </tuple>
+   <tuple> <atom label="Attribute$9"/> <atom label="-11"/> </tuple>
+   <tuple> <atom label="Attribute$10"/> <atom label="15"/> </tuple>
+   <tuple> <atom label="Attribute$11"/> <atom label="15"/> </tuple>
+   <tuple> <atom label="Attribute$12"/> <atom label="15"/> </tuple>
+   <tuple> <atom label="Attribute$13"/> <atom label="15"/> </tuple>
+   <tuple> <atom label="Attribute$14"/> <atom label="15"/> </tuple>
+   <tuple> <atom label="Attribute$15"/> <atom label="15"/> </tuple>
+   <tuple> <atom label="Attribute$16"/> <atom label="14"/> </tuple>
+   <tuple> <atom label="Attribute$17"/> <atom label="14"/> </tuple>
+   <tuple> <atom label="Attribute$18"/> <atom label="14"/> </tuple>
+   <tuple> <atom label="Attribute$19"/> <atom label="14"/> </tuple>
+   <types> <type ID="15"/> <type ID="1"/> </types>
+</field>
+
+<field label="is_primary" ID="20" parentID="15">
+   <tuple> <atom label="Attribute$0"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Attribute$1"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Attribute$2"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Attribute$3"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Attribute$4"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Attribute$5"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Attribute$6"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Attribute$7"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Attribute$8"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Attribute$9"/> <atom label="Bool/False"/> </tuple>
+   <tuple> <atom label="Attribute$10"/> <atom label="Bool/True"/> </tuple>
+   <tuple> <atom label="Attribute$11"/> <atom label="Bool/True"/> </tuple>
+   <tuple> <atom label="Attribute$12"/> <atom label="Bool/True"/> </tuple>
+   <tuple> <atom label="Attribute$13"/> <atom label="Bool/True"/> </tuple>
+   <tuple> <atom label="Attribute$14"/> <atom label="Bool/True"/> </tuple>
+   <tuple> <atom label="Attribute$15"/> <atom label="Bool/True"/> </tuple>
+   <tuple> <atom label="Attribute$16"/> <atom label="Bool/True"/> </tuple>
+   <tuple> <atom label="Attribute$17"/> <atom label="Bool/True"/> </tuple>
+   <tuple> <atom label="Attribute$18"/> <atom label="Bool/True"/> </tuple>
+   <tuple> <atom label="Attribute$19"/> <atom label="Bool/True"/> </tuple>
+   <types> <type ID="15"/> <type ID="12"/> </types>
+</field>
+
+<field label="type" ID="21" parentID="15">
+   <tuple> <atom label="Attribute$0"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="Attribute$1"/> <atom label="PrimitiveDataType$1"/> </tuple>
+   <tuple> <atom label="Attribute$2"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="Attribute$3"/> <atom label="Class$9"/> </tuple>
+   <tuple> <atom label="Attribute$4"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="Attribute$5"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="Attribute$6"/> <atom label="Class$9"/> </tuple>
+   <tuple> <atom label="Attribute$7"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="Attribute$8"/> <atom label="Class$9"/> </tuple>
+   <tuple> <atom label="Attribute$9"/> <atom label="Class$6"/> </tuple>
+   <tuple> <atom label="Attribute$10"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="Attribute$11"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="Attribute$12"/> <atom label="Class$9"/> </tuple>
+   <tuple> <atom label="Attribute$13"/> <atom label="PrimitiveDataType$1"/> </tuple>
+   <tuple> <atom label="Attribute$14"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="Attribute$15"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="Attribute$16"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="Attribute$17"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="Attribute$18"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <tuple> <atom label="Attribute$19"/> <atom label="PrimitiveDataType$2"/> </tuple>
+   <types> <type ID="15"/> <type ID="5"/> </types>
+</field>
+
+<sig label="Bool/Bool" ID="12" parentID="0" abstract="yes">
+   <atom label="Bool/True"/>
+   <atom label="Bool/False"/>
+</sig>
+
+<sig label="Bool/True" ID="22" parentID="12" one="yes">
+   <atom label="Bool/True"/>
+</sig>
+
+<sig label="Bool/False" ID="23" parentID="12" one="yes">
+   <atom label="Bool/False"/>
+</sig>
+
+</instance>
+
+<source filename="/Users/freddy/Documents/Research/noFrags200Models.als" content="&#x000a;module tmp/simpleUMLCD&#x000a;open util/boolean as Bool&#x000a;&#x000a;sig ClassModel {&#x000a;&#x0009;classifier: set Classifier,&#x000a;&#x0009;association: set Association&#x000a;}&#x000a;&#x000a;abstract sig Classifier {&#x000a;      name :  Int&#x000a;}&#x000a;&#x000a;sig PrimitiveDataType extends Classifier {}&#x000a;&#x000a;sig Class extends Classifier {&#x000a;&#x0009;is_persistent: one Bool,&#x000a;&#x0009;parent : lone Class,&#x000a;&#x0009;attrs : some Attribute //atleast one attribute, chnqge to set if not necessary&#x000a;}&#x000a;&#x000a;sig Association {&#x000a;&#x0009;name: Int,&#x000a;&#x0009;dest: one Class,&#x000a;&#x0009;src: one Class&#x000a;}&#x000a;&#x000a;&#x000a;sig Attribute {&#x000a;&#x0009;name: Int,&#x000a;&#x0009;is_primary : Bool,&#x000a;&#x0009;type: one Classifier&#x000a;}&#x000a;&#x000a;&#x000a;//Meta-model constraints//&#x000a;&#x000a;//There must be no cyclic inheritance in the generated UML class diagram&#x000a;fact noCyclicInheritance {&#x000a;&#x0009;no c: Class | c in c.^parent&#x000a;}&#x000a;&#x000a;//All the attributes in a Class must have unique attribute names&#x000a;fact uniqueAttributeNames {&#x000a;all c:Class |  all a1:  c.attrs , a2 : c.attrs |a1.name==a2.name =&gt; a1 = a2  &#x000a;}&#x000a;&#x000a;//An attribute object can be contained by only one class&#x000a;fact attributeContainment {&#x000a;all c1:Class, c2:Class | all a1:c1.attrs, a2:c2.attrs | a1==a2 =&gt; c1=c2&#x000a;}&#x000a;&#x000a;//There is exactly one ClassModel object&#x000a;fact oneClassModel {&#x000a; one ClassModel&#x000a;}&#x000a;&#x000a;//All Classifier objects are contained in a ClassModel&#x000a;fact classifierContainment {&#x000a;all c:Classifier | c in ClassModel.classifier&#x000a;}&#x000a;&#x000a;//All Association objects are contained in a ClassModel&#x000a;fact associationContainment {&#x000a;all a:Association | a in ClassModel.association&#x000a;}&#x000a;&#x000a;&#x000a;&#x000a;//A Classifier must have a unique name in the class diagram&#x000a;fact uniqueClassifierName {&#x000a;all c1:Classifier, c2:Classifier | c1.name==c2.name =&gt; c1=c2&#x000a;}&#x000a;&#x000a;&#x000a;&#x000a;//An associations have the same name either they are the same association or they have different sources&#x000a;fact uniqeNameAssocSrc {&#x000a;all a1:Association, a2:Association | a1.name == a2.name =&gt; (a1 = a2 or a1.src != a2.src)&#x000a;}&#x000a;&#x000a;&#x000a;//Model Transformation UMLCD to RDBMS Pre-condition&#x000a;fact atleastOnePrimaryAttribute {&#x000a;    all c:Class| one a:c.attrs | a.is_primary==True&#x000a;}&#x000a;&#x000a;&#x000a;//Improved Model Transformation pre-conditions&#x000a;fact no4CyclicClassAttribute{&#x000a;&#x0009;all a:Attribute | a.type in Class =&gt; all a1:a.type.attrs|a1.type in Class =&gt; all a2:a.type.attrs|a2.type in Class =&gt; all a3:a.type.attrs|a3.type in Class =&gt; all a4:a.type.attrs|a4.type in PrimitiveDataType&#x000a;}&#x000a;&#x000a;//A Class cannot have an association and an attribute of the same name &#x000a;fact noAttribAndAssocSameName{&#x000a;&#x0009;all c:Class, assoc:Association | all a : c.attrs | (assoc.src == c) =&gt; a.name != assoc.name&#x000a;}&#x000a;&#x000a;&#x000a;//No cycles between non-persistent classes&#x000a;&#x000a;&#x000a;&#x000a;fact no1CycleNonPersistent&#x000a;{&#x000a;      all a: Association | (a.dest == a.src) =&gt; a.dest.is_persistent= True &#x000a;}&#x000a;&#x000a;&#x000a;&#x000a;fact no2CycleNonPersistent&#x000a;{&#x000a;      all a1: Association, a2:Association | (a1.dest == a2.src and a2.dest==a1.src) =&gt; a1.src.is_persistent= True or a2.src.is_persistent=True  &#x000a;}&#x000a;&#x000a;/*&#x000a;fact no3CycleNonPersistent&#x000a;{&#x000a;      all a1: Association, a2:Association, a3:Association | (a1.dest == a2.src and a2.dest==a3.src and a3.dest==a1.src) =&gt; a1.src.is_persistent= True or a2.src.is_persistent=True  or a3.src.is_persistent=True&#x000a;}&#x000a;&#x000a;fact no4CycleNonPersistent&#x000a;{&#x000a;      all a1: Association, a2:Association, a3:Association, a4:Association | (a1.dest == a2.src and a2.dest==a3.src and a3.dest == a4.src and a4.dest==a1.src ) =&gt; a1.src.is_persistent= True or a2.src.is_persistent=True  or a3.src.is_persistent=True or a4.src.is_persistent=True&#x000a;}&#x000a;&#x000a;*/&#x000a;&#x000a;pred genAutom{&#x000a;}&#x000a;&#x000a;run genAutom for 1 ClassModel,5 int,exactly 10 Class,exactly 20 Attribute,exactly 3 PrimitiveDataType, 25 Association&#x000a;"/>
+
+<source filename="/$alloy4$/models/util/boolean.als" content="module util/boolean&#x000a;&#x000a;/*&#x000a; * Creates a Bool type with two singleton subtypes: True&#x000a; * and False. Provides common boolean operations.&#x000a; *&#x000a; * author: Greg Dennis&#x000a; */&#x000a;&#x000a;abstract sig Bool {}&#x000a;one sig True, False extends Bool {}&#x000a;&#x000a;pred isTrue[b: Bool] { b in True }&#x000a;&#x000a;pred isFalse[b: Bool] { b in False }&#x000a;&#x000a;fun Not[b: Bool] : Bool {&#x000a;  Bool - b&#x000a;}&#x000a;&#x000a;fun And[b1, b2: Bool] : Bool {&#x000a;  subset_[b1 + b2, True]&#x000a;}&#x000a;&#x000a;fun Or[b1, b2: Bool] : Bool {&#x000a;  subset_[True, b1 + b2]&#x000a;}&#x000a;&#x000a;fun Xor[b1, b2: Bool] : Bool {&#x000a;  subset_[Bool, b1 + b2]&#x000a;}&#x000a;&#x000a;fun Nand[b1, b2: Bool] : Bool {&#x000a;  subset_[False, b1 + b2]&#x000a;}&#x000a;&#x000a;fun Nor[b1, b2: Bool] : Bool {&#x000a;  subset_[b1 + b2, False]&#x000a;}&#x000a;&#x000a;fun subset_[s1, s2: set Bool] : Bool {&#x000a;  (s1 in s2) =&gt; True else False&#x000a;}&#x000a;"/>
+
+</alloy>

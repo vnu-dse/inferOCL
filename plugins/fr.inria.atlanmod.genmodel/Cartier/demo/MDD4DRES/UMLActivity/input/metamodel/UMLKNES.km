@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kermeta_language_structure:ModelingUnit xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:kermeta_language_structure="http://www.kermeta.org/kermeta/1_2_0//kermeta/language/structure" referencedModelingUnits="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#/ Ecore.km#/">
+  <packages name="umlknes" uri="http://umlknes/1.0">
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Activity"
+        superType="#//@packages.0/Activity/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+      <ownedAttribute name="node" type="#//@packages.0/Activity/node/@containedType.0"
+          isOrdered="true" upper="-1" opposite="#//@packages.0/ActivityNode/activity"
+          isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ActivityNode"/>
+      </ownedAttribute>
+      <ownedAttribute name="edge" type="#//@packages.0/Activity/edge/@containedType.0"
+          isOrdered="true" upper="-1" opposite="#//@packages.0/ActivityEdge/activity"
+          isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ActivityEdge"/>
+      </ownedAttribute>
+      <ownedAttribute name="isReadOnly" type="Ecore.km#//@packages.0/EBoolean" isOrdered="true"
+          lower="1" upper="1" isComposite="true"/>
+      <ownedAttribute name="isSingleExecution" type="Ecore.km#//@packages.0/EBoolean"
+          isOrdered="true" lower="1" upper="1" isComposite="true"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="ActivityNode"
+        isAbstract="true" superType="#//@packages.0/ActivityNode/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/RedefinableElement"/>
+      <ownedAttribute name="activity" type="#//@packages.0/ActivityNode/activity/@containedType.0"
+          isOrdered="true" upper="1" opposite="#//@packages.0/Activity/node">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Activity"/>
+      </ownedAttribute>
+      <ownedAttribute name="incoming" type="#//@packages.0/ActivityNode/incoming/@containedType.0"
+          isOrdered="true" upper="-1" opposite="#//@packages.0/ActivityEdge/target">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ActivityEdge"/>
+      </ownedAttribute>
+      <ownedAttribute name="outgoing" type="#//@packages.0/ActivityNode/outgoing/@containedType.0"
+          isOrdered="true" upper="-1" opposite="#//@packages.0/ActivityEdge/source">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ActivityEdge"/>
+      </ownedAttribute>
+      <ownedAttribute name="redefinedElement" type="#//@packages.0/ActivityNode/redefinedElement/@containedType.0"
+          isOrdered="true" upper="-1">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ActivityNode"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="ControlNode"
+        isAbstract="true" superType="#//@packages.0/ControlNode/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ActivityNode"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="ActivityFinalNode"
+        superType="#//@packages.0/ActivityFinalNode/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ControlNode"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="InitialNode"
+        superType="#//@packages.0/InitialNode/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ControlNode"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="ActivityEdge"
+        isAbstract="true" superType="#//@packages.0/ActivityEdge/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/RedefinableElement"/>
+      <ownedAttribute name="target" type="#//@packages.0/ActivityEdge/target/@containedType.0"
+          isOrdered="true" lower="1" upper="1" opposite="#//@packages.0/ActivityNode/incoming">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ActivityNode"/>
+      </ownedAttribute>
+      <ownedAttribute name="source" type="#//@packages.0/ActivityEdge/source/@containedType.0"
+          isOrdered="true" lower="1" upper="1" opposite="#//@packages.0/ActivityNode/outgoing">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ActivityNode"/>
+      </ownedAttribute>
+      <ownedAttribute name="activity" type="#//@packages.0/ActivityEdge/activity/@containedType.0"
+          isOrdered="true" upper="1" opposite="#//@packages.0/Activity/edge">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Activity"/>
+      </ownedAttribute>
+      <ownedAttribute name="weight" type="#//@packages.0/ActivityEdge/weight/@containedType.0"
+          isOrdered="true" lower="1" upper="1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ValueSpecification"/>
+      </ownedAttribute>
+      <ownedAttribute name="guard" type="#//@packages.0/ActivityEdge/guard/@containedType.0"
+          isOrdered="true" lower="1" upper="1" isComposite="true">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ValueSpecification"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="ControlFlow"
+        superType="#//@packages.0/ControlFlow/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ActivityEdge"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="DecisionNode"
+        superType="#//@packages.0/DecisionNode/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ControlNode"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Action"
+        isAbstract="true" superType="#//@packages.0/Action/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ActivityNode"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="AcceptEventAction"
+        superType="#//@packages.0/AcceptEventAction/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Action"/>
+      <ownedAttribute name="isUnMarshall" type="Ecore.km#//@packages.0/EBoolean" isOrdered="true"
+          upper="1" isComposite="true"/>
+      <ownedAttribute name="trigger" type="#//@packages.0/AcceptEventAction/trigger/@containedType.0"
+          isOrdered="true" lower="1" upper="-1">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Trigger"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="ValueSpecification"
+        isAbstract="true" superType="#//@packages.0/ValueSpecification/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/NamedElement"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="NamedElement"
+        isAbstract="true" superType="#//@packages.0/NamedElement/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+      <ownedAttribute name="visibility" type="#//@packages.0/VisibilityKind" isOrdered="true"
+          lower="1" upper="1" isComposite="true"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:Enumeration" name="VisibilityKind">
+      <ownedLiteral name="public"/>
+      <ownedLiteral name="protected"/>
+      <ownedLiteral name="package"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="RedefinableElement"
+        isAbstract="true" superType="#//@packages.0/RedefinableElement/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/NamedElement"/>
+      <ownedAttribute name="isLeaf" type="Ecore.km#//@packages.0/EBoolean" isOrdered="true"
+          lower="1" upper="1" isComposite="true"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Trigger"
+        superType="#//@packages.0/Trigger/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/NamedElement"/>
+      <ownedAttribute name="event" type="#//@packages.0/Trigger/event/@containedType.0"
+          isOrdered="true" lower="1" upper="1">
+        <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Event"/>
+      </ownedAttribute>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="Event"
+        isAbstract="true" superType="#//@packages.0/Event/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="kermeta_language_structure:ClassDefinition platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.km#//@packages.0/language/structure/Object"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="ExecutionEvent"
+        superType="#//@packages.0/ExecutionEvent/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Event"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="CreationEvent"
+        superType="#//@packages.0/CreationEvent/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Event"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="DestructionEvent"
+        superType="#//@packages.0/DestructionEvent/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/Event"/>
+    </ownedTypeDefinition>
+    <ownedTypeDefinition xsi:type="kermeta_language_structure:ClassDefinition" name="OpaqueExpression"
+        superType="#//@packages.0/OpaqueExpression/@containedType.0">
+      <containedType xsi:type="kermeta_language_structure:Class" typeDefinition="#//@packages.0/ValueSpecification"/>
+    </ownedTypeDefinition>
+  </packages>
+  <requires uri="kermeta"/>
+  <requires uri="http://www.eclipse.org/emf/2002/Ecore"/>
+  <usings qualifiedName="umlknes"/>
+</kermeta_language_structure:ModelingUnit>

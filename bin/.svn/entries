@@ -1,0 +1,31 @@
+8
+
+dir
+5
+svn+ssh://ssen@scm.gforge.inria.fr/svn/cartier/alloy2emf/src
+svn+ssh://ssen@scm.gforge.inria.fr/svn/cartier
+
+
+
+2008-10-13T21:02:40.278603Z
+5
+fmunoz
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d7339b88-a637-0410-ae7f-c04d44d591dd
+
+fr
+dir
+

@@ -1,0 +1,57 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%              A lightweight ocl invariant solver                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Author: Duc-Hanh Dang (duc-hanh.dang@inria.fr)
+% (c) 2013
+% See "Lightweight OCL Invariant Reasoning in Model Finding"
+%     "Automating Inference of OCL Business Rules from User Scenarios", Apsec2013
+%     "InferOCL: An Automated Inference of OCL Domain Restriction from Scenarios"
+
+:- lib(ic).
+:- lib(ech).
+:- lib(ordset).
+:- lib(var_name).
+:- handler inv.
+
+:- option(already_in_store, off). 
+:- option(check_guard_bindings, off).
+:- option(default_chr_priority,6).
+
+:- constraints 
+	addInv/4.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           INFERENCE RULES                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+inv_intvAttr_maxCard	::= 	addInv(CardVars, Pat1, Para1, 1),
+				addInv(CardVars, Pat2, Para2, 0)
+				==>	patternIndex("intervalInv",Pat1),
+					patternIndex("maxCard",Pat2),
+					test_intvAttr_maxCard(CardVars, Para1, Para2, SizeAssoc, Min)
+				| SizeAssoc #> Min.
+
+inv_cardInv		::=	addInv(CardVars, Pat, Para, 0)
+				==>	patternIndex("cardInv",Pat),
+					test_cardInv(CardVars,Para,SizeAssoc,Min,Max)					
+				| SizeClsB #=< Min or SizeClsB #>= Max.
+
+inv_labeling		::= 	addInv(CardVars, Pat, Para, R) <=> ground(CardVars) | true.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           HELPERS                                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+test_intvAttr_maxCard(CardVars, Para1, Para2, SizeAssoc, Min) :-
+	Para1 = [XClass,XAttr,[clsInterval(_,Min0,_)]],
+	Para2 = [XClass,XAttr,XAssoc,_,_,_],
+	index(XAssoc,Idx),
+	nth1(Idx,CardVars,SizeAssoc),
+	Min is Min0 + 1.
+
+test_cardInv(CardVars,Para,SizeAssoc,Min,Max) :-
+	Para = [_, XAssoc, _, _, [clsInterval(_,Min,Max)], _],
+	index(XAssoc,Idx),
+	nth1(Idx,CardVars,SizeAssoc).
+

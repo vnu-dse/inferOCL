@@ -1,0 +1,104 @@
+@uri "http://umlknes/1.0"
+package umlknes;
+
+require "kermeta"
+require "http://www.eclipse.org/emf/2002/Ecore"
+class Activity
+{
+	attribute node : ActivityNode[0..*]#activity
+
+	attribute edge : ActivityEdge[0..*]#activity
+
+	attribute isReadOnly : ecore::EBoolean[1..1]
+
+	attribute isSingleExecution : ecore::EBoolean[1..1]
+
+}
+abstract class ActivityNode inherits RedefinableElement
+{
+	reference activity : Activity#node
+
+	reference incoming : ActivityEdge[0..*]#target
+
+	reference outgoing : ActivityEdge[0..*]#source
+
+	reference redefinedElement : ActivityNode[0..*]
+
+}
+abstract class ControlNode inherits ActivityNode
+{
+}
+class ActivityFinalNode inherits ControlNode
+{
+}
+class InitialNode inherits ControlNode
+{
+}
+abstract class ActivityEdge inherits RedefinableElement
+{
+	reference target : ActivityNode[1..1]#incoming
+
+	reference source : ActivityNode[1..1]#outgoing
+
+	reference activity : Activity#edge
+
+	attribute weight : ValueSpecification[1..1]
+
+	attribute guard : ValueSpecification[1..1]
+
+}
+class ControlFlow inherits ActivityEdge
+{
+}
+class DecisionNode inherits ControlNode
+{
+}
+abstract class Action inherits ActivityNode
+{
+}
+class AcceptEventAction inherits Action
+{
+	attribute isUnMarshall : ecore::EBoolean
+
+	reference trigger : Trigger[1..*]
+
+}
+abstract class ValueSpecification inherits NamedElement
+{
+}
+abstract class NamedElement
+{
+	attribute visibility : VisibilityKind[1..1]
+
+}
+enumeration VisibilityKind
+{
+	public;
+	protected;
+	~package;
+}
+abstract class RedefinableElement inherits NamedElement
+{
+	attribute isLeaf : ecore::EBoolean[1..1]
+
+}
+class Trigger inherits NamedElement
+{
+	reference event : Event[1..1]
+
+}
+abstract class Event
+{
+}
+class ExecutionEvent inherits Event
+{
+}
+class CreationEvent inherits Event
+{
+}
+class DestructionEvent inherits Event
+{
+}
+class OpaqueExpression inherits ValueSpecification
+{
+}

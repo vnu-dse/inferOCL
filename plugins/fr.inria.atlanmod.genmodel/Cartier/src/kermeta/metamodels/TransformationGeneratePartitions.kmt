@@ -1,0 +1,834 @@
+
+
+package kermeta::language::structure;
+require "metamodels/alloy.kmt"
+//require "ToAlloy.kmt"
+require "Kermeta2AlloyTrace.kmt"
+require kermeta
+require "TransformationBase.kmt"
+
+using kermeta::standard
+using kermeta::utils
+using Cartier::Kermeta2AlloyTrace
+using Cartier::AlloyMM
+using kermeta::language::structure
+
+aspect class Object
+{
+
+	operation toAlloyPartitionPredicates(trace: Kermeta2AlloyTrace) : Void is do
+	end
+	
+}
+
+aspect class Property
+{
+	reference partitionPredicateNames:Name[0..*] 
+	
+	method toAlloyPartitionPredicates(trace: Kermeta2AlloyTrace) : Void is do
+	
+		/*Boolean partitions are noted as a set of sets of Boolean values. For example
+		{{true},{false}} designates a partition with two ranges: a range which
+		contains the value true and a range which contains the value false
+		
+		- Integer partitions are noted as a set of sets of Integer values. For example,
+		{{0}, {1}, {x | x ! 2}} designates a partition with three ranges: 0, 1, greater
+		or equal to 2.
+		
+		- String partitions are noted as a set of sets of String values. A set of string
+		  values is specified by a regular expression. For example {{‘evt1'}, {“”},
+			{“.+”}} designates a partition with three ranges: a range which contains the
+			string ‘evt1’, a range which contains the empty string and a range which
+			contains all strings with one or more character. In the regular expression
+			language, “.” designates any character and “+” specifies that the preceding
+			symbol has to be repeated one or more time.
+		*/
+
+	
+		if self.type.isInstanceOf(PrimitiveType) then
+			
+			if self.type.asType(PrimitiveType).instanceType.toString == "Boolean"  then
+			
+				//Create predicates of the form 
+				/*
+					pred <self.alloyName>_partition1
+					{
+						some o : <self.owningClass.name> | all p : o.<self.alloyName> | p = True
+					}
+					
+					pred <self.alloyName>_partition2
+					{
+						some o : <self.owningClass.name> | all p : o.<self.alloyName>| p = False
+					}
+				
+				*/				
+				//Create compareOp expressions o.<self.alloyName> = True and o.<self.alloyName> = False
+				
+				var compareOp_partition1 : CompareOp_Expression init CompareOp_Expression.new
+				var compareOp_partition2: CompareOp_Expression init CompareOp_Expression.new
+				
+				var compareOp_partition_name:IDName init IDName.new
+				var compareOp_partition_nameExpr:Name_Expression init Name_Expression.new
+				var true_Name:IDName init IDName.new
+				var true_NameExpr:Name_Expression init Name_Expression.new
+				var false_Name: IDName init IDName.new
+				var false_NameExpr:Name_Expression init Name_Expression.new
+				
+				true_Name.initialize("True")
+				false_Name.initialize("False")
+				true_NameExpr.initialize(true_Name)
+				false_NameExpr.initialize(false_Name)
+				compareOp_partition_name.initialize("o."+self.alloyName.getDefinition)
+				compareOp_partition_nameExpr.initialize(compareOp_partition_name)
+				
+				//stdio.writeln(compareOp_partition_nameExpr.getDefinition)
+				
+				compareOp_partition1.initialize(compareOp_partition_nameExpr,true_NameExpr,equal_CompareOp.new,false)
+				compareOp_partition2.initialize(compareOp_partition_nameExpr,false_NameExpr,equal_CompareOp.new,false)
+				
+				//Create Decl o : <self.owningClass.name> 
+				var partition_Decl:Decl init Decl.new
+				var partition_Name1: IDName init IDName.new
+				var partition_Names:Name[1..*] init OrderedSet<Name>.new
+				var partition_Decls:Decl[1..*] init OrderedSet<Decl>.new
+				
+				partition_Name1.initialize("o")
+				partition_Names.add(partition_Name1)
+				partition_Decl.initialize(partition_Names,self.owningClass.alloyNameExpr,false,false)
+				partition_Decls.add(partition_Decl)
+				//stdio.writeln(partition_Decl.getDefinition)
+				
+				//Create quant expressions
+				//some o : <self.owningClass.name> | o.<self.alloyName> = True
+				//some o : <self.owningClass.name> | o.<self.alloyName> = False
+				var partition1_QuantExpr:Quant_Expression init Quant_Expression.new
+				var partition2_QuantExpr:Quant_Expression init Quant_Expression.new
+				var partition1_QuantBlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+				var partition2_QuantBlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+				
+				partition1_QuantBlockOrBar.initialize(compareOp_partition1)
+				partition2_QuantBlockOrBar.initialize(compareOp_partition2)
+				
+				partition1_QuantExpr.initialize(some_Quantifier.new,partition_Decls,partition1_QuantBlockOrBar)
+				partition2_QuantExpr.initialize(some_Quantifier.new,partition_Decls,partition2_QuantBlockOrBar)
+				//stdio.writeln(partition1_QuantExpr.getDefinition)
+				//stdio.writeln(partition2_QuantExpr.getDefinition)
+				//Create predicate declarations
+				/*pred <self.alloyName>_partition1
+					{
+						partition1_QuantExpr
+					}
+					
+					pred <self.alloyName>_partition2
+					{
+						partition2_QuantExpr
+					}*/
+				var partition1_PredDecl : PredDecl init PredDecl.new
+				var partition2_PredDecl : PredDecl init PredDecl.new
+				var partition1_Block : Block init Block.new
+				var partition1_BlockExprs : Expression[0..*] init OrderedSet<Expression>.new
+				var partition2_Block : Block init Block.new
+				var partition2_BlockExprs : Expression[0..*] init OrderedSet<Expression>.new
+				
+				partition1_BlockExprs.add(partition1_QuantExpr)
+				partition2_BlockExprs.add(partition2_QuantExpr)
+				
+				partition1_Block.initialize(partition1_BlockExprs)
+				partition2_Block.initialize(partition2_BlockExprs)
+				//Create partition names
+				//<self.alloyName>_partition1
+				//<self.alloyName>_partition2
+				var partition1pred_Name:IDName init IDName.new
+				var partition2pred_Name:IDName init IDName.new
+				
+				partition1pred_Name.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_partition1")
+				partition2pred_Name.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_partition2")
+				
+				partition1_PredDecl.initialize(void,partition1pred_Name,partition1_Block,void)
+				partition2_PredDecl.initialize(void,partition2pred_Name,partition2_Block,void)
+				
+				//Add predicate names as a reference
+				self.partitionPredicateNames.clear
+				self.partitionPredicateNames.add(partition1pred_Name)
+				self.partitionPredicateNames.add(partition2pred_Name)
+				
+				trace.partitionNames.add(partition1pred_Name)
+				trace.partitionNames.add(partition2pred_Name)
+				
+				//Insert predicates into Alloy Model
+				
+				trace.alloyModel.addParagraph(partition1_PredDecl)
+				trace.alloyModel.addParagraph(partition2_PredDecl)
+			end
+			
+			if self.type.asType(PrimitiveType).instanceType.toString == "Integer"  then
+				//Create predicates of the form 
+				/*
+					pred <self.alloyName>_partition1
+					{
+						some o : <self.owningClass.name> | all p: o.<self.alloyName> | p = 0
+					}
+					
+					pred <self.alloyName>_partition2
+					{
+						some o : <self.owningClass.name> | all p:o.<self.alloyName | p> = 1
+					}
+					
+					pred <self.alloyName>_partition3
+					{
+						some o : <self.owningClass.name> | all p:o.<self.alloyName> | p >= minInteger
+					}
+				
+				*/				
+				
+				//Create compareOp expressions o.<self.alloyName> = 0, o.<self.alloyName> = 1, and o.<self.alloyName> >= minInteger
+				
+				var compareOp_partition1 : CompareOp_Expression init CompareOp_Expression.new
+				var compareOp_partition2: CompareOp_Expression init CompareOp_Expression.new
+				var compareOp_partition3: CompareOp_Expression init CompareOp_Expression.new
+				
+				var compareOp_partition_name:IDName init IDName.new
+				var compareOp_partition_nameExpr:Name_Expression init Name_Expression.new
+				
+				var part1RHS_Name:IDName init IDName.new
+				var part1RHS_NameExpr:Name_Expression init Name_Expression.new
+				var part2RHS_Name: IDName init IDName.new
+				var part2RHS_NameExpr:Name_Expression init Name_Expression.new
+				var part3RHS_Name: IDName init IDName.new
+				var part3RHS_NameExpr:Name_Expression init Name_Expression.new
+				
+				part1RHS_Name.initialize("0")
+				part2RHS_Name.initialize("1")
+				part3RHS_Name.initialize(trace.minInteger.toString)
+				
+				part1RHS_NameExpr.initialize(part1RHS_Name)
+				part2RHS_NameExpr.initialize(part2RHS_Name)
+				part3RHS_NameExpr.initialize(part3RHS_Name)
+				
+				compareOp_partition_name.initialize("o."+self.alloyName.getDefinition)
+				compareOp_partition_nameExpr.initialize(compareOp_partition_name)
+				
+				//stdio.writeln(compareOp_partition_nameExpr.getDefinition)
+				
+				compareOp_partition1.initialize(compareOp_partition_nameExpr,part1RHS_NameExpr,equal_CompareOp.new,false)
+				compareOp_partition2.initialize(compareOp_partition_nameExpr,part2RHS_NameExpr,equal_CompareOp.new,false)
+				compareOp_partition3.initialize(compareOp_partition_nameExpr,part3RHS_NameExpr,greaterThanEqual_CompareOp.new,false)
+				
+				//Create Decl o : <self.owningClass.name> 
+				var partition_Decl:Decl init Decl.new
+				var partition_Name: IDName init IDName.new
+				var partition_Names:Name[1..*] init OrderedSet<Name>.new
+				var partition_Decls:Decl[1..*] init OrderedSet<Decl>.new
+				
+				partition_Name.initialize("o")
+				partition_Names.add(partition_Name)
+				
+				partition_Decl.initialize(partition_Names,self.owningClass.alloyNameExpr,false,false)
+				partition_Decls.add(partition_Decl)
+				//stdio.writeln(partition_Decl.getDefinition)
+				
+				//Create quant expressions
+				//some o : <self.owningClass.name> | o.<self.alloyName> = 0
+				//some o : <self.owningClass.name> | o.<self.alloyName> = 1
+				//some o : <self.owningClass.name> | o.<self.alloyName> >= minInteger
+				
+				var partition1_QuantExpr:Quant_Expression init Quant_Expression.new
+				var partition2_QuantExpr:Quant_Expression init Quant_Expression.new
+				var partition3_QuantExpr:Quant_Expression init Quant_Expression.new
+				
+				var partition1_QuantBlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+				var partition2_QuantBlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+				var partition3_QuantBlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+				
+				partition1_QuantBlockOrBar.initialize(compareOp_partition1)
+				partition2_QuantBlockOrBar.initialize(compareOp_partition2)
+				partition3_QuantBlockOrBar.initialize(compareOp_partition3)
+				
+				
+				partition1_QuantExpr.initialize(some_Quantifier.new,partition_Decls,partition1_QuantBlockOrBar)
+				partition2_QuantExpr.initialize(some_Quantifier.new,partition_Decls,partition2_QuantBlockOrBar)
+				partition3_QuantExpr.initialize(some_Quantifier.new,partition_Decls,partition3_QuantBlockOrBar)
+				//stdio.writeln(partition1_QuantExpr.getDefinition)
+				//stdio.writeln(partition2_QuantExpr.getDefinition)
+				//Create predicate declarations
+				/*pred <self.alloyName>_partition1
+					{
+						partition1_QuantExpr
+					}
+					
+					pred <self.alloyName>_partition2
+					{
+						partition2_QuantExpr
+					}
+					
+					pred <self.alloyName>_partition3
+					{
+						partition3_QuantExpr
+					}
+					
+					*/
+				var partition1_PredDecl : PredDecl init PredDecl.new
+				var partition2_PredDecl : PredDecl init PredDecl.new
+				var partition3_PredDecl : PredDecl init PredDecl.new
+				
+				var partition1_Block : Block init Block.new
+				var partition1_BlockExprs : Expression[0..*] init OrderedSet<Expression>.new
+				var partition2_Block : Block init Block.new
+				var partition2_BlockExprs : Expression[0..*] init OrderedSet<Expression>.new
+				var partition3_Block : Block init Block.new
+				var partition3_BlockExprs : Expression[0..*] init OrderedSet<Expression>.new
+				
+				partition1_BlockExprs.add(partition1_QuantExpr)
+				partition2_BlockExprs.add(partition2_QuantExpr)
+				partition3_BlockExprs.add(partition3_QuantExpr)
+				
+				partition1_Block.initialize(partition1_BlockExprs)
+				partition2_Block.initialize(partition2_BlockExprs)
+				partition3_Block.initialize(partition3_BlockExprs)
+				
+				//Create partition names
+				//<self.alloyName>_partition1
+				//<self.alloyName>_partition2
+				var partition1pred_Name:IDName init IDName.new
+				var partition2pred_Name:IDName init IDName.new
+				var partition3pred_Name:IDName init IDName.new
+				
+				partition1pred_Name.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_partition1")
+				partition2pred_Name.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_partition2")
+				partition3pred_Name.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_partition3")
+				
+				partition1_PredDecl.initialize(void,partition1pred_Name,partition1_Block,void)
+				partition2_PredDecl.initialize(void,partition2pred_Name,partition2_Block,void)
+				partition3_PredDecl.initialize(void,partition3pred_Name,partition3_Block,void)
+				
+				
+				//stdio.writeln(partition1_PredDecl.getDefinition)
+				//stdio.writeln(partition2_PredDecl.getDefinition)
+				//stdio.writeln(partition3_PredDecl.getDefinition)
+				
+				//Add predicate names as a reference
+				self.partitionPredicateNames.clear
+				self.partitionPredicateNames.add(partition1pred_Name)
+				self.partitionPredicateNames.add(partition2pred_Name)
+				self.partitionPredicateNames.add(partition3pred_Name)
+				//If lower bound is zero then add predicate
+				if self.lower==0 then
+				trace.partitionNames.add(partition1pred_Name)
+				end
+				//If upper bound is greater than or equal to 1 then add this predicate
+				if self.upper>=1 then
+				trace.partitionNames.add(partition2pred_Name)
+				end
+				//Add the third predicate only if the upper bound of the multiplicity is * or > minInteger
+				
+				if self.upper>trace.minInteger or self.upper==-1 then
+				trace.partitionNames.add(partition3pred_Name)
+				end
+				
+				//Insert predicates into Alloy Model
+				//If lower bound is zero then add the predicate
+				if self.lower==0 then
+				trace.alloyModel.addParagraph(partition1_PredDecl)
+				end
+				//If upper bound is greater than or equal to 1 then add this predicate
+				if self.upper>=1 then
+				trace.alloyModel.addParagraph(partition2_PredDecl)
+				end
+				//Add the third predicate only if the upper bound of the multiplicity is * or > minInteger
+				if self.upper>trace.minInteger or self.upper==-1 then
+					trace.alloyModel.addParagraph(partition3_PredDecl)
+				end
+			end
+			
+			if self.type.asType(PrimitiveType).instanceType.toString == "String"  then
+				//Create predicates of the form 
+				/*
+					pred <self.alloyName>_partition1
+					{
+						some o : <self.owningClass.name> | all p : o.<self.alloyName> |size[p] = 0
+					}
+					
+					pred <self.alloyName>_partition2
+					{
+						some o : <self.owningClass.name> | all p : o.<self.alloyName> |size[p]  = 1
+					}
+					
+					pred <self.alloyName>_partition3
+					{
+						some o : <self.owningClass.name> | all p : o.<self.alloyName> |size[p] >= minStringLength
+					}
+				
+				*/			
+					
+				//Specify min string length
+			
+				//Create compareOp expressions size[o.<self.alloyName>] = 0, size[o.<self.alloyName>] = 1, and size[o.<self.alloyName>] >= minStringLength
+				
+				var compareOp_partition1 : CompareOp_Expression init CompareOp_Expression.new
+				var compareOp_partition2: CompareOp_Expression init CompareOp_Expression.new
+				var compareOp_partition3: CompareOp_Expression init CompareOp_Expression.new
+				
+				var compareOp_partition_name:IDName init IDName.new
+				var compareOp_partition_nameExpr:Name_Expression init Name_Expression.new
+				
+				var part1RHS_Name:IDName init IDName.new
+				var part1RHS_NameExpr:Name_Expression init Name_Expression.new
+				var part2RHS_Name: IDName init IDName.new
+				var part2RHS_NameExpr:Name_Expression init Name_Expression.new
+				var part3RHS_Name: IDName init IDName.new
+				var part3RHS_NameExpr:Name_Expression init Name_Expression.new
+				
+				part1RHS_Name.initialize("0")
+				part2RHS_Name.initialize("1")
+				part3RHS_Name.initialize(trace.minStringLength.toString)
+				
+				part1RHS_NameExpr.initialize(part1RHS_Name)
+				part2RHS_NameExpr.initialize(part2RHS_Name)
+				part3RHS_NameExpr.initialize(part3RHS_Name)
+				
+				if trace.useIntForString==true then
+					compareOp_partition_name.initialize("o."+self.alloyName.getDefinition)
+					compareOp_partition_nameExpr.initialize(compareOp_partition_name)
+				else
+					compareOp_partition_name.initialize("size["+"o."+self.alloyName.getDefinition+"]")
+					compareOp_partition_nameExpr.initialize(compareOp_partition_name)
+				end
+				//stdio.writeln(compareOp_partition_nameExpr.getDefinition)
+				
+				compareOp_partition1.initialize(compareOp_partition_nameExpr,part1RHS_NameExpr,equal_CompareOp.new,false)
+				compareOp_partition2.initialize(compareOp_partition_nameExpr,part2RHS_NameExpr,equal_CompareOp.new,false)
+				compareOp_partition3.initialize(compareOp_partition_nameExpr,part3RHS_NameExpr,greaterThanEqual_CompareOp.new,false)
+				
+				//Create Decl o : <self.owningClass.name> 
+				var partition_Decl:Decl init Decl.new
+				var partition_Name: IDName init IDName.new
+				var partition_Names:Name[1..*] init OrderedSet<Name>.new
+				var partition_Decls:Decl[1..*] init OrderedSet<Decl>.new
+				
+				partition_Name.initialize("o")
+				partition_Names.add(partition_Name)
+				
+				partition_Decl.initialize(partition_Names,self.owningClass.alloyNameExpr,false,false)
+				partition_Decls.add(partition_Decl)
+				//stdio.writeln(partition_Decl.getDefinition)
+				
+				//Create quant expressions
+				//some o : <self.owningClass.name> | size[o.<self.alloyName>] = 0
+				//some o : <self.owningClass.name> | size[o.<self.alloyName>] = 1
+				//some o : <self.owningClass.name> | size[o.<self.alloyName>] >= minStringLength
+				
+				var partition1_QuantExpr:Quant_Expression init Quant_Expression.new
+				var partition2_QuantExpr:Quant_Expression init Quant_Expression.new
+				var partition3_QuantExpr:Quant_Expression init Quant_Expression.new
+				
+				var partition1_QuantBlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+				var partition2_QuantBlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+				var partition3_QuantBlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+				
+				partition1_QuantBlockOrBar.initialize(compareOp_partition1)
+				partition2_QuantBlockOrBar.initialize(compareOp_partition2)
+				partition3_QuantBlockOrBar.initialize(compareOp_partition3)
+				
+				
+				partition1_QuantExpr.initialize(some_Quantifier.new,partition_Decls,partition1_QuantBlockOrBar)
+				partition2_QuantExpr.initialize(some_Quantifier.new,partition_Decls,partition2_QuantBlockOrBar)
+				partition3_QuantExpr.initialize(some_Quantifier.new,partition_Decls,partition3_QuantBlockOrBar)
+				//stdio.writeln(partition1_QuantExpr.getDefinition)
+				//stdio.writeln(partition2_QuantExpr.getDefinition)
+				//Create predicate declarations
+				/*pred <self.alloyName>_partition1
+					{
+						partition1_QuantExpr
+					}
+					
+					pred <self.alloyName>_partition2
+					{
+						partition2_QuantExpr
+					}
+					
+					pred <self.alloyName>_partition3
+					{
+						partition3_QuantExpr
+					}
+					
+					*/
+				var partition1_PredDecl : PredDecl init PredDecl.new
+				var partition2_PredDecl : PredDecl init PredDecl.new
+				var partition3_PredDecl : PredDecl init PredDecl.new
+				
+				var partition1_Block : Block init Block.new
+				var partition1_BlockExprs : Expression[0..*] init OrderedSet<Expression>.new
+				var partition2_Block : Block init Block.new
+				var partition2_BlockExprs : Expression[0..*] init OrderedSet<Expression>.new
+				var partition3_Block : Block init Block.new
+				var partition3_BlockExprs : Expression[0..*] init OrderedSet<Expression>.new
+				
+				partition1_BlockExprs.add(partition1_QuantExpr)
+				partition2_BlockExprs.add(partition2_QuantExpr)
+				partition3_BlockExprs.add(partition3_QuantExpr)
+				
+				partition1_Block.initialize(partition1_BlockExprs)
+				partition2_Block.initialize(partition2_BlockExprs)
+				partition3_Block.initialize(partition3_BlockExprs)
+				
+				//Create partition names
+				//<self.alloyName>_partition1
+				//<self.alloyName>_partition2
+				//<self.alloyName>_partition3
+				var partition1pred_Name:IDName init IDName.new
+				var partition2pred_Name:IDName init IDName.new
+				var partition3pred_Name:IDName init IDName.new
+				
+				partition1pred_Name.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_partition1")
+				partition2pred_Name.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_partition2")
+				partition3pred_Name.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_partition3")
+				
+				partition1_PredDecl.initialize(void,partition1pred_Name,partition1_Block,void)
+				partition2_PredDecl.initialize(void,partition2pred_Name,partition2_Block,void)
+				partition3_PredDecl.initialize(void,partition3pred_Name,partition3_Block,void)
+				
+				
+				//stdio.writeln(partition1_PredDecl.getDefinition)
+				//stdio.writeln(partition2_PredDecl.getDefinition)
+				//stdio.writeln(partition3_PredDecl.getDefinition)
+				
+				//Add predicate names as a reference
+				self.partitionPredicateNames.clear
+				self.partitionPredicateNames.add(partition1pred_Name)
+				self.partitionPredicateNames.add(partition2pred_Name)
+				self.partitionPredicateNames.add(partition3pred_Name)
+				
+				trace.partitionNames.add(partition1pred_Name)
+				trace.partitionNames.add(partition2pred_Name)
+				trace.partitionNames.add(partition3pred_Name)
+				
+				//Insert predicates into Alloy Model
+				
+				trace.alloyModel.addParagraph(partition1_PredDecl)
+				trace.alloyModel.addParagraph(partition2_PredDecl)
+				trace.alloyModel.addParagraph(partition3_PredDecl)
+			
+			end
+			
+		end
+		//If its a Class or Primitive type generate a Multiplicty Constraint
+		if self.type.isInstanceOf(Class) or self.type.isInstanceOf(PrimitiveType) then
+			//Create predicates of the form 
+				/*
+					pred <self.alloyName>_partition1
+					{
+						some o : <self.owningClass.name> | #o.<self.alloyName> = 0
+					}
+					
+					pred <self.alloyName>_partition2
+					{
+						some o : <self.owningClass.name> | #o.<self.alloyName> = 1
+					}
+					
+					pred <self.alloyName>_partition3
+					{
+						some o : <self.owningClass.name> | #o.<self.alloyName> >= minObjects
+					}
+				
+				*/		
+				
+			
+				//Create compareOp expressions #o.<self.alloyName> = 0, #o.<self.alloyName> = 1, and #o.<self.alloyName> >= minObjects
+				
+				var compareOp_partition1 : CompareOp_Expression init CompareOp_Expression.new
+				var compareOp_partition2: CompareOp_Expression init CompareOp_Expression.new
+				var compareOp_partition3: CompareOp_Expression init CompareOp_Expression.new
+				
+				var compareOp_partition_name:IDName init IDName.new
+				var compareOp_partition_nameExpr:Name_Expression init Name_Expression.new
+				
+				var part1RHS_Name:IDName init IDName.new
+				var part1RHS_NameExpr:Name_Expression init Name_Expression.new
+				var part2RHS_Name: IDName init IDName.new
+				var part2RHS_NameExpr:Name_Expression init Name_Expression.new
+				var part3RHS_Name: IDName init IDName.new
+				var part3RHS_NameExpr:Name_Expression init Name_Expression.new
+				
+				part1RHS_Name.initialize("0")
+				part2RHS_Name.initialize("1")
+				part3RHS_Name.initialize(trace.minObjects.toString)
+				
+				part1RHS_NameExpr.initialize(part1RHS_Name)
+				part2RHS_NameExpr.initialize(part2RHS_Name)
+				part3RHS_NameExpr.initialize(part3RHS_Name)
+				
+				compareOp_partition_name.initialize("#o."+self.alloyName.getDefinition)
+				compareOp_partition_nameExpr.initialize(compareOp_partition_name)
+				
+				//stdio.writeln(compareOp_partition_nameExpr.getDefinition)
+				
+				compareOp_partition1.initialize(compareOp_partition_nameExpr,part1RHS_NameExpr,equal_CompareOp.new,false)
+				compareOp_partition2.initialize(compareOp_partition_nameExpr,part2RHS_NameExpr,equal_CompareOp.new,false)
+				compareOp_partition3.initialize(compareOp_partition_nameExpr,part3RHS_NameExpr,greaterThanEqual_CompareOp.new,false)
+				
+				//Create Decl o : <self.owningClass.name> 
+				var partition_Decl:Decl init Decl.new
+				var partition_Name: IDName init IDName.new
+				var partition_Names:Name[1..*] init OrderedSet<Name>.new
+				var partition_Decls:Decl[1..*] init OrderedSet<Decl>.new
+				
+				partition_Name.initialize("o")
+				partition_Names.add(partition_Name)
+				
+				partition_Decl.initialize(partition_Names,self.owningClass.alloyNameExpr,false,false)
+				partition_Decls.add(partition_Decl)
+				//stdio.writeln(partition_Decl.getDefinition)
+				
+				//Create quant expressions
+				//some o : <self.owningClass.name> | size[o.<self.alloyName>] = 0
+				//some o : <self.owningClass.name> | size[o.<self.alloyName>] = 1
+				//some o : <self.owningClass.name> | size[o.<self.alloyName>] >= minObjects
+				
+				var partition1_QuantExpr:Quant_Expression init Quant_Expression.new
+				var partition2_QuantExpr:Quant_Expression init Quant_Expression.new
+				var partition3_QuantExpr:Quant_Expression init Quant_Expression.new
+				
+				var partition1_QuantBlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+				var partition2_QuantBlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+				var partition3_QuantBlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+				
+				partition1_QuantBlockOrBar.initialize(compareOp_partition1)
+				partition2_QuantBlockOrBar.initialize(compareOp_partition2)
+				partition3_QuantBlockOrBar.initialize(compareOp_partition3)
+				
+				
+				partition1_QuantExpr.initialize(some_Quantifier.new,partition_Decls,partition1_QuantBlockOrBar)
+				partition2_QuantExpr.initialize(some_Quantifier.new,partition_Decls,partition2_QuantBlockOrBar)
+				partition3_QuantExpr.initialize(some_Quantifier.new,partition_Decls,partition3_QuantBlockOrBar)
+				//stdio.writeln(partition1_QuantExpr.getDefinition)
+				//stdio.writeln(partition2_QuantExpr.getDefinition)
+				//Create predicate declarations
+				/*pred <self.alloyName>_partition1
+					{
+						partition1_QuantExpr
+					}
+					
+					pred <self.alloyName>_partition2
+					{
+						partition2_QuantExpr
+					}
+					
+					pred <self.alloyName>_partition3
+					{
+						partition3_QuantExpr
+					}
+					
+					*/
+				var partition1_PredDecl : PredDecl init PredDecl.new
+				var partition2_PredDecl : PredDecl init PredDecl.new
+				var partition3_PredDecl : PredDecl init PredDecl.new
+				
+				var partition1_Block : Block init Block.new
+				var partition1_BlockExprs : Expression[0..*] init OrderedSet<Expression>.new
+				var partition2_Block : Block init Block.new
+				var partition2_BlockExprs : Expression[0..*] init OrderedSet<Expression>.new
+				var partition3_Block : Block init Block.new
+				var partition3_BlockExprs : Expression[0..*] init OrderedSet<Expression>.new
+				
+				partition1_BlockExprs.add(partition1_QuantExpr)
+				partition2_BlockExprs.add(partition2_QuantExpr)
+				partition3_BlockExprs.add(partition3_QuantExpr)
+				
+				partition1_Block.initialize(partition1_BlockExprs)
+				partition2_Block.initialize(partition2_BlockExprs)
+				partition3_Block.initialize(partition3_BlockExprs)
+				
+				//Create partition names
+				//<self.alloyName>_partition1
+				//<self.alloyName>_partition2
+				//<self.alloyName>_partition3
+				var partition1pred_Name:IDName init IDName.new
+				var partition2pred_Name:IDName init IDName.new
+				var partition3pred_Name:IDName init IDName.new
+				
+				partition1pred_Name.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_partition1")
+				partition2pred_Name.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_partition2")
+				partition3pred_Name.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_partition3")
+				
+				partition1_PredDecl.initialize(void,partition1pred_Name,partition1_Block,void)
+				partition2_PredDecl.initialize(void,partition2pred_Name,partition2_Block,void)
+				partition3_PredDecl.initialize(void,partition3pred_Name,partition3_Block,void)
+				
+				
+				//stdio.writeln(partition1_PredDecl.getDefinition)
+				//stdio.writeln(partition2_PredDecl.getDefinition)
+				//stdio.writeln(partition3_PredDecl.getDefinition)
+				
+				//Add predicate names as a reference
+				self.partitionPredicateNames.clear
+				self.partitionPredicateNames.add(partition1pred_Name)
+				self.partitionPredicateNames.add(partition2pred_Name)
+				self.partitionPredicateNames.add(partition3pred_Name)
+				if self.lower>=0 then
+				trace.partitionNames.add(partition1pred_Name)
+				end
+				if self.lower>=1 then
+				trace.partitionNames.add(partition2pred_Name)
+				end
+				//Add third predicate if and only if upper bound is > minObjects or upper bound is *
+				if self.upper>trace.minObjects or self.upper==-1 then
+				trace.partitionNames.add(partition3pred_Name)
+				end
+				
+				//Insert predicates into Alloy Model
+				if self.lower>=0 then
+				trace.alloyModel.addParagraph(partition1_PredDecl)
+				end
+				if self.lower>=1 then
+				trace.alloyModel.addParagraph(partition2_PredDecl)
+				end
+				//Add third predicate if and only if upper bound is > minObjects or upper bound is *
+				if self.upper>trace.minObjects or self.upper==-1 then
+				trace.alloyModel.addParagraph(partition3_PredDecl)
+				end
+			
+		
+		
+		end
+	
+		if self.type.isInstanceOf(Enumeration) then
+			//Create predicates of the form 
+				/*
+					pred <self.alloyName>_partition1
+					{
+						some o : <self.owningClass.name> |all p: o.<self.alloyName> | p = Enumliteral1
+					}
+					
+					pred <self.alloyName>_partition2
+					{
+						some o : <self.owningClass.name> | all p: o.<self.alloyName> | p =  Enumliteral2
+					}
+					...
+					pred <self.alloyName>_partition3
+					{
+						some o : <self.owningClass.name> |all p: o.<self.alloyName> | p =  EnumliteralN
+					}
+				
+				*/		
+				
+				
+				//Create compareOp expressions #o.<self.alloyName> = 0, #o.<self.alloyName> = 1, and #o.<self.alloyName> >= minObjects
+				var enumerationClass: Enumeration init Enumeration.new
+				
+				enumerationClass := self.type.asType(Enumeration)
+				var literalNum: Integer init Integer.new
+				literalNum:=1
+				enumerationClass.ownedLiteral.each 
+				
+				{ 
+				
+				literal |
+					
+				var compareOp_partition1 : CompareOp_Expression init CompareOp_Expression.new
+					
+				
+				
+				var compareOp_partition_name:IDName init IDName.new
+				var compareOp_partition_nameExpr:Name_Expression init Name_Expression.new
+				
+				var part1RHS_Name:IDName init IDName.new
+				var part1RHS_NameExpr:Name_Expression init Name_Expression.new
+				
+				
+				part1RHS_Name.initialize(literal.name)
+				
+				
+				part1RHS_NameExpr.initialize(part1RHS_Name)
+				
+				
+				compareOp_partition_name.initialize("o."+self.alloyName.getDefinition)
+				compareOp_partition_nameExpr.initialize(compareOp_partition_name)
+				
+				//stdio.writeln(compareOp_partition_nameExpr.getDefinition)
+				
+				compareOp_partition1.initialize(compareOp_partition_nameExpr,part1RHS_NameExpr,equal_CompareOp.new,false)
+				
+				
+				//Create Decl o : <self.owningClass.name> 
+				var partition_Decl:Decl init Decl.new
+				var partition_Name: IDName init IDName.new
+				var partition_Names:Name[1..*] init OrderedSet<Name>.new
+				var partition_Decls:Decl[1..*] init OrderedSet<Decl>.new
+				
+				partition_Name.initialize("o")
+				partition_Names.add(partition_Name)
+				
+				partition_Decl.initialize(partition_Names,self.owningClass.alloyNameExpr,false,false)
+				partition_Decls.add(partition_Decl)
+				//stdio.writeln(partition_Decl.getDefinition)
+				
+				//Create quant expressions
+				//some o : <self.owningClass.name> | o.<self.alloyName> = literal
+				
+				
+				var partition1_QuantExpr:Quant_Expression init Quant_Expression.new
+				
+				
+				var partition1_QuantBlockOrBar : Expr_BlockOrBar init Expr_BlockOrBar.new
+				
+				partition1_QuantBlockOrBar.initialize(compareOp_partition1)
+				
+				
+				partition1_QuantExpr.initialize(some_Quantifier.new,partition_Decls,partition1_QuantBlockOrBar)
+			
+				//stdio.writeln(partition1_QuantExpr.getDefinition)
+				//stdio.writeln(partition2_QuantExpr.getDefinition)
+				//Create predicate declarations
+				/*pred <self.alloyName>_partition1
+					{
+						partition1_QuantExpr
+					}
+					
+					
+					
+					*/
+				var partition1_PredDecl : PredDecl init PredDecl.new
+				
+				
+				var partition1_Block : Block init Block.new
+				var partition1_BlockExprs : Expression[0..*] init OrderedSet<Expression>.new
+				
+				
+				partition1_BlockExprs.add(partition1_QuantExpr)
+				
+				
+				partition1_Block.initialize(partition1_BlockExprs)
+			
+				
+				//Create partition names
+				//<self.alloyName>_partition1
+				
+				var partition1pred_Name:IDName init IDName.new
+				
+				
+				partition1pred_Name.initialize(self.owningClass.name+"_"+self.alloyName.getDefinition+"_partition"+literalNum.toString)
+				
+				partition1_PredDecl.initialize(void,partition1pred_Name,partition1_Block,void)
+				
+				
+				//stdio.writeln(partition1_PredDecl.getDefinition)
+			
+				
+				//Add predicate names as a reference
+				self.partitionPredicateNames.clear
+				self.partitionPredicateNames.add(partition1pred_Name)
+				trace.partitionNames.add(partition1pred_Name)
+				
+				
+				//Insert predicates into Alloy Model
+				
+				trace.alloyModel.addParagraph(partition1_PredDecl)
+				literalNum:=literalNum+1
+				}
+				
+			
+		
+		
+		end
+	end
+}

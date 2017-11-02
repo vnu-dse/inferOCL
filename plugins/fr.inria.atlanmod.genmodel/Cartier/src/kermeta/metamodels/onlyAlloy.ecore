@@ -1,0 +1,1258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="AlloyMM"
+    nsURI="platform:/resource/Cartier/src/kermeta/metamodels/alloy.ecore#/Cartier/AlloyMM"
+    nsPrefix="AlloyMM">
+  <eClassifiers xsi:type="ecore:EClass" name="BlockOrBar" abstract="true" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Block_BlockOrBar" eSuperTypes="#//BlockOrBar">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.block := block&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="block" eType="#//Block"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//BlockOrBar/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := self.block.getDefinition&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::BlockOrBar"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="block" lowerBound="1" eType="#//Block"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Expr_BlockOrBar" eSuperTypes="#//BlockOrBar">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.expression := expression&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="expression" eType="#//Expression"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//BlockOrBar/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := ((&quot;|&quot;) + (expression.getDefinition))&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::BlockOrBar"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expression" lowerBound="1"
+        eType="#//Expression"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Name" abstract="true" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ThisName" eSuperTypes="#//Name">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Name/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;this&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Name"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IDName" eSuperTypes="#//Name">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.ID := ID&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="ID" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Name/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := self.ID&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Name"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ID" lowerBound="1" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="QualifiedName" eSuperTypes="#//Name">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.ID.addAll(ID)&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="ID" upperBound="-1" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Name/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var qualifiedName : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;self.ID.each{id | do&#xA;&#x9;&#x9;&#x9;qualifiedName := ((((qualifiedName) + (&quot;/&quot;))) + (id))&#xA;&#x9;&#x9;end}&#xA;&#x9;result := qualifiedName&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Name"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ID" upperBound="-1" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Reference" abstract="true" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NameReference" eSuperTypes="#//Reference">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.name := name&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="name" eType="#//Name"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Reference/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := self.name.getDefinition&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Reference"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UnivReference" eSuperTypes="#//Reference">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Reference/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;univ&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Reference"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IntReference" eSuperTypes="#//Reference">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Reference/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;Int&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Reference"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SeqIntReference" eSuperTypes="#//Reference">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Reference/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;seq/Int&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Reference"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Decl" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.names.addAll(names)&#xA;&#x9;self.expr := expr&#xA;&#x9;self.isDisjointLHS := isDisjointLHS&#xA;&#x9;self.isDisjointRHS := isDisjointRHS&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="names" lowerBound="1" upperBound="-1" eType="#//Name"/>
+      <eParameters name="expr" eType="#//Expression"/>
+      <eParameters name="isDisjointLHS" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+      <eParameters name="isDisjointRHS" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;var declDefinition : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;declDefinition := &quot;&quot;&#xA;&#x9;if ((self.isDisjointLHS) and (self.isDisjointRHS)) then&#xA;&#x9;&#x9;self.names.each{name | do&#xA;&#x9;&#x9;&#x9;&#x9;declDefinition := ((((((declDefinition) + (&quot;disj &quot;))) + (name.getDefinition))) + (&quot;,&quot;))&#xA;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;declDefinition := declDefinition.substring(0, ((declDefinition.size) - (1)))&#xA;&#x9;&#x9;declDefinition := ((declDefinition) + (&quot; : &quot;))&#xA;&#x9;&#x9;declDefinition := ((declDefinition) + (&quot; disj &quot;))&#xA;&#x9;&#x9;declDefinition := ((declDefinition) + (self.expr.getDefinition))&#xA;&#xA;&#x9;end&#xA;&#x9;if ((self.isDisjointLHS) and (self.isDisjointRHS.~not)) then&#xA;&#x9;&#x9;self.names.each{name | do&#xA;&#x9;&#x9;&#x9;&#x9;declDefinition := ((((((declDefinition) + (&quot;disj &quot;))) + (name.getDefinition))) + (&quot;,&quot;))&#xA;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;declDefinition := declDefinition.substring(0, ((declDefinition.size) - (1)))&#xA;&#x9;&#x9;declDefinition := ((declDefinition) + (&quot; : &quot;))&#xA;&#x9;&#x9;declDefinition := ((declDefinition) + (self.expr.getDefinition))&#xA;&#xA;&#x9;end&#xA;&#x9;if ((self.isDisjointLHS.~not) and (self.isDisjointRHS)) then&#xA;&#x9;&#x9;self.names.each{name | do&#xA;&#x9;&#x9;&#x9;&#x9;declDefinition := ((((declDefinition) + (name.getDefinition))) + (&quot;,&quot;))&#xA;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;declDefinition := declDefinition.substring(0, ((declDefinition.size) - (1)))&#xA;&#x9;&#x9;declDefinition := ((declDefinition) + (&quot; : &quot;))&#xA;&#x9;&#x9;declDefinition := ((declDefinition) + (&quot; disj &quot;))&#xA;&#x9;&#x9;declDefinition := ((declDefinition) + (self.expr.getDefinition))&#xA;&#xA;&#x9;end&#xA;&#x9;if ((self.isDisjointLHS.~not) and (self.isDisjointRHS.~not)) then&#xA;&#x9;&#x9;self.names.each{name | do&#xA;&#x9;&#x9;&#x9;&#x9;declDefinition := ((((declDefinition) + (name.getDefinition))) + (&quot;,&quot;))&#xA;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;declDefinition := declDefinition.substring(0, ((declDefinition.size) - (1)))&#xA;&#x9;&#x9;declDefinition := ((declDefinition) + (&quot; : &quot;))&#xA;&#x9;&#x9;declDefinition := ((declDefinition) + (self.expr.getDefinition))&#xA;&#xA;&#x9;end&#xA;&#x9;result := declDefinition&#xA;end"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="names" lowerBound="1" upperBound="-1"
+        eType="#//Name"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" lowerBound="1" eType="#//Expression"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isDisjointLHS" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isDisjointRHS" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Module" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.name := name&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="name" eType="#//Name"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;result := ((&quot;module &quot;) + (self.name.getDefinition))&#xA;end"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OpenDecl" eSuperTypes="#//Paragraph">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.qualifiedName := qualifiedName&#xA;&#x9;self.name := name&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="qualifiedName" eType="#//Name"/>
+      <eParameters name="name" eType="#//Name"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Paragraph/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := ((((((&quot;open &quot;) + (self.qualifiedName.getDefinition))) + (&quot; as &quot;))) + (self.name.getDefinition))&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Paragraph"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="qualifiedName" eType="#//Name"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SigQual" abstract="true" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EmptySigQual" eSuperTypes="#//SigQual">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//SigQual/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::SigQual"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractSigQual" eSuperTypes="#//SigQual">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//SigQual/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;abstract&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::SigQual"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LoneSigQual" eSuperTypes="#//SigQual">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//SigQual/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;lone&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::SigQual"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OneSigQual" eSuperTypes="#//SigQual">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//SigQual/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;one&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::SigQual"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SomeSigQual" eSuperTypes="#//SigQual">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//SigQual/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;some&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::SigQual"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SigExt" abstract="true" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+      <eParameters name="aReference" eType="#//Reference"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aReference" eType="#//Reference"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EmptySigExt" eSuperTypes="#//SigExt">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//SigExt/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::SigExt"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExtendsSigExt" eSuperTypes="#//SigExt">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta" references="#//SigExt/initialize">
+        <details key="body" value="do&#xA;&#x9;self.aReference := aReference&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::SigExt"/>
+      </eAnnotations>
+      <eParameters name="aReference" eType="#//Reference"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//SigExt/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := ((((&quot;extends&quot;) + (&quot; &quot;))) + (self.aReference.getDefinition))&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::SigExt"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InSigExt" eSuperTypes="#//SigExt">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta" references="#//SigExt/initialize">
+        <details key="body" value="do&#xA;&#x9;self.aReference := aReference&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::SigExt"/>
+      </eAnnotations>
+      <eParameters name="aReference" eType="#//Reference"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//SigExt/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := ((((&quot;in&quot;) + (&quot; &quot;))) + (self.aReference.getDefinition))&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::SigExt"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Paragraph" abstract="true" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AlloyModel" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="setModule" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.module := module&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="module" eType="#//Module"/>
+    </eOperations>
+    <eOperations name="addParagraph" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.paragraphs.add(paragraph)&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="paragraph" eType="#//Paragraph"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;var alloyModelString : kermeta::standard::String init &quot;&quot;&#xA;&#x9;if self.isVoid.~not then&#xA;&#x9;&#x9;if self.module.isVoid.~not then&#xA;&#x9;&#x9;&#x9;alloyModelString := ((self.module.getDefinition) + (&quot;\n\n&quot;))&#xA;&#xA;&#x9;&#x9;end&#xA;&#x9;&#x9;if self.paragraphs.isVoid.~not then&#xA;&#x9;&#x9;&#x9;self.paragraphs.each{paragraph | do&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;if paragraph.isInstanceOf(Cartier::AlloyMM::OpenDecl) then&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;alloyModelString := ((((alloyModelString) + (paragraph.getDefinition))) + (&quot;\n\n&quot;))&#xA;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;end&#xA;&#x9;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;&#x9;self.paragraphs.each{paragraph | do&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;if paragraph.isInstanceOf(Cartier::AlloyMM::EnumDecl) then&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;alloyModelString := ((alloyModelString) + (paragraph.getDefinition))&#xA;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;end&#xA;&#x9;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;&#x9;self.paragraphs.each{paragraph | do&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;if paragraph.isInstanceOf(Cartier::AlloyMM::SigDecl) then&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;alloyModelString := ((alloyModelString) + (paragraph.getDefinition))&#xA;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;end&#xA;&#x9;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;&#x9;self.paragraphs.each{paragraph | do&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;if paragraph.isInstanceOf(Cartier::AlloyMM::FactDecl) then&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;alloyModelString := ((alloyModelString) + (paragraph.getDefinition))&#xA;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;end&#xA;&#x9;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;&#x9;self.paragraphs.each{paragraph | do&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;if paragraph.isInstanceOf(Cartier::AlloyMM::FunDecl) then&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;alloyModelString := ((alloyModelString) + (paragraph.getDefinition))&#xA;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;end&#xA;&#x9;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;&#x9;self.paragraphs.each{paragraph | do&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;if paragraph.isInstanceOf(Cartier::AlloyMM::PredDecl) then&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;alloyModelString := ((alloyModelString) + (paragraph.getDefinition))&#xA;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;end&#xA;&#x9;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;&#x9;self.paragraphs.each{paragraph | do&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;if paragraph.isInstanceOf(Cartier::AlloyMM::AssertDecl) then&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;alloyModelString := ((alloyModelString) + (paragraph.getDefinition))&#xA;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;end&#xA;&#x9;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;&#x9;self.paragraphs.each{paragraph | do&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;if paragraph.isInstanceOf(Cartier::AlloyMM::CmdDecl) then&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;alloyModelString := ((alloyModelString) + (paragraph.getDefinition))&#xA;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;end&#xA;&#x9;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;&#x9;self.paragraphs.each{paragraph | do&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;if paragraph.isInstanceOf(Cartier::AlloyMM::MultiLineComment) then&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;alloyModelString := ((alloyModelString) + (paragraph.getDefinition))&#xA;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;end&#xA;&#x9;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;&#x9;self.paragraphs.each{paragraph | do&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;if paragraph.isInstanceOf(Cartier::AlloyMM::SingleLineComment) then&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;alloyModelString := ((alloyModelString) + (paragraph.getDefinition))&#xA;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;end&#xA;&#x9;&#x9;&#x9;&#x9;end}&#xA;&#xA;&#x9;&#x9;end&#xA;&#xA;&#x9;end&#xA;&#x9;result := alloyModelString&#xA;end"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="module" lowerBound="1"
+        eType="#//Module" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="paragraphs" lowerBound="1"
+        upperBound="-1" eType="#//Paragraph"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FactDecl" eSuperTypes="#//Paragraph">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;if name.isVoid.~not then&#xA;&#x9;&#x9;self.name := name&#xA;&#xA;&#x9;end&#xA;&#x9;self.block := block&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="name" eType="#//Name"/>
+      <eParameters name="block" eType="#//Block"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Paragraph/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var factDefinition : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;factDefinition := &quot;\nfact &quot;&#xA;&#x9;if self.name.isVoid.~not then&#xA;&#x9;&#x9;factDefinition := ((factDefinition) + (self.name.getDefinition))&#xA;&#xA;&#x9;end&#xA;&#x9;factDefinition := ((factDefinition) + (self.block.getDefinition))&#xA;&#x9;result := factDefinition&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Paragraph"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="block" lowerBound="1" eType="#//Block"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MultiLineComment" eSuperTypes="#//Paragraph">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.comment := comment&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="commnet" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Paragraph/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var commentDefn : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;commentDefn := ((((&quot;/*\n&quot;) + (self.comment))) + (&quot;\n*/\n&quot;))&#xA;&#x9;result := commentDefn&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Paragraph"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="false"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SingleLineComment" eSuperTypes="#//Paragraph">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.comment := comment&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="commnet" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Paragraph/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var commentDefn : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;commentDefn := ((&quot;//&quot;) + (self.comment))&#xA;&#x9;result := commentDefn&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Paragraph"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="false"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EnumDecl" eSuperTypes="#//Paragraph">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.name := name&#xA;&#x9;self.literals.addAll(literals)&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="name" eType="#//Name"/>
+      <eParameters name="literals" lowerBound="1" upperBound="-1" eType="#//Name"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Paragraph/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var enumDecl : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;enumDecl := ((((&quot;enum &quot;) + (self.name.getDefinition))) + (&quot; { &quot;))&#xA;&#x9;self.literals.each{l | do&#xA;&#x9;&#x9;&#x9;enumDecl := ((((enumDecl) + (l.getDefinition))) + (&quot;,&quot;))&#xA;&#x9;&#x9;end}&#xA;&#x9;enumDecl := enumDecl.substring(0, ((enumDecl.size) - (1)))&#xA;&#x9;enumDecl := ((enumDecl) + (&quot; }\n\n &quot;))&#xA;&#x9;result := enumDecl&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Paragraph"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="literals" lowerBound="1"
+        upperBound="-1" eType="#//Name"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CmdDecl" eSuperTypes="#//Paragraph">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.name := name&#xA;&#x9;self.isRun := isRun&#xA;&#x9;self.isCheck := isCheck&#xA;&#x9;self.scope := scope&#xA;&#x9;self.block := block&#xA;&#x9;self.predName := predName&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="name" eType="#//Name"/>
+      <eParameters name="isRun" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+      <eParameters name="isCheck" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+      <eParameters name="scope" eType="#//Scope"/>
+      <eParameters name="predName" eType="#//Name"/>
+      <eParameters name="block" eType="#//Block"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Paragraph/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var cmdDefn : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;cmdDefn := &quot;&quot;&#xA;&#x9;if name.isVoid.~not then&#xA;&#x9;&#x9;cmdDefn := ((self.name.getDefinition) + (&quot;:&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;if self.isRun then&#xA;&#x9;&#x9;cmdDefn := ((cmdDefn) + (&quot;run&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;if self.isCheck then&#xA;&#x9;&#x9;cmdDefn := ((cmdDefn) + (&quot;check&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;if self.predName.isVoid.~not then&#xA;&#x9;&#x9;cmdDefn := ((((((cmdDefn) + (&quot; &quot;))) + (self.predName.getDefinition))) + (&quot; &quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;if self.block.isVoid.~not then&#xA;&#x9;&#x9;cmdDefn := ((((((cmdDefn) + (&quot; &quot;))) + (self.block.getDefinition))) + (&quot; &quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;cmdDefn := ((((cmdDefn) + (&quot; &quot;))) + (self.scope.getDefinition))&#xA;&#x9;result := cmdDefn&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Paragraph"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isRun" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isCheck" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="scope" eType="#//Scope"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="predName" eType="#//Name"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="block" eType="#//Block"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Scope" abstract="true" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isExpect" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isExpectValue" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ForNumber_Scope" eSuperTypes="#//Scope">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.number := number&#xA;&#x9;self.isExpect := isExpect&#xA;&#x9;self.isExpectValue := isExpectValue&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="number" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Integer"/>
+      <eParameters name="isExpect" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+      <eParameters name="isExpectValue" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Scope/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var scopeDefinition : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;scopeDefinition := ((&quot;for &quot;) + (self.number.toString))&#xA;&#x9;if ((isExpect) and (isExpectValue)) then&#xA;&#x9;&#x9;scopeDefinition := ((scopeDefinition) + (&quot; expect 1&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;if ((isExpect) and (isExpectValue.~not)) then&#xA;&#x9;&#x9;scopeDefinition := ((scopeDefinition) + (&quot; expect 0&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;result := scopeDefinition&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Scope"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="number" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Integer"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ForNumberBut_Scope" eSuperTypes="#//Scope">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.number := number&#xA;&#x9;self.isExpect := isExpect&#xA;&#x9;self.isExpectValue := isExpectValue&#xA;&#x9;self.typeScopes.addAll(typeScopes)&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="number" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Integer"/>
+      <eParameters name="isExpect" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+      <eParameters name="isExpectValue" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+      <eParameters name="typeScopes" lowerBound="1" upperBound="-1" eType="#//TypeScope"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Scope/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var scopeDefinition : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;scopeDefinition := ((((&quot;for &quot;) + (self.number.toString))) + (&quot; but &quot;))&#xA;&#x9;self.typeScopes.each{ts | do&#xA;&#x9;&#x9;&#x9;scopeDefinition := ((((scopeDefinition) + (ts.getDefinition))) + (&quot;,&quot;))&#xA;&#x9;&#x9;end}&#xA;&#x9;scopeDefinition := scopeDefinition.substring(0, ((scopeDefinition.size) - (1)))&#xA;&#x9;if ((isExpect) and (isExpectValue)) then&#xA;&#x9;&#x9;scopeDefinition := ((scopeDefinition) + (&quot; expect 1&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;if ((isExpect) and (isExpectValue.~not)) then&#xA;&#x9;&#x9;scopeDefinition := ((scopeDefinition) + (&quot; expect 0&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;result := scopeDefinition&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Scope"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="number" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Integer"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="typeScopes" lowerBound="1"
+        upperBound="-1" eType="#//TypeScope"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ForTypeScope_Scope" eSuperTypes="#//Scope">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.number := number&#xA;&#x9;self.isExpect := isExpect&#xA;&#x9;self.isExpectValue := isExpectValue&#xA;&#x9;self.typeScopes.addAll(typeScopes)&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="number" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Integer"/>
+      <eParameters name="isExpect" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+      <eParameters name="isExpectValue" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+      <eParameters name="typeScopes" lowerBound="1" upperBound="-1" eType="#//TypeScope"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Scope/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var scopeDefinition : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;scopeDefinition := &quot;for &quot;&#xA;&#x9;self.typeScopes.each{ts | do&#xA;&#x9;&#x9;&#x9;scopeDefinition := ((((scopeDefinition) + (ts.getDefinition))) + (&quot;,&quot;))&#xA;&#x9;&#x9;end}&#xA;&#x9;scopeDefinition := scopeDefinition.substring(0, ((scopeDefinition.size) - (1)))&#xA;&#x9;if ((isExpect) and (isExpectValue)) then&#xA;&#x9;&#x9;scopeDefinition := ((scopeDefinition) + (&quot; expect 1&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;if ((isExpect) and (isExpectValue.~not)) then&#xA;&#x9;&#x9;scopeDefinition := ((scopeDefinition) + (&quot; expect 0&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;result := scopeDefinition&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Scope"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="number" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Integer"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="typeScopes" lowerBound="1"
+        upperBound="-1" eType="#//TypeScope"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Empty_Scope" eSuperTypes="#//Scope">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.isExpect := isExpect&#xA;&#x9;self.isExpectValue := isExpectValue&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="isExpect" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+      <eParameters name="isExpectValue" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Scope/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var scopeDefinition : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;scopeDefinition := &quot;&quot;&#xA;&#x9;if ((isExpect) and (isExpectValue)) then&#xA;&#x9;&#x9;scopeDefinition := ((scopeDefinition) + (&quot;expect 1&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;if ((isExpect) and (isExpectValue.~not)) then&#xA;&#x9;&#x9;scopeDefinition := ((scopeDefinition) + (&quot;expect 0&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;result := scopeDefinition&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Scope"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TypeScope" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.number := number&#xA;&#x9;self.name := name&#xA;&#x9;self.isName := isName&#xA;&#x9;self.isInt := isInt&#xA;&#x9;self.isSeq := isSeq&#xA;&#x9;self.isExactly := isExactly&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="number" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Integer"/>
+      <eParameters name="name" eType="#//Name"/>
+      <eParameters name="isName" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+      <eParameters name="isInt" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+      <eParameters name="isSeq" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+      <eParameters name="isExactly" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;var typeScopeExpr : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;if isExactly then&#xA;&#x9;&#x9;typeScopeExpr := ((typeScopeExpr) + (&quot;exactly&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;typeScopeExpr := ((typeScopeExpr) + (self.number.toString))&#xA;&#x9;if isName then&#xA;&#x9;&#x9;typeScopeExpr := ((typeScopeExpr) + (self.name.getDefinition))&#xA;&#xA;&#x9;end&#xA;&#x9;if isInt then&#xA;&#x9;&#x9;typeScopeExpr := ((typeScopeExpr) + (&quot; int &quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;if isSeq then&#xA;&#x9;&#x9;typeScopeExpr := ((typeScopeExpr) + (&quot; seq &quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;result := typeScopeExpr&#xA;end"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="number" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Integer"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isName" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isInt" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isSeq" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isExactly" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AssertDecl" eSuperTypes="#//Paragraph">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.name := name&#xA;&#x9;self.block := block&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="name" eType="#//Name"/>
+      <eParameters name="block" eType="#//Block"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Paragraph/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := ((((&quot;assert &quot;) + (self.name.getDefinition))) + (self.block.getDefinition))&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Paragraph"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="block" lowerBound="1" eType="#//Block"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FunDecl" eSuperTypes="#//Paragraph">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.aReference := aReference&#xA;&#x9;self.name := name&#xA;&#x9;self.block := block&#xA;&#x9;self.expr := expr&#xA;&#x9;self.params.addAll(params)&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="aReference" eType="#//Reference"/>
+      <eParameters name="name" eType="#//Name"/>
+      <eParameters name="block" eType="#//Block"/>
+      <eParameters name="expr" eType="#//Expression"/>
+      <eParameters name="params" upperBound="-1" eType="#//Decl"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Paragraph/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var funDefinition : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;if self.params.isVoid.~not then&#xA;&#x9;&#x9;if self.aReference.isVoid then&#xA;&#x9;&#x9;&#x9;funDefinition := ((((((&quot;fun&quot;) + (&quot; &quot;))) + (self.name.getDefinition))) + (&quot;(&quot;))&#xA;&#xA;&#x9;&#x9;end&#xA;&#x9;&#x9;if self.aReference.isVoid.~not then&#xA;&#x9;&#x9;&#x9;funDefinition := ((((((((((&quot;fun&quot;) + (&quot; &quot;))) + (self.aReference.getDefinition))) + (&quot;.&quot;))) + (self.name.getDefinition))) + (&quot;(&quot;))&#xA;&#xA;&#x9;&#x9;end&#xA;&#x9;&#x9;self.params.each{param | do&#xA;&#x9;&#x9;&#x9;&#x9;funDefinition := ((((funDefinition) + (param.getDefinition))) + (&quot;,&quot;))&#xA;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;funDefinition := funDefinition.substring(0, ((funDefinition.size) - (1)))&#xA;&#x9;&#x9;funDefinition := ((((((((funDefinition) + (&quot;)&quot;))) + (&quot;:&quot;))) + (expr.getDefinition))) + (self.block.getDefinition))&#xA;&#xA;&#x9;end&#xA;&#x9;if self.params.isVoid then&#xA;&#x9;&#x9;funDefinition := ((((((((((((&quot;fun&quot;) + (&quot; &quot;))) + (self.name.getDefinition))) + (&quot;()&quot;))) + (&quot;:&quot;))) + (expr.getDefinition))) + (self.block.getDefinition))&#xA;&#xA;&#x9;end&#xA;&#x9;result := funDefinition&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Paragraph"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aReference" eType="#//Reference"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="block" lowerBound="1" eType="#//Block"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="params" upperBound="-1"
+        eType="#//Decl"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" lowerBound="1" eType="#//Expression"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PredDecl" eSuperTypes="#//Paragraph">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.aReference := aReference&#xA;&#x9;self.name := name&#xA;&#x9;self.block := block&#xA;&#x9;if params.isVoid then&#xA;&#x9;&#x9;self.params.clear&#xA;&#xA;&#x9;end&#xA;&#x9;if params.isVoid.~not then&#xA;&#x9;&#x9;self.params.addAll(params)&#xA;&#xA;&#x9;end&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="aReference" eType="#//Reference"/>
+      <eParameters name="name" eType="#//Name"/>
+      <eParameters name="block" eType="#//Block"/>
+      <eParameters name="params" upperBound="-1" eType="#//Decl"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Paragraph/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var predDefinition : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;if self.params.isEmpty then&#xA;&#x9;&#x9;predDefinition := ((((((((&quot;pred&quot;) + (&quot; &quot;))) + (self.name.getDefinition))) + (&quot;\n&quot;))) + (self.block.getDefinition))&#xA;&#xA;&#x9;end&#xA;&#x9;if self.params.isEmpty.~not then&#xA;&#x9;&#x9;if self.aReference.isVoid then&#xA;&#x9;&#x9;&#x9;predDefinition := ((((((&quot;pred&quot;) + (&quot; &quot;))) + (self.name.getDefinition))) + (&quot;(&quot;))&#xA;&#xA;&#x9;&#x9;end&#xA;&#x9;&#x9;if self.aReference.isVoid.~not then&#xA;&#x9;&#x9;&#x9;predDefinition := ((((((((((&quot;pred&quot;) + (&quot; &quot;))) + (self.aReference.getDefinition))) + (&quot;.&quot;))) + (self.name.getDefinition))) + (&quot;(&quot;))&#xA;&#xA;&#x9;&#x9;end&#xA;&#x9;&#x9;self.params.each{param | do&#xA;&#x9;&#x9;&#x9;&#x9;predDefinition := ((((predDefinition) + (param.getDefinition))) + (&quot;,&quot;))&#xA;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;predDefinition := predDefinition.substring(0, ((predDefinition.size) - (1)))&#xA;&#x9;&#x9;predDefinition := ((((((predDefinition) + (&quot;)&quot;))) + (&quot;\n&quot;))) + (self.block.getDefinition))&#xA;&#xA;&#x9;end&#xA;&#x9;result := predDefinition&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Paragraph"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aReference" eType="#//Reference"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="block" eType="#//Block"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="params" upperBound="-1"
+        eType="#//Decl"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SigDecl" eSuperTypes="#//Paragraph">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;if name.isVoid.~not then&#xA;&#x9;&#x9;self.name := name&#xA;&#xA;&#x9;end&#xA;&#x9;if sigQual.isVoid.~not then&#xA;&#x9;&#x9;self.sigQual := sigQual&#xA;&#xA;&#x9;end&#xA;&#x9;if extension.isVoid.~not then&#xA;&#x9;&#x9;self.extension := extension&#xA;&#xA;&#x9;end&#xA;&#x9;if fields.isVoid.~not then&#xA;&#x9;&#x9;self.fields.addAll(fields)&#xA;&#xA;&#x9;end&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="sigQual" eType="#//SigQual"/>
+      <eParameters name="name" eType="#//Name"/>
+      <eParameters name="extension" eType="#//SigExt"/>
+      <eParameters name="fields" upperBound="-1" eType="#//Decl"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Paragraph/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;&quot;&#xA;&#x9;var signatureDefinition : kermeta::standard::String init &quot;&quot;&#xA;&#x9;if self.isVoid.~not then&#xA;&#x9;&#x9;if self.sigQual.isVoid.~not then&#xA;&#x9;&#x9;&#x9;signatureDefinition := sigQual.getDefinition&#xA;&#xA;&#x9;&#x9;end&#xA;&#x9;&#x9;signatureDefinition := ((((((signatureDefinition) + (&quot; sig &quot;))) + (self.name.getDefinition))) + (&quot; &quot;))&#xA;&#x9;&#x9;if self.extension.isVoid.~not then&#xA;&#x9;&#x9;&#x9;signatureDefinition := ((signatureDefinition) + (self.extension.getDefinition))&#xA;&#xA;&#x9;&#x9;end&#xA;&#x9;&#x9;signatureDefinition := ((signatureDefinition) + (&quot; \n{ \n&quot;))&#xA;&#x9;&#x9;if self.fields.isVoid.~not then&#xA;&#x9;&#x9;&#x9;self.fields.each{f | do&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;signatureDefinition := ((((((((signatureDefinition) + (&quot;\t&quot;))) + (f.getDefinition))) + (&quot;,&quot;))) + (&quot;\n&quot;))&#xA;&#x9;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;&#x9;signatureDefinition := signatureDefinition.substring(0, ((signatureDefinition.size) - (2)))&#xA;&#xA;&#x9;&#x9;end&#xA;&#x9;&#x9;signatureDefinition := ((signatureDefinition) + (&quot;\n}\n&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;result := signatureDefinition&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Paragraph"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sigQual" eType="#//SigQual"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="extension" eType="#//SigExt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fields" upperBound="-1"
+        eType="#//Decl"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Block" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;if exprs.isVoid.~not then&#xA;&#x9;&#x9;self.expressions.addAll(exprs)&#xA;&#xA;&#x9;end&#xA;&#x9;if exprs.isVoid then&#xA;&#x9;&#x9;self.expressions.clear&#xA;&#xA;&#x9;end&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="exprs" upperBound="-1" eType="#//Expression"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;var blockExpressions : kermeta::standard::String init &quot;&quot;&#xA;&#x9;if self.expressions.isVoid.~not then&#xA;&#x9;&#x9;blockExpressions := &quot;\n{\n&quot;&#xA;&#x9;&#x9;self.expressions.each{exp | do&#xA;&#x9;&#x9;&#x9;&#x9;blockExpressions := ((((blockExpressions) + (&quot;\t&quot;))) + (exp.getDefinition))&#xA;&#x9;&#x9;&#x9;end}&#xA;&#x9;&#x9;blockExpressions := ((blockExpressions) + (&quot;\n}\n&quot;))&#xA;&#xA;&#x9;end&#xA;&#x9;if self.expressions.isVoid then&#xA;&#x9;&#x9;blockExpressions := &quot;\n{ }\n&quot;&#xA;&#xA;&#x9;end&#xA;&#x9;result := blockExpressions&#xA;end"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expressions" upperBound="-1"
+        eType="#//Expression"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UnOp" abstract="true" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="not_UnOp" eSuperTypes="#//UnOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//UnOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;not&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::UnOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="no_UnOp" eSuperTypes="#//UnOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//UnOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;no&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::UnOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="some_UnOp" eSuperTypes="#//UnOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//UnOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;some&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::UnOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="lone_UnOp" eSuperTypes="#//UnOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//UnOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;lone&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::UnOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="one_UnOp" eSuperTypes="#//UnOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//UnOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;one&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::UnOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="set_UnOp" eSuperTypes="#//UnOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//UnOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;set&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::UnOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="seq_UnOp" eSuperTypes="#//UnOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//UnOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;seq&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::UnOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="size_UnOp" eSuperTypes="#//UnOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//UnOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;#&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::UnOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="transpose_UnOp" eSuperTypes="#//UnOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//UnOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;~&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::UnOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="reflexiveTransitiveClosure_UnOp" eSuperTypes="#//UnOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//UnOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;*&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::UnOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="transitiveClosure_UnOp" eSuperTypes="#//UnOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//UnOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;^&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::UnOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CompareOp" abstract="true" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="equal_CompareOp" eSuperTypes="#//CompareOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//CompareOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;=&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::CompareOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="in_CompareOp" eSuperTypes="#//CompareOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//CompareOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;in&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::CompareOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="lessThan_CompareOp" eSuperTypes="#//CompareOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//CompareOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;&lt;&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::CompareOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="greaterThan_CompareOp" eSuperTypes="#//CompareOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//CompareOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;>&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::CompareOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="lessThanEqual_CompareOp" eSuperTypes="#//CompareOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//CompareOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;&lt;=&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::CompareOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="greaterThanEqual_CompareOp" eSuperTypes="#//CompareOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//CompareOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;>=&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::CompareOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BinOp" abstract="true" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="or_BinOp" eSuperTypes="#//BinOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//BinOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;or&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::BinOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="and_BinOp" eSuperTypes="#//BinOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//BinOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;and&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::BinOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="biImpl_BinOp" eSuperTypes="#//BinOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//BinOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;iff&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::BinOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="implies_BinOp" eSuperTypes="#//BinOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//BinOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;implies&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::BinOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="add_BinOp" eSuperTypes="#//BinOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//BinOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;+&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::BinOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="diff_BinOp" eSuperTypes="#//BinOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//BinOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;-&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::BinOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="join_BinOp" eSuperTypes="#//BinOp">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//BinOp/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;.&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::BinOp"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Quantifier" abstract="true" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="all_Quantifier" eSuperTypes="#//Quantifier">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Quantifier/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;all&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Quantifier"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="no_Quantifier" eSuperTypes="#//Quantifier">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Quantifier/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;no&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Quantifier"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="some_Quantifier" eSuperTypes="#//Quantifier">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Quantifier/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;some&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Quantifier"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="lone_Quantifier" eSuperTypes="#//Quantifier">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Quantifier/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;lone&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Quantifier"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="one_Quantifier" eSuperTypes="#//Quantifier">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Quantifier/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;one&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Quantifier"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="sum_Quantifier" eSuperTypes="#//Quantifier">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Quantifier/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;sum&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Quantifier"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="empty_Quantifier" eSuperTypes="#//Quantifier">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Quantifier/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Quantifier"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LetDecl" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.name := name&#xA;&#x9;self.expr := expr&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="name" eType="#//Name"/>
+      <eParameters name="expr" eType="#//Expression"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;result := ((((self.name.getDefinition) + (&quot;=&quot;))) + (self.expr.getDefinition))&#xA;end"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//Expression"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Expression" abstract="true" eSuperTypes="platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/language/structure/Object">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta">
+        <details key="isAbstract" value="true"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Let_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.letDecls.addAll(letDecls)&#xA;&#x9;self.blockOrBar := blockOrBar&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="letDecls" lowerBound="1" upperBound="-1" eType="#//LetDecl"/>
+      <eParameters name="blockOrBar" eType="#//BlockOrBar"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var letExpression : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;letExpression := &quot;let &quot;&#xA;&#x9;self.letDecls.each{letDecl | do&#xA;&#x9;&#x9;&#x9;letExpression := ((((letExpression) + (letDecl.getDefinition))) + (&quot;,&quot;))&#xA;&#x9;&#x9;end}&#xA;&#x9;letExpression := letExpression.substring(0, ((letExpression.size) - (1)))&#xA;&#x9;letExpression := ((((letExpression) + (&quot; &quot;))) + (self.blockOrBar.getDefinition))&#xA;&#x9;result := letExpression&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="letDecls" lowerBound="1"
+        upperBound="-1" eType="#//LetDecl"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="blockOrBar" eType="#//BlockOrBar"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UnOp_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.expr := expr&#xA;&#x9;self.unaryOp := unaryOp&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="expr" eType="#//Expression"/>
+      <eParameters name="unaryOp" eType="#//UnOp"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := ((((self.unaryOp.getDefinition) + (&quot; &quot;))) + (self.expr.getDefinition))&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" lowerBound="1" eType="#//Expression"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="unaryOp" lowerBound="1"
+        eType="#//UnOp"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Quant_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.quant := quant&#xA;&#x9;self.decls.addAll(decls)&#xA;&#x9;self.blockOrBar := blockOrBar&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="quant" eType="#//Quantifier"/>
+      <eParameters name="decls" lowerBound="1" upperBound="-1" eType="#//Decl"/>
+      <eParameters name="blockOrBar" eType="#//BlockOrBar"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var quant_Expression : kermeta::standard::String init &quot;&quot;&#xA;&#x9;quant_Expression := ((self.quant.getDefinition) + (&quot; &quot;))&#xA;&#x9;self.decls.each{decl | do&#xA;&#x9;&#x9;&#x9;quant_Expression := ((((((quant_Expression) + (&quot; &quot;))) + (decl.getDefinition))) + (&quot;,&quot;))&#xA;&#x9;&#x9;end}&#xA;&#x9;quant_Expression := quant_Expression.substring(0, ((quant_Expression.size) - (1)))&#xA;&#x9;quant_Expression := ((((quant_Expression) + (&quot; &quot;))) + (self.blockOrBar.getDefinition))&#xA;&#x9;result := quant_Expression&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="quant" lowerBound="1" eType="#//Quantifier"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="decls" lowerBound="1" upperBound="-1"
+        eType="#//Decl"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="blockOrBar" eType="#//BlockOrBar"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BinOp_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.lhsexpr := lhsexpr&#xA;&#x9;self.rhsexpr := rhsexpr&#xA;&#x9;self.binaryOp := binaryOp&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="lhsexpr" eType="#//Expression"/>
+      <eParameters name="rhsexpr" eType="#//Expression"/>
+      <eParameters name="binaryOp" eType="#//BinOp"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var binOpExpression : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;binOpExpression := ((((((((self.lhsexpr.getDefinition) + (&quot; &quot;))) + (self.binaryOp.getDefinition))) + (&quot; &quot;))) + (self.rhsexpr.getDefinition))&#xA;&#x9;result := binOpExpression&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lhsexpr" eType="#//Expression"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rhsexpr" eType="#//Expression"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="binaryOp" eType="#//BinOp"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CompareOp_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.lhsexpr := lhsexpr&#xA;&#x9;self.rhsexpr := rhsexpr&#xA;&#x9;self.compOp := compOp&#xA;&#x9;self.isNot := isNot&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="lhsexpr" eType="#//Expression"/>
+      <eParameters name="rhsexpr" eType="#//Expression"/>
+      <eParameters name="compOp" eType="#//CompareOp"/>
+      <eParameters name="isNot" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var compareOpExpression : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;if self.isNot then&#xA;&#x9;&#x9;compareOpExpression := ((((((((self.lhsexpr.getDefinition) + (&quot; not &quot;))) + (self.compOp.getDefinition))) + (&quot; &quot;))) + (self.rhsexpr.getDefinition))&#xA;&#xA;&#x9;else&#xA;&#x9;&#x9;compareOpExpression := ((((((((self.lhsexpr.getDefinition) + (&quot; &quot;))) + (self.compOp.getDefinition))) + (&quot; &quot;))) + (self.rhsexpr.getDefinition))&#xA;&#xA;&#x9;end&#xA;&#x9;result := compareOpExpression&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isNot" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Boolean">
+      <eAnnotations source="kermeta">
+        <details key="isComposite" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lhsexpr" eType="#//Expression"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rhsexpr" eType="#//Expression"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="compOp" eType="#//CompareOp"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ImpliesElse_Expression" eSuperTypes="#//Expression">
+    <eOperations name="intialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.ifExpression := ifExpression&#xA;&#x9;self.thenExpression := thenExpression&#xA;&#x9;self.elseExpression := elseExpression&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="ifExpression" eType="#//Expression"/>
+      <eParameters name="thenExpression" eType="#//Expression"/>
+      <eParameters name="elseExpression" eType="#//Expression"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := ((((((((ifExpression.getDefinition) + (&quot; implies &quot;))) + (self.thenExpression.getDefinition))) + (&quot; else &quot;))) + (self.elseExpression.getDefinition))&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ifExpression" eType="#//Expression"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="thenExpression" eType="#//Expression"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="elseExpression" eType="#//Expression"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Bracket_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.lhsExpression := lhsExpression&#xA;&#x9;self.rhsExpressions.addAll(rhsExpressions)&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="lhsExpression" eType="#//Expression"/>
+      <eParameters name="rhsExpressions" upperBound="-1" eType="#//Expression"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var bracketExpression : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;bracketExpression := ((lhsExpression.getDefinition) + (&quot;[&quot;))&#xA;&#x9;self.rhsExpressions.each{e | do&#xA;&#x9;&#x9;&#x9;bracketExpression := ((((bracketExpression) + (e.getDefinition))) + (&quot;,&quot;))&#xA;&#x9;&#x9;end}&#xA;&#x9;bracketExpression := bracketExpression.substring(0, ((bracketExpression.size) - (1)))&#xA;&#x9;bracketExpression := ((bracketExpression) + (&quot;]&quot;))&#xA;&#x9;result := bracketExpression&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lhsExpression" eType="#//Expression"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rhsExpressions" upperBound="-1"
+        eType="#//Expression"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Number_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.number := number&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="number" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Integer"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := self.number.toString&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="number" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Integer"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MinusNumber_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.number := number&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="number" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Integer"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := ((&quot;-&quot;) + (self.number.toString))&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="number" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Integer"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="None_Expression" eSuperTypes="#//Expression">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;none&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Iden_Expression" eSuperTypes="#//Expression">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;iden&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Univ_Expression" eSuperTypes="#//Expression">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;univ&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Int_Expression" eSuperTypes="#//Expression">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;Int&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SeqInt_Expression" eSuperTypes="#//Expression">
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := &quot;seq/Int&quot;&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Paren_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.expr := expr&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="expr" eType="#//Expression"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := ((((&quot;(&quot;) + (expr.getDefinition))) + (&quot;)&quot;))&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//Expression"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AtName_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.name := name&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="name" eType="#//Name"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := ((&quot;@&quot;) + (name.getDefinition))&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Name_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.name := name&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="name" eType="#//Name"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := name.getDefinition&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//Name"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Block_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize" ordered="false" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/Void">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.block := block&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="block" eType="#//Block"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;result := self.block.getDefinition&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="block" eType="#//Block"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DeclsBlockOrBar_Expression" eSuperTypes="#//Expression">
+    <eOperations name="initialize">
+      <eAnnotations source="kermeta">
+        <details key="body" value="do&#xA;&#x9;self.decls.addAll(decls)&#xA;&#x9;self.blockOrBar := blockOrBar&#xA;end"/>
+      </eAnnotations>
+      <eParameters name="decls" lowerBound="1" upperBound="-1" eType="#//Decl"/>
+      <eParameters name="blockOrBar" eType="#//BlockOrBar"/>
+    </eOperations>
+    <eOperations name="getDefinition" eType="ecore:EClass platform:/plugin/fr.irisa.triskell.kermeta.io/src/kermeta/framework.ecore#/2/standard/String">
+      <eAnnotations source="kermeta" references="#//Expression/getDefinition">
+        <details key="body" value="do&#xA;&#x9;var dbbExpression : kermeta::standard::String init kermeta::standard::String.new&#xA;&#x9;dbbExpression := &quot;{&quot;&#xA;&#x9;self.decls.each{d | do&#xA;&#x9;&#x9;&#x9;dbbExpression := ((dbbExpression) + (d.getDefinition))&#xA;&#x9;&#x9;end}&#xA;&#x9;dbbExpression := ((dbbExpression) + (blockOrBar.getDefinition))&#xA;&#x9;dbbExpression := ((dbbExpression) + (&quot;}&quot;))&#xA;&#x9;result := dbbExpression&#xA;end"/>
+        <details key="superOperation" value="Cartier::AlloyMM::Expression"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="decls" lowerBound="1" upperBound="-1"
+        eType="#//Decl"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="blockOrBar" eType="#//BlockOrBar"/>
+  </eClassifiers>
+</ecore:EPackage>

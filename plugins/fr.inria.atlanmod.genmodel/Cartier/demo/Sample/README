@@ -1,0 +1,40 @@
+README for using Cartier(Beta) 
+
+Sagar Sen 2009
+
+Creation of Meta-model
+
+Steps
+
+1. Let the metamodel directory be directory "platform:/resource/Cartier/demo/Sample/input/metamodel"
+2. Right click on the "metamodel" directory and go to : New->Other->Ecore Tools->Ecore Diagram
+3. Create an Ecore Diagram of the desired metamodel with a top-level class
+4. Validate the Ecore model.
+5. 
+
+Editing the metamodel2AlloyModel.kmt File
+
+Steps:
+
+1. Open the file: metamodel2AlloyModel.kmt
+2. In the initialize function of the Main class:
+	2.1 Edit the input meta-model path "self.inputModelPath" and set it to the input meta-model path
+	2.2 Similarly, edit the output Alloy model path "self.outputModelPath"
+	2.3 Set the following parameters: 
+		//Setting Synthesis Scope for Classes
+		self.synthesisScope := 20
+		//Setting Synthesis Scope for Integer
+		self.integerScope := 5
+		//Setting Synthesis Scope for Sequences
+		self.sequenceScope := 5
+		//Setting Synthesis Scope for String
+		self.stringScope := 5
+		//Use Integer instead of String
+		self.useIntForString := true
+	2.4 Select an Experiment to Generate and Comment the Rest.
+		//Setting Experiment
+		self.experimentSelection := Experiment.GenerateAndTestSimple
+		//self.experimentSelection := Experiment.GenerateAndTestCustom
+		//self.experimentSelection := Experiment.ModelFragmentsAllRanges
+		//self.experimentSelection := Experiment.ModelFragmentsAllPartitions
+		

@@ -1,0 +1,179 @@
+
+
+package kermeta::language::structure;
+require "metamodels/alloy.kmt"
+//require "ToAlloy.kmt"
+require "Kermeta2AlloyTrace.kmt"
+require kermeta
+
+using kermeta::standard
+using kermeta::utils
+using Cartier::Kermeta2AlloyTrace
+using Cartier::AlloyMM
+using kermeta::language::structure
+
+class ContainerProperty
+{
+	reference containerClass:ClassDefinition
+	reference containerProperty: Property
+	reference AlloyNameExpr:Name_Expression
+	
+	operation getExpression():Name_Expression is do
+		var containerName:IDName init IDName.new
+		containerName.initialize(self.containerClass.name+"."+self.containerProperty.name)
+		
+		self.AlloyNameExpr.initialize(containerName)
+		result:=self.AlloyNameExpr
+	end
+}
+
+aspect class ClassDefinition 
+{
+	operation isExistingContainer( cp: ContainerProperty):Boolean is do
+		var isExisting:Boolean init Boolean.new
+		isExisting:=false
+		
+		self.containers.each{c | if (c.containerClass.name == cp.containerClass.name) and (c.containerProperty.name == cp.containerProperty.name) then
+										isExisting:=true
+								end
+								}
+		
+		result:=isExisting
+	end
+	
+	
+	operation allSuperTypes() : Set<Type> is do
+          var allSuperClasses : Set<Type> init Set<Type>.new
+      var superClasses : Set<Type> init Set<Type>.new
+      superClasses.addAll(self.superType)
+            from  not superClasses.isEmpty
+      until superClasses.isEmpty
+      loop
+          allSuperClasses.addAll(superClasses)
+          var temp : Set<Type> init Set<Type>.new
+           superClasses.each{ s |
+               if s.isInstanceOf(ParameterizedType) then
+                  if s.asType(ParameterizedType).typeDefinition.isInstanceOf(ClassDefinition) then
+                      temp.addAll(s.asType(ParameterizedType).typeDefinition.asType(ClassDefinition).superType)
+                  end
+              end
+           }
+           superClasses.clear()
+           superClasses.addAll(temp)
+      end
+            result := allSuperClasses
+  	end
+  	
+  	
+  	operation allSubClassDefs(trace: Kermeta2AlloyTrace): Set<ClassDefinition> is do
+  		var allSubClasses: Set<ClassDefinition> init Set<ClassDefinition>.new
+  		allSubClasses.clear
+  		trace.kermetaMetamodel.packages.each
+					{ p | 
+					p.asType(TypeDefinitionContainer).ownedTypeDefinition.each
+						{ 
+							object | 
+							if object.isInstanceOf(ClassDefinition) then
+								 object.asType(ClassDefinition).allSuperTypes.each{ s|
+									if s.isInstanceOf(Class) then
+										if trace.isClassInMetamodel(s.asType(Class).classDefinition) and self==s.asType(Class).classDefinition then
+											allSubClasses.add(object.asType(ClassDefinition))
+										end
+									end		
+								}
+							end
+							
+							
+						}
+						
+					}
+  		result:=allSubClasses
+  	end	
+	
+}
+
+
+
+
+class ExperimentLog
+{
+	attribute numberOfNameExpressions : Integer[1..1]
+	attribute numberOfQuantExpressions : Integer[1..1]
+	attribute numberOfBinOpExpressions : Integer[1..1]
+	attribute numberOfNoneExpressions : Integer[1..1]
+	attribute numberOfCompareOpExpressions: Integer[1..1]
+	attribute numberOfUnOpExpressions : Integer[1..1]
+	attribute numberOfNumberExpressions : Integer[1..1]
+	attribute numberOfSignatureDecls : Integer[1..1]
+	attribute numberOfFactDecls : Integer[1..1]
+	attribute numberOfPredDecls : Integer[1..1]
+	attribute numberOfDecls: Integer[1..1]
+	attribute numberOfModules : Integer[1..1]
+	attribute numberOfRunCommands : Integer[1..1]
+	attribute totalNumberOfExpressions : Integer[1..1]
+	attribute totalNumberOfParagraphs : Integer[1..1]
+	attribute totalNumberOfConcepts : Integer[1..1]
+	attribute numberOfFieldDecls : Integer[1..1]
+	attribute numberOfEnumerationDecls : Integer[1..1]
+	
+	operation initialize():Void is do
+		self.numberOfNameExpressions := 0
+		self.numberOfQuantExpressions := 0
+		self.numberOfBinOpExpressions := 0
+		self.numberOfNoneExpressions := 0
+	 	self.numberOfCompareOpExpressions:= 0
+		self.numberOfUnOpExpressions := 0
+		self.numberOfNumberExpressions := 0
+		self.numberOfSignatureDecls := 0
+		self.numberOfFactDecls := 0
+		self.numberOfPredDecls := 0
+		self.numberOfDecls:= 0
+		self.numberOfModules := 0
+		self.numberOfRunCommands := 0
+		self.totalNumberOfExpressions := 0
+		self.totalNumberOfParagraphs := 0
+		self.totalNumberOfConcepts := 0
+		self.numberOfFieldDecls := 0
+		self.numberOfEnumerationDecls := 0
+	end
+	operation computeTotal():Void is do
+		self.totalNumberOfExpressions := self.totalNumberOfExpressions +
+										self.numberOfNameExpressions +
+										self.numberOfQuantExpressions +
+										self.numberOfBinOpExpressions  +
+										self.numberOfNoneExpressions +
+										self.numberOfCompareOpExpressions +
+										self.numberOfUnOpExpressions + 
+										self.numberOfNumberExpressions
+										
+	end
+	operation displayExperimentLog():Void is do
+		self.computeTotal
+		stdio.writeln("Total Number of Expressions for the model ="+self.totalNumberOfExpressions.toString)
+	end
+}
+
+
+aspect class Object
+{
+operation showLog(trace: Kermeta2AlloyTrace) : Void is do
+		stdio.writeln("\nConcept Name:"+self.alloyName.getDefinition +"\n")
+		stdio.writeln("Number of Name Expressions ="+self.scaleLog.numberOfNameExpressions.toString)
+		stdio.writeln("Number of Quant Expressions ="+self.scaleLog.numberOfQuantExpressions.toString)
+		stdio.writeln("Number of BinOp Expressions ="+self.scaleLog.numberOfBinOpExpressions.toString)
+		stdio.writeln("Number of None Expressions ="+self.scaleLog.numberOfNoneExpressions.toString)
+	 	stdio.writeln("Number of CompareOp Expressions="+self.scaleLog.numberOfCompareOpExpressions.toString)
+		stdio.writeln("Number of UnOp Expressions ="+ self.scaleLog.numberOfUnOpExpressions.toString)
+		stdio.writeln("Number of Number Expressions ="+self.scaleLog.numberOfNumberExpressions.toString)
+		stdio.writeln("Number of Signature Declarations =" +self.scaleLog.numberOfSignatureDecls.toString)
+		stdio.writeln("Number of Fact Declarations ="+self.scaleLog.numberOfFactDecls.toString)
+		stdio.writeln("Number of Predicate Declarations ="+self.scaleLog.numberOfPredDecls.toString)
+		stdio.writeln("Number of Declarations ="+self.scaleLog.numberOfDecls.toString)
+		stdio.writeln("Number of Modules ="+self.scaleLog.numberOfModules.toString)
+		stdio.writeln("Number of Run Commands ="+self.scaleLog.numberOfRunCommands.toString)
+		stdio.writeln("Number of Field Declarations="+self.scaleLog.numberOfFieldDecls.toString)
+		stdio.writeln("Number of Enumeration Declarations="+self.scaleLog.numberOfEnumerationDecls.toString)
+	end
+	
+
+}

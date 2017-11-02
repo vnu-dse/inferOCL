@@ -1,0 +1,130 @@
+@uri "platform:/resource/AntWorld/src/test/alloyInstance.xsd"
+package AlloyInstance;
+
+require "kermeta"
+require "http://www.eclipse.org/emf/2003/XMLType"
+require "http://www.eclipse.org/emf/2002/Ecore"
+class AlloyType
+{
+	attribute instance : InstanceType[1..*]
+
+}
+class AtomType
+{
+	attribute name : type::String[1..1]
+
+}
+class DocumentRoot
+{
+	attribute mixed : seq ecore::EFeatureMapEntry[0..*]
+
+	attribute xMLNSPrefixMap : ecore::EStringToStringMapEntry[0..*]
+
+	attribute xSISchemaLocation : ecore::EStringToStringMapEntry[0..*]
+
+	property readonly alloy : AlloyType[0..*]
+		getter is do
+			result := kermeta::standard::OrderedSet<AlloyType>.new
+			self.mixed.each{fme | do
+					if fme.eStructuralFeatureName.equals("element") then
+						var val : AlloyType
+						val ?= fme.~value
+						result.add(val)
+
+					end
+				end}
+		end
+
+}
+class FieldType
+{
+	attribute type : TypesType[1..1]
+
+	attribute tuple : TupleType[0..*]
+
+	attribute name : type::String[1..1]
+
+}
+class InstanceType
+{
+	attribute group : seq ecore::EFeatureMapEntry[0..*]
+
+	property readonly sig : SigType[0..*]
+		getter is do
+			result := kermeta::standard::OrderedSet<SigType>.new
+			self.group.each{fme | do
+					if fme.eStructuralFeatureName.equals("element") then
+						var val : SigType
+						val ?= fme.~value
+						result.add(val)
+
+					end
+				end}
+		end
+
+	property readonly ~set : SetType[0..*]
+		getter is do
+			result := kermeta::standard::OrderedSet<SetType>.new
+			self.group.each{fme | do
+					if fme.eStructuralFeatureName.equals("element") then
+						var val : SetType
+						val ?= fme.~value
+						result.add(val)
+
+					end
+				end}
+		end
+
+	property readonly field : FieldType[0..*]
+		getter is do
+			result := kermeta::standard::OrderedSet<FieldType>.new
+			self.group.each{fme | do
+					if fme.eStructuralFeatureName.equals("element") then
+						var val : FieldType
+						val ?= fme.~value
+						result.add(val)
+
+					end
+				end}
+		end
+
+	attribute bitwidth : type::String
+
+	attribute command : type::String
+
+	attribute filename : type::String[1..1]
+
+}
+class SetType
+{
+	attribute atom : AtomType[0..*]
+
+	attribute name : type::String[1..1]
+
+	attribute type : type::String[1..1]
+
+}
+class SigType
+{
+	attribute atom : AtomType[0..*]
+
+	attribute extends : type::String
+
+	attribute name : type::String[1..1]
+
+}
+class TupleType
+{
+	attribute atom : AtomType[1..*]
+
+}
+class TypesType
+{
+	attribute sig : TypeType[1..*]
+
+}
+class TypeType
+{
+	attribute name : type::String[1..1]
+
+}

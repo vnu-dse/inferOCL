@@ -1,0 +1,137 @@
+/* $Id: metamodel2AlloyModel.kmt,v 1.1 2009-02-11 07:55:17 ssen Exp $ 
+ * Creation : October 13, 2008
+ * Licence  : EPL 
+ * Copyright:
+ * Authors  : Sagar Sen
+ */
+@mainClass "root_package::Main"
+@mainOperation "main"
+
+
+package root_package;
+
+
+require kermeta
+require "platform:/resource/Cartier/src/kermeta/Kermeta2Alloy.kmt"
+require "platform:/resource/Cartier/src/kermeta/Kermeta2AlloyTrace.kmt"
+require "platform:/resource/Cartier/src/kermeta/CartierExperiments.kmt"
+
+using Cartier::Kermeta2AlloyTrace
+using Cartier::CartierExperiments
+using Cartier::Kermeta2Alloy
+using kermeta::standard
+using kermeta::utils
+using kermeta::persistence
+using kermeta::io
+using kermeta::language::structure
+
+enumeration Experiment
+{
+	GenerateAndTestSimple;
+	GenerateAndTestCustom;
+	ModelFragmentsAllRanges;
+	ModelFragmentsAllPartitions;
+
+}
+class Main
+{
+	//The Trace object that stores the Alloy Model
+	attribute trace : Kermeta2AlloyTrace
+	attribute kermeta2Alloy:Kermeta2Alloy
+	attribute cartierExperiment: CartierExperiment
+	
+	//Initialization variables
+	attribute inputModelPath:String
+	attribute outputModelPath:String
+	attribute synthesisScope :Integer
+	attribute integerScope :Integer
+	attribute sequenceScope : Integer
+	attribute stringScope :Integer
+	attribute experimentSelection : Experiment
+	attribute useIntForString: Boolean
+	
+	operation initialize():Void is do
+	
+		//Setting Input Kermeta Meta-model Path
+		 self.inputModelPath := "platform:/resource/Cartier/demo/MDD4DRES/SimpleUMLCD/input/metamodel/simpleUML_MM.km"
+		//Setting Output Meta-model Path
+		//self.outputModelPath := "platform:/resource/Cartier/demo/MDD4DRES/SimpleUMLCD/output/alloyModel/simpleUML_MM_gts.als"
+		//self.outputModelPath := "platform:/resource/Cartier/demo/MDD4DRES/SimpleUMLCD/output/alloyModel/simpleUML_MM2_gtc.als"
+		self.outputModelPath := "platform:/resource/Cartier/demo/MDD4DRES/SimpleUMLCD/output/alloyModel/simpleUML_MM_allranges.als"
+		//self.outputModelPath := "platform:/resource/Cartier/demo/MDD4DRES/SimpleUMLCD/output/alloyModel/simpleUML_MM_allparts.als"
+		
+		//Setting Synthesis Scope for Classes
+		self.synthesisScope := 20
+		//Setting Synthesis Scope for Integer
+		self.integerScope := 5
+		//Setting Synthesis Scope for Sequences
+		self.sequenceScope := 5
+		//Setting Synthesis Scope for String
+		self.stringScope := 5
+		//Use Integer instead of String
+		self.useIntForString := false
+		//Setting Experiment
+		//self.experimentSelection := Experiment.GenerateAndTestSimple
+		//self.experimentSelection := Experiment.GenerateAndTestCustom
+		self.experimentSelection := Experiment.ModelFragmentsAllRanges
+		//self.experimentSelection := Experiment.ModelFragmentsAllPartitions
+	end
+	operation main() : Void is do 
+		self.kermeta2Alloy:=Kermeta2Alloy.new
+		self.cartierExperiment:= CartierExperiment.new
+		self.trace := Kermeta2AlloyTrace.new
+		
+		
+		self.kermeta2Alloy.headerNotice
+		self.kermeta2Alloy.initialize(self.trace)
+		//Initiaize Transformation Parameters
+		self.initialize
+		//Set scopes 
+		self.trace.integerScope := Integer.new
+		self.trace.integerScope := self.integerScope
+		self.trace.seqScope := Integer.new
+		self.trace.seqScope := self.sequenceScope
+		self.trace.synthesisScope := Integer.new
+		self.trace.synthesisScope := self.synthesisScope
+		self.trace.stringScope := Integer.new
+		self.trace.stringScope := self.stringScope
+		self.trace.useIntForString := self.useIntForString
+		//Load Modelling Domain
+		
+		//self.kermeta2Alloy.load("platform:/resource/Cartier/testModels/UMLNEW.km")
+		//self.kermeta2Alloy.load("platform:/resource/Cartier/testModels/statemachine/UMLStateMachineSelect.km")
+		//self.kermeta2Alloy.load("platform:/resource/Cartier/demo/ConferenceScheduling/input/metamodel/conference.km")
+		if not self.inputModelPath.isVoid then
+			self.kermeta2Alloy.load(self.inputModelPath)
+		end
+		
+		//Transform Modelling Domain of Kermeta Model
+		self.kermeta2Alloy.transform
+		
+		//Transform Experiment to Alloy
+		
+		//Create Cartier Experiment
+		self.cartierExperiment.initialize(self.trace)
+		
+		//Generate Selected Experiment
+		if self.experimentSelection == Experiment.GenerateAndTestSimple then
+			self.cartierExperiment.generateAndTestExperiementSimple
+		end
+		if self.experimentSelection == Experiment.GenerateAndTestCustom then
+			self.cartierExperiment.generateAndTestExperiementCustom
+		end
+		if self.experimentSelection == Experiment.ModelFragmentsAllRanges then
+			self.cartierExperiment.mfAllRangesExperiement
+		end
+		if self.experimentSelection == Experiment.ModelFragmentsAllPartitions then
+			self.cartierExperiment.mfAllPartitionsExperiement
+		end
+		
+		//Display resulting Alloy model
+		//self.kermeta2Alloy.printAlloy
+		if not self.outputModelPath.isVoid then
+			kermeta2Alloy.save(self.outputModelPath)
+		end
+		
+	end
+}

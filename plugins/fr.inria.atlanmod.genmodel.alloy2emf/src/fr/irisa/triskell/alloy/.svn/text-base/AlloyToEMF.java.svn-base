@@ -1,0 +1,60 @@
+package fr.irisa.triskell.alloy;
+
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+
+import org.eclipse.emf.ecore.EObject;
+
+import edu.mit.csail.sdg.alloy4viz.AlloyAtom;
+import edu.mit.csail.sdg.alloy4viz.AlloyInstance;
+import edu.mit.csail.sdg.alloy4viz.AlloyModel;
+import edu.mit.csail.sdg.alloy4viz.AlloyRelation;
+import edu.mit.csail.sdg.alloy4viz.AlloyTuple;
+import edu.mit.csail.sdg.alloy4viz.AlloyType;
+
+public class AlloyToEMF {
+
+	private EMFConverter converter;
+	private AlloyInstance instance;
+	private  Hashtable<String,EObject> elements;
+
+	public AlloyToEMF(EMFConverter converter,AlloyInstance instance){
+		this.converter=converter;
+		this.instance=instance;
+		this.elements=new Hashtable<String, EObject>();
+	}
+	
+	public void convert(){
+		AlloyModel model = this.instance.model;
+		Set<AlloyType> types = model.getTypes();
+		
+		for(AlloyType t:types){
+			List<AlloyAtom> atoms =  this.instance.type2atoms(t);
+			
+			for(AlloyAtom atom:atoms){
+				EObject type=converter.createTypeElement(t.getName());
+				if(type!=null){
+					this.elements.put(atom.toString(), type);
+					System.out.println(" type: "+type.toString());
+				}
+			}
+			System.out.println(" holi: "+t.toString());
+		}
+		for(AlloyRelation r:model.getRelations()){
+				Set<AlloyTuple> tuples =  this.instance.relation2tuples(r);
+				System.out.println(" relation: "+r.getName());
+				for(AlloyTuple tuple:tuples){
+					AlloyAtom start=tuple.getStart();
+					AlloyAtom end=tuple.getEnd();
+					if(this.elements.containsKey(end.toString())){
+						this.converter.createAttrElement(r.getName(), this.elements.get(start.toString()), this.elements.get(end.toString()));
+					}
+					else{
+						this.converter.createAttrElement(r.getName(), this.elements.get(start.toString()),AlloyTypesHelper.alloyToEcoreType(end));
+					}
+					System.out.println(" tupe: "+tuple.toString());
+				}
+		}
+	}
+}
